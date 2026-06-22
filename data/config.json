@@ -1,0 +1,40 @@
+{
+  "trip": {
+    "name": "🦊 Ski Babies 2027 🦊",
+    "destination": "野沢溫泉村 Nozawa Onsen",
+    "dates": "Jan 22–31, 2027",
+    "departure": "Hong Kong",
+    "members": ["Chan Kit (CK)", "Chong (SY)", "Chan Leung (CL)", "Toby", "Oli", "Sonija", "Rachel (Rac)", "Tony"]
+  },
+  "map": {
+    "center": {"lat": 36.9225, "lng": 138.4485},
+    "zoom": 15,
+    "referencePoint": {
+      "name": "Schanze Nozawa",
+      "lat": 36.9197849,
+      "lng": 138.4498459,
+      "note": "User-provided reference from Google Maps"
+    }
+  },
+  "categories": {
+    "hotel": {"label": "🏨 住宿", "color": "#10b981"},
+    "food": {"label": "🍜 餐廳", "color": "#f59e0b"},
+    "onsen": {"label": "♨️ 溫泉", "color": "#0ea5e9"},
+    "sight": {"label": "📍 景點", "color": "#ec4899"},
+    "ski": {"label": "⛷️ 滑雪", "color": "#1e40af"}
+  },
+  "dayTrips": [
+    {
+      "title": "雪猴公園 (地獄谷野猿公苑)",
+      "desc": "Day 5 — 野沢 → 飯山 → 湯田中 → 雪猴",
+      "routeUrl": "https://www.google.com/maps/dir/Nozawa+Onsen+Bus+Terminal/Iiyama+Station/Jigokudani+Monkey+Park"
+    },
+    {
+      "title": "雪猴 + 小布施",
+      "desc": "野沢 → 雪猴 → 小布施(栗子) → 飯山",
+      "routeUrl": "https://www.google.com/maps/dir/Nozawa+Onsen+Bus+Terminal/Jigokudani+Monkey+Park/Obuse+Station/Iiyama+Station"
+    }
+  ],
+  "coordinatesLastVerified": "2026-06-21",
+  "coordinatesSource": "Google Places API textsearch (romanized queries)"
+}

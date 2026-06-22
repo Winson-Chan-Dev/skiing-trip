@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🦊 Ski Babies 2027 🦊 — 野沢溫泉 分享版</title>
+<style>
+:root {
+  --apple-blue: #007AFF;
+  --apple-gray: #8E8E93;
+  --apple-gray2: #636366;
+  --apple-gray3: #48484A;
+  --apple-gray6: #1C1C1E;
+  --apple-bg: #F2F2F7;
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --font: -apple-system, 'SF Pro Display', 'SF Pro Text', system-ui, 'Microsoft JhengHei', sans-serif;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: var(--font); background: var(--apple-bg); min-height: 100vh; }
+
+.header {
+  background: white; padding: 16px 20px;
+  border-bottom: 0.5px solid rgba(0,0,0,0.1);
+  position: sticky; top: 0; z-index: 10;
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  background: rgba(255,255,255,0.82);
+}
+.header h1 { font-size: 1.1rem; font-weight: 700; letter-spacing: -0.3px; }
+.header .sub { font-size: 0.72rem; color: var(--apple-gray); margin-top: 2px; }
+.header .links { margin-top: 8px; display: flex; gap: 8px; }
+.header .links a {
+  padding: 5px 12px; border-radius: 16px; font-size: 0.7rem;
+  font-weight: 600; text-decoration: none;
+  background: var(--apple-blue); color: white;
+}
+
+.container { max-width: 680px; margin: 0 auto; padding: 16px; }
+
+.card {
+  background: white; border-radius: var(--radius-lg);
+  padding: 16px 18px; margin-bottom: 12px;
+  box-shadow: 0 0.5px 3px rgba(0,0,0,0.04);
+}
+.card h3 {
+  font-size: 0.88rem; font-weight: 700; color: var(--apple-gray6);
+  margin-bottom: 12px; padding-bottom: 8px;
+  border-bottom: 0.5px solid rgba(0,0,0,0.06);
+}
+.card .intro {
+  font-size: 0.76rem; color: var(--apple-gray2); line-height: 1.6;
+}
+
+.day-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.day-pill {
+  padding: 6px 14px; border-radius: 16px;
+  font-size: 0.72rem; font-weight: 600; cursor: pointer;
+  border: none; background: rgba(118,118,128,0.12); color: var(--apple-gray3);
+}
+.day-pill.active { background: var(--apple-blue); color: white; }
+
+.route-panel { display: none; }
+.route-panel.active { display: block; }
+.route-stop {
+  display: flex; gap: 12px; align-items: flex-start; padding: 7px 0;
+  font-size: 0.8rem;
+}
+.route-stop .time {
+  font-weight: 700; color: var(--apple-blue); min-width: 44px; flex-shrink: 0;
+  font-size: 0.76rem;
+}
+.route-stop .what a { color: var(--apple-blue); text-decoration: none; font-weight: 600; }
+
+.place-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 0; border-bottom: 0.5px solid rgba(0,0,0,0.04);
+}
+.place-row:last-child { border-bottom: none; }
+.place-info { flex: 1; min-width: 0; }
+.place-info .name { font-weight: 700; font-size: 0.82rem; color: var(--apple-gray6); }
+.place-info .desc { font-size: 0.7rem; color: var(--apple-gray); margin-top: 1px; }
+.place-btns { display: flex; gap: 6px; flex-shrink: 0; }
+.btn-open {
+  padding: 5px 12px; border-radius: 14px; font-size: 0.68rem;
+  font-weight: 600; text-decoration: none;
+  background: var(--apple-blue); color: white;
+}
+.btn-copy {
+  padding: 5px 10px; border-radius: 14px; font-size: 0.68rem;
+  font-weight: 600; cursor: pointer; border: 1.5px solid rgba(0,0,0,0.08);
+  background: white; color: var(--apple-gray3);
+}
+.btn-copy.copied { background: #dcfce7; color: #166534; border-color: #86efac; }
+
+@media (max-width: 600px) {
+  .place-row { flex-wrap: wrap; }
+  .place-btns { width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🦊 Ski Babies 2027 🦊</h1>
+  <div class="sub">野沢溫泉村 Nozawa Onsen · Jan 22–31, 2027</div>
+  <div class="links">
+    <a href="nozawa-trip.html">🗺️ 互動地圖版</a>
+  </div>
+</div>
+
+<div class="container">
+  <div class="card">
+    <h3>使用方法</h3>
+    <div class="intro">點擊「開啟」在手機 Google Maps App 直接查看位置、評價、照片。可存到「想去的地方」清單。「複製」按鈕可直接貼到 WhatsApp / Line 分享給團友。</div>
+  </div>
+
+  <!-- Daily Itinerary -->
+  <div class="card">
+    <h3>📅 每日行程</h3>
+    <div class="day-pills" id="day-pills">
+      <button class="day-pill active" onclick="showRoute(0,this)">Day 2 抵達</button>
+      <button class="day-pill" onclick="showRoute(1,this)">Day 3 滑雪1</button>
+      <button class="day-pill" onclick="showRoute(2,this)">Day 4 滑雪2</button>
+      <button class="day-pill" onclick="showRoute(3,this)">Day 5 休息日</button>
+      <button class="day-pill" onclick="showRoute(4,this)">Day 6 滑雪3</button>
+      <button class="day-pill" onclick="showRoute(5,this)">Day 7 離開</button>
+    </div>
+        <div class="route-panel active" id="route-0">
+      <div class="route-stop"><span class="time">10:00</span><span class="what">東京上野站 · 北陸新幹線</span></div>
+      <div class="route-stop"><span class="time">12:00</span><span class="what">飯山站 · 轉巴士</span></div>
+      <div class="route-stop"><span class="time">12:30</span><span class="what">野沢溫泉巴士站 · 抵達！</span></div>
+      <div class="route-stop"><span class="time">13:00</span><span class="what">酒店 Check-in · 放行李</span></div>
+      <div class="route-stop"><span class="time">16:00</span><span class="what"><a href="https://www.google.com/maps/search/麻釜+野沢温泉村" target="_blank">麻釜（おがま） 煮蛋體驗</a></span></div>
+      <div class="route-stop"><span class="time">18:00</span><span class="what"><a href="https://www.google.com/maps/search/大湯+野沢温泉村+外湯" target="_blank">大湯 Oyu 外湯初體驗</a></span></div>
+      <div class="route-stop"><span class="time">19:30</span><span class="what"><a href="https://www.google.com/maps/search/お好み焼+でん+野沢温泉村" target="_blank">Den でん 大阪燒晚餐</a></span></div>
+    </div>
+    <div class="route-panel" id="route-1">
+      <div class="route-stop"><span class="time">09:30</span><span class="what"><a href="https://www.google.com/maps/search/長坂ゴンドラリフト+野沢温泉スキー場" target="_blank">長坂ゴンドラ 集合上山</a></span></div>
+      <div class="route-stop"><span class="time">10:00</span><span class="what"><a href="https://www.google.com/maps/search/上ノ平ゲレンデ+野沢温泉スキー場" target="_blank">上之平ゲレンデ 初學者課</a></span></div>
+      <div class="route-stop"><span class="time">12:30</span><span class="what">山頂餐廳 · 午餐</span></div>
+      <div class="route-stop"><span class="time">16:00</span><span class="what">下山 · 回村</span></div>
+      <div class="route-stop"><span class="time">17:00</span><span class="what"><a href="https://www.google.com/maps/search/熊の手洗湯+野沢温泉村" target="_blank">熊之手洗湯 外湯</a></span></div>
+      <div class="route-stop"><span class="time">19:00</span><span class="what"><a href="https://www.google.com/maps/search/レストランさんぞく+野沢温泉村" target="_blank">Sanzoku 山賊 野味鍋晚餐</a></span></div>
+    </div>
+    <div class="route-panel" id="route-2">
+      <div class="route-stop"><span class="time">09:30</span><span class="what"><a href="https://www.google.com/maps/search/長坂ゴンドラリフト+野沢温泉スキー場" target="_blank">長坂ゴンドラ 上山</a></span></div>
+      <div class="route-stop"><span class="time">10:00</span><span class="what">中級區 · Kenashi-yama</span></div>
+      <div class="route-stop"><span class="time">16:30</span><span class="what">下山</span></div>
+      <div class="route-stop"><span class="time">17:30</span><span class="what"><a href="https://www.google.com/maps/search/スパリーナ+野沢温泉" target="_blank">Sparena スパリーナ SPA放鬆</a></span></div>
+      <div class="route-stop"><span class="time">19:30</span><span class="what"><a href="https://www.google.com/maps/search/ハウスサンアントン+野沢温泉村" target="_blank">Haus St. Anton 歐式晚餐</a></span></div>
+      <div class="route-stop"><span class="time">21:30</span><span class="what"><a href="https://www.google.com/maps/search/ファウスト+野沢温泉村+bar" target="_blank">Faust ファウスト 酒吧</a></span></div>
+    </div>
+    <div class="route-panel" id="route-3">
+      <div class="route-stop"><span class="time">08:00</span><span class="what"><a href="https://www.google.com/maps/search/ナガイパン+野沢温泉村" target="_blank">Nagai Pan ナガイパン 早餐麵包</a></span></div>
+      <div class="route-stop"><span class="time">09:00</span><span class="what">野沢巴士站 → 飯山站 · 25分</span></div>
+      <div class="route-stop"><span class="time">10:00</span><span class="what">飯山 → 湯田中 · 電車</span></div>
+      <div class="route-stop"><span class="time">11:00</span><span class="what"><a href="https://www.google.com/maps/place/Jigokudani+Monkey+Park" target="_blank">地獄谷野猿公苑 雪猴！</a></span></div>
+      <div class="route-stop"><span class="time">16:00</span><span class="what">回飯山 → 野沢</span></div>
+      <div class="route-stop"><span class="time">18:00</span><span class="what"><a href="https://www.google.com/maps/search/十王堂の湯+野沢温泉村" target="_blank">十王堂之湯 外湯</a></span></div>
+      <div class="route-stop"><span class="time">19:30</span><span class="what"><a href="https://www.google.com/maps/search/Nozawa+Onsen+Brewing+Company" target="_blank">Nozawa Brewing 啤酒+披薩</a></span></div>
+    </div>
+    <div class="route-panel" id="route-4">
+      <div class="route-stop"><span class="time">09:30</span><span class="what"><a href="https://www.google.com/maps/search/長坂ゴンドラリフト+野沢温泉スキー場" target="_blank">長坂ゴンドラ 上山</a></span></div>
+      <div class="route-stop"><span class="time">10:00</span><span class="what"><a href="https://www.google.com/maps/search/日影ゲレンデ+野沢温泉スキー場" target="_blank">日影ゲレンデ 練習</a></span></div>
+      <div class="route-stop"><span class="time">16:00</span><span class="what">下山</span></div>
+      <div class="route-stop"><span class="time">17:00</span><span class="what"><a href="https://www.google.com/maps/search/田中屋酒造店+野沢温泉村" target="_blank">田中屋酒造店 清酒見學</a></span></div>
+      <div class="route-stop"><span class="time">18:30</span><span class="what"><a href="https://www.google.com/maps/search/大湯+野沢温泉村+外湯" target="_blank">大湯 Oyu 外湯</a></span></div>
+      <div class="route-stop"><span class="time">19:30</span><span class="what"><a href="https://www.google.com/maps/search/兼津+蕎麦+野沢温泉村" target="_blank">Kanetsu 兼津 蕎麥麵</a></span></div>
+    </div>
+    <div class="route-panel" id="route-5">
+      <div class="route-stop"><span class="time">09:00</span><span class="what">Check-out · 打包</span></div>
+      <div class="route-stop"><span class="time">10:00</span><span class="what">野沢巴士站 · → 飯山</span></div>
+      <div class="route-stop"><span class="time">10:30</span><span class="what">飯山站 · 新幹線 → 東京</span></div>
+      <div class="route-stop"><span class="time">12:30</span><span class="what">抵達東京</span></div>
+      <div class="route-stop"><span class="time">14:00</span><span class="what">自由活動 · 購物</span></div>
+    </div>
+  </div>
+
+  <!-- Places by category -->
+  <div class="card">
+    <h3>🏨 住宿</h3>
+    <div class="place-row">
+      <div class="place-info"><div class="name">Schanze シャンツェ野沢</div><div class="desc">⭐4.3 · 160m到長坂 · ~$600–800/人</div></div>
+      <div class="place-btns">
+        <a class="btn-open" href="https://www.google.com/maps/search/シャンツェ野沢+旅館+野沢温泉村" target="_blank">開啟</a>
+        <button class="btn-copy" onclick="copyLink(this,'https://www.google.com/maps/search/シャンツェ野沢+旅館+野沢温泉村')">複製</button>
+      </div>
+    </div>
+    <div class="place-row">
+      <div class="place-info"><div class="name">たまゆら Tamayura</div><div class="desc">⭐4.0 · 90m到長坂 · ~$1,166/人</div></div>
+      <div class="place-btns">
+        <a class="btn-open" href="https://www.google.com/maps/search/おやど玉ゆら+野沢温泉村" target="_blank">開啟</a>
+        <button class="btn-copy" onclick="copyLink(this,'https://www.google.com/maps/search/おやど玉ゆら+野沢温泉村')">複製</button>
+      </div>
+    </div>
+    <div class="place-row">
+      <div class="place-info"><div class="name">野沢温泉ロッヂ Nozawa Lodge</div><div class="desc">⭐3.8 · 220m到長坂 · 團體首選</div></div>
+      <div class="place-btns">
+        <a class="btn-open" href="https://www.google.com/maps/search/野沢温泉ロッジ+野沢温泉村" target="_blank">開啟</a>
+        <button class="btn-copy" onclick="copyLink(this,'https://www.google.com/maps/search/野沢温泉ロッジ+野沢温泉村')">複製</button>
+      </div>
+    </div>
+    <div class="place-row">
+      <div class="place-info"><div class="name">Lodge Denbey でんべえ</div><div class="desc">⭐3.9 · Ski-in · ~$800–1,200/人</div></div>
+      <div class="place-btns">
+        <a class="btn-open" href="https://www.google.com/maps/search/ロッジでんべえ+野沢温泉村" target="_blank">開啟</a>
+        <button class="btn-copy" onclick="copyLink(this,'https://www.google.com/maps/search/ロッジでんべえ+野沢温泉村')">複製</button>
+      </div>
+    </div>
+    <div class="place-row">
+      <div class="place-info"><div class="name">Address Nozawa</div><div class="desc">⭐3.5 · 290m到Yu-Road · 近初學者區</div></div>
+      <div class="place-btns">
+        <a class="btn-open" href="https://www.google.com/maps/search/Address+Nozawa+野沢温泉" target="_blank">開啟</a>
+        <button class="btn-copy" onclick="copyLink(this,'https://www.google.com/maps/search/Address+Nozawa+野沢温泉')">複製</button>
+      </div>
+    </div>
+    <div class="place-row">
+      <div class="place-info"><div class="name">住吉屋 Sumiyosiya</div><div class="desc">⭐3.7 · 80m到Yu-Road · 高級旅館</div></div>
+      <div class="place-btns">
+        <a class="btn-open" href="https://www.google.com/maps/search/住吉屋+野沢温泉+旅館" target="_blank">開啟</a>
+        <button class="btn-copy" onclick="copyLink(this,'https://www.google.com/maps/search/住吉屋+野沢温泉+旅館')">複製</button>
+      </div>
+    </div>
+    <div class="place-row">
+      <div class="place-info"><div class="name">Tanuki Apartments</div><div class="desc">⭐3.8 · 200m到Yu-Road · 有廚房</div></div>
+      <div class="place-btns">
+        <a class="btn-open" href="https://www.google.com/maps/search/Tanuki+Nozawa+Apartments" target="_blank">開啟</a>
+        <button class="btn-copy" onclick="copyLink(this,'https://www.google.com/maps/search/Tanuki+Nozawa+Apartments')">複製</button>
+      </div>
+    </div>
+    <div class="place-row">
+      <div class="place-info"><div class="name">Gondola Apartments</div><div class="desc">⭐4.0 · ~200m到長坂</div></div>
+      <div class="place-btns">
+        <a class="btn-open" href="https://www.google.com/maps/search/Nozawa+Gondola+Apartments" target="_blank">開啟</a>
+        <button class="btn-copy" onclick="copyLink(this,'https://www.google.com/maps/search/Nozawa+Gondola+Apartments')">複製</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🍜 餐廳</h3>
+    <div class="place-row">
+      <div class="place-info"><div class="name">Sanzoku 山賊</div><div class="desc">野味鍋・炭火燒肉 · 需預約</div></div>
+      <div class="place-btns">
+        <a class="btn-open" href="https://www.google.com/maps/search/レストランさんぞく+野沢温泉村" target="_blank">開啟</a>
+        <button class="btn-copy" onclick="copyLink(this,'https://www.google.com/maps/search/レストランさんぞく+野沢温泉村')">複製</button>
+      </div>
+    </div>
+    <div class="place-row">
+      <div class="place-info"><div class="name">Den でん ⭐人氣No.1</div><div class="desc">大阪燒・鐵板燒</div></div>
+      <div class="place-btns">
+        <a class="btn-open" href="https://www.google.com/maps/search/お好み焼+でん+野沢温泉村" target="_blank">開啟</a>
+        <button class="btn-copy" onclick="copyLink(this,'https://www.google.com/maps/search/お好み焼+でん+野沢温泉村')">複製</button>
+      </div>
+    </div>
+    <div class="place-row">
+      <div class="place-info"><div class="name">Kanetsu 兼津</div><div class="desc">手打蕎麥麵</div></div>
+      <div class="place-btns">
+        <a class="btn-open" href="https://www.google.com/maps/search/兼津+蕎麦+野沢温泉村" target="_blank">開啟</a>
+        <button class="btn-copy" onclick="copyLink(this,'https://www.google.com/maps/search/兼津+蕎麦+野沢温泉村')">複製</button>
+      </div>
+    </div>
+    <div class="place-row">
+      <div class="place-info"><div class="name">Nozawa Brewing</div><div class="desc">精釀啤酒+窯烤披薩</div></div>
+      <div class="place-btns">
+        <a class="btn-open" href="https://www.google.com/maps/search/Nozawa+Onsen+Brewing+Company" target="_blank">開啟</a>
+        <button class="btn-copy" onclick="copyLink(this,'https://www.google.com/maps/search/Nozawa+Onsen+Brewing+Company')">複製</button>
+      </div>
+    </div>
+    <div class="place-row">
+      <div class="place-info"><div class="name">Haus St. Anton</div><div class="desc">歐式料理 · 需預約</div></div>
+      <div class="place-btns">
+        <a class="btn-open" href="https://www.google.com/maps/search/ハウスサンアントン+野沢温泉村" target="_blank">開啟</a>
+        <button class="btn-copy" onclick="copyLink(this,'https://www.google.com/maps/search/ハウスサンアントン+野沢温泉村')">複製</button>
+      </div>
+    </div>
+    <div class="place-row">
+      <div class="place-info"><div class="name">Nagai Pan ナガイパン</div><div class="desc">手工麵包店 · 7:00開門</div></div>
+      <div class="place-btns">
+        <a class="btn-open" href="https://www.google.com/maps/search/ナガイパン+野沢温泉村" target="_blank">開啟</a>
+        <button class="btn-copy" onclick="copyLink(this,'https://www.google.com/maps/search/ナガイパン+野沢温泉村')">複製</button>
+      </div>
+    </div>
+    <div class="place-row">
+      <div class="place-info"><div class="name">Faust ファウスト</div><div class="desc">酒吧 · 17:00–24:00</div></div>
+      <div class="place-btns">
+        <a class="btn-open" href="https://www.google.com/maps/search/ファウスト+野沢温泉村+bar" target="_blank">開啟</a>
+        <button class="btn-copy" onclick="copyLink(this,'https://www.google.com/maps/search/ファウスト+野沢温泉村+bar')">複製</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>♨️ 溫泉</h3>
+    <div class="place-row">
+      <div class="place-info"><div class="name">麻釜（おがま）</div><div class="desc">天然溫泉煮蛋 · 免費</div></div>
+      <div class="place-btns">
+        <a class="btn-open" href="https://www.google.com/maps/search/麻釜+野沢温泉村" target="_blank">開啟</a>
+        <button class="btn-copy" onclick="copyLink(this,'https://www.google.com/maps/search/麻釜+野沢温泉村')">複製</button>
+      </div>
+    </div>
+    <div class="place-row">
+      <div class="place-info"><div class="name">大湯 Oyu ⭐最有名</div><div class="desc">最有名外湯 · 免費</div></div>
+      <div class="place-btns">
+        <a class="btn-open" href="https://www.google.com/maps/search/大湯+野沢温泉村+外湯" target="_blank">開啟</a>
+        <button class="btn-copy" onclick="copyLink(this,'https://www.google.com/maps/search/大湯+野沢温泉村+外湯')">複製</button>
+      </div>
+    </div>
+    <div class="place-row">
+      <div class="place-info"><div class="name">熊之手洗湯</div><div class="desc">歷史外湯 · 免費</div></div>
+      <div class="place-btns">
+        <a class="btn-open" href="https://www.google.com/maps/search/熊の手洗湯+野沢温泉村" target="_blank">開啟</a>
+        <button class="btn-copy" onclick="copyLink(this,'https://www.google.com/maps/search/熊の手洗湯+野沢温泉村')">複製</button>
+      </div>
+    </div>
+    <div class="place-row">
+      <div class="place-info"><div class="name">河原湯</div><div class="desc">初心者推薦 · 免費</div></div>
+      <div class="place-btns">
+        <a class="btn-open" href="https://www.google.com/maps/search/河原湯+野沢温泉村" target="_blank">開啟</a>
+        <button class="btn-copy" onclick="copyLink(this,'https://www.google.com/maps/search/河原湯+野沢温泉村')">複製</button>
+      </div>
+    </div>
+    <div class="place-row">
+      <div class="place-info"><div class="name">Sparena スパリーナ</div><div class="desc">SPA設施 · ¥700</div></div>
+      <div class="place-btns">
+        <a class="btn-open" href="https://www.google.com/maps/search/スパリーナ+野沢温泉" target="_blank">開啟</a>
+        <button class="btn-copy" onclick="copyLink(this,'https://www.google.com/maps/search/スパリーナ+野沢温泉')">複製</button>
+      </div>
+    </div>
+    <div class="place-row">
+      <div class="place-info"><div class="name">真湯 Shin-yu</div><div class="desc">村中心外湯 · 免費</div></div>
+      <div class="place-btns">
+        <a class="btn-open" href="https://www.google.com/maps/search/真湯+野沢温泉村" target="_blank">開啟</a>
+        <button class="btn-copy" onclick="copyLink(this,'https://www.google.com/maps/search/真湯+野沢温泉村')">複製</button>
+      </div>
+    </div>
+    <div class="place-row">
+      <div class="place-info"><div class="name">十王堂之湯</div><div class="desc">二層建築外湯 · 免費</div></div>
+      <div class="place-btns">
+        <a class="btn-open" href="https://www.google.com/maps/search/十王堂の湯+野沢温泉村" target="_blank">開啟</a>
+        <button class="btn-copy" onclick="copyLink(this,'https://www.google.com/maps/search/十王堂の湯+野沢温泉村')">複製</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📍 景點</h3>
+    <div class="place-row">
+      <div class="place-info"><div class="name">田中屋酒造店</div><div class="desc">清酒「水尾」見學</div></div>
+      <div class="place-btns">
+        <a class="btn-open" href="https://www.google.com/maps/search/田中屋酒造店+野沢温泉村" target="_blank">開啟</a>
+        <button class="btn-copy" onclick="copyLink(this,'https://www.google.com/maps/search/田中屋酒造店+野沢温泉村')">複製</button>
+      </div>
+    </div>
+    <div class="place-row">
+      <div class="place-info"><div class="name">朧月夜之館</div><div class="desc">音樂紀念館</div></div>
+      <div class="place-btns">
+        <a class="btn-open" href="https://www.google.com/maps/search/おぼろ月夜の館+野沢温泉村" target="_blank">開啟</a>
+        <button class="btn-copy" onclick="copyLink(this,'https://www.google.com/maps/search/おぼろ月夜の館+野沢温泉村')">複製</button>
+      </div>
+    </div>
+    <div class="place-row">
+      <div class="place-info"><div class="name">湯澤神社</div><div class="desc">古老神社 · 拍照景點</div></div>
+      <div class="place-btns">
+        <a class="btn-open" href="https://www.google.com/maps/search/湯沢神社+野沢温泉村" target="_blank">開啟</a>
+        <button class="btn-copy" onclick="copyLink(this,'https://www.google.com/maps/search/湯沢神社+野沢温泉村')">複製</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>⛷️ 滑雪</h3>
+    <div class="place-row">
+      <div class="place-info"><div class="name">長坂ゴンドラ</div><div class="desc">主要纜車站 · 08:30–16:00</div></div>
+      <div class="place-btns">
+        <a class="btn-open" href="https://www.google.com/maps/search/長坂ゴンドラリフト+野沢温泉スキー場" target="_blank">開啟</a>
+        <button class="btn-copy" onclick="copyLink(this,'https://www.google.com/maps/search/長坂ゴンドラリフト+野沢温泉スキー場')">複製</button>
+      </div>
+    </div>
+    <div class="place-row">
+      <div class="place-info"><div class="name">日影ゲレンデ</div><div class="desc">初學者區 + 夜滑</div></div>
+      <div class="place-btns">
+        <a class="btn-open" href="https://www.google.com/maps/search/日影ゲレンデ+野沢温泉スキー場" target="_blank">開啟</a>
+        <button class="btn-copy" onclick="copyLink(this,'https://www.google.com/maps/search/日影ゲレンデ+野沢温泉スキー場')">複製</button>
+      </div>
+    </div>
+    <div class="place-row">
+      <div class="place-info"><div class="name">上之平ゲレンデ</div><div class="desc">初中級 · 寬闊緩坡</div></div>
+      <div class="place-btns">
+        <a class="btn-open" href="https://www.google.com/maps/search/上ノ平ゲレンデ+野沢温泉スキー場" target="_blank">開啟</a>
+        <button class="btn-copy" onclick="copyLink(this,'https://www.google.com/maps/search/上ノ平ゲレンデ+野沢温泉スキー場')">複製</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Day trips -->
+  <div class="card">
+    <h3>🚄 周邊一日遊</h3>
+    <div class="place-row">
+      <div class="place-info"><div class="name">雪猴公園 (地獄谷野猿公苑)</div><div class="desc">Day 5 — 野沢 → 飯山 → 湯田中 → 雪猴</div></div>
+      <div class="place-btns"><a class="btn-open" href="https://www.google.com/maps/dir/Nozawa+Onsen+Bus+Terminal/Iiyama+Station/Jigokudani+Monkey+Park" target="_blank">🚄 路線</a></div>
+    </div>
+    <div class="place-row">
+      <div class="place-info"><div class="name">雪猴 + 小布施</div><div class="desc">野沢 → 雪猴 → 小布施(栗子) → 飯山</div></div>
+      <div class="place-btns"><a class="btn-open" href="https://www.google.com/maps/dir/Nozawa+Onsen+Bus+Terminal/Jigokudani+Monkey+Park/Obuse+Station/Iiyama+Station" target="_blank">🚄 路線</a></div>
+    </div>
+  </div>
+</div>
+
+<script>
+function copyLink(btn, url) {
+  navigator.clipboard.writeText(url).then(function() {
+    btn.textContent = '✓ 已複製';
+    btn.classList.add('copied');
+    setTimeout(function() { btn.textContent = '複製'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+function showRoute(idx, btn) {
+  document.querySelectorAll('.day-pill').forEach(function(b) { b.classList.remove('active'); });
+  document.querySelectorAll('.route-panel').forEach(function(r) { r.classList.remove('active'); });
+  btn.classList.add('active');
+  document.getElementById('route-' + idx).classList.add('active');
+}
+</script>
+</body>
+</html>

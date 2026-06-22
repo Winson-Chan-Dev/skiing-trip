@@ -1,0 +1,629 @@
+    <!-- ===== 野沢溫泉村地圖 ===== -->
+    <div class="map-container">
+        <h2>🗺️ 野沢溫泉村地圖 — 觀光路線 & 推薦地點
+            <a href="#" onclick="switchTopTab('map',document.querySelector('.top-tab'));return false;" style="font-size:0.7rem; margin-left:16px; padding:5px 14px; background:#0ea5e9; color:white; border-radius:20px; text-decoration:none; font-weight:600; vertical-align:middle;">📍 開啟 Google Map 版本 →</a>
+        </h2>
+        <div class="map-controls">
+            <button class="map-toggle active-route-a" data-layer="route-a" onclick="toggleMapLayer(this)">🐒 路線A：雪猴+小布施</button>
+            <button class="map-toggle active-route-b" data-layer="route-b" onclick="toggleMapLayer(this)">♨️ 路線B：村內溫泉巡禮</button>
+            <button class="map-toggle active-route-c" data-layer="route-c" onclick="toggleMapLayer(this)">⛩️ 路線C：善光寺</button>
+            <button class="map-toggle active-food" data-layer="food" onclick="toggleMapLayer(this)">🍜 餐廳</button>
+            <button class="map-toggle active-onsen" data-layer="onsen" onclick="toggleMapLayer(this)">♨️ 溫泉</button>
+            <button class="map-toggle active-sight" data-layer="sight" onclick="toggleMapLayer(this)">📍 觀光景點</button>
+        </div>
+        <div class="map-svg-wrap">
+            <div class="map-tooltip" id="mapTooltip"></div>
+            <svg viewBox="0 0 900 680" xmlns="http://www.w3.org/2000/svg" id="villageMap">
+                <!-- Background terrain -->
+                <defs>
+                    <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="#bae6fd"/>
+                        <stop offset="100%" stop-color="#e0f2fe"/>
+                    </linearGradient>
+                    <linearGradient id="mountainGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="#94a3b8"/>
+                        <stop offset="100%" stop-color="#cbd5e1"/>
+                    </linearGradient>
+                    <pattern id="snowPattern" width="20" height="20" patternUnits="userSpaceOnUse">
+                        <circle cx="3" cy="5" r="1" fill="#ffffff" opacity="0.5"/>
+                        <circle cx="12" cy="14" r="0.8" fill="#ffffff" opacity="0.4"/>
+                        <circle cx="18" cy="3" r="0.6" fill="#ffffff" opacity="0.3"/>
+                    </pattern>
+                    <filter id="shadow">
+                        <feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.15"/>
+                    </filter>
+                </defs>
+
+                <!-- Sky -->
+                <rect width="900" height="680" fill="url(#skyGrad)"/>
+                <!-- Snow overlay -->
+                <rect width="900" height="680" fill="url(#snowPattern)"/>
+
+                <!-- Mountains background -->
+                <polygon points="0,180 80,90 160,130 250,60 350,110 430,40 520,100 600,70 680,120 770,50 850,90 900,130 900,300 0,300" fill="url(#mountainGrad)" opacity="0.4"/>
+                <polygon points="0,220 100,160 200,190 320,130 420,170 530,120 650,160 750,130 850,170 900,190 900,340 0,340" fill="#94a3b8" opacity="0.3"/>
+
+                <!-- Ski slopes (top area) -->
+                <path d="M 650,80 Q 700,140 720,200 L 760,200 Q 740,140 690,80 Z" fill="#f0fdf4" stroke="#86efac" stroke-width="1" opacity="0.6"/>
+                <path d="M 720,100 Q 760,160 770,220 L 810,210 Q 790,150 750,90 Z" fill="#f0fdf4" stroke="#86efac" stroke-width="1" opacity="0.5"/>
+                <text x="710" y="110" font-size="11" fill="#166534" font-weight="600">滑雪場</text>
+
+                <!-- Nagasaka Gondola station -->
+                <rect x="680" y="195" width="90" height="40" rx="6" fill="#1e40af" opacity="0.85" filter="url(#shadow)"/>
+                <text x="725" y="213" font-size="10" fill="white" text-anchor="middle" font-weight="700">長坂ゴンドラ</text>
+                <text x="725" y="227" font-size="9" fill="#bfdbfe" text-anchor="middle">Nagasaka Gondola</text>
+                <!-- Gondola line -->
+                <line x1="720" y1="195" x2="700" y2="100" stroke="#1e40af" stroke-width="2" stroke-dasharray="6,3" opacity="0.5"/>
+
+                <!-- Hikage area (south-west) -->
+                <rect x="80" y="410" width="100" height="36" rx="6" fill="#1e40af" opacity="0.7" filter="url(#shadow)"/>
+                <text x="130" y="428" font-size="10" fill="white" text-anchor="middle" font-weight="600">日影ゲレンデ</text>
+                <text x="130" y="440" font-size="9" fill="#bfdbfe" text-anchor="middle">Hikage Ski Area</text>
+
+                <!-- Yu-Road area -->
+                <path d="M 200,350 L 200,440" stroke="#7c3aed" stroke-width="3" stroke-dasharray="4,2" opacity="0.5"/>
+                <text x="215" y="395" font-size="9" fill="#7c3aed" font-weight="600">Yu-Road</text>
+
+                <!-- Village roads -->
+                <!-- Main road (温泉街 / Onsen Street) - runs roughly N-S in center -->
+                <path d="M 400,250 Q 410,320 420,380 Q 425,420 430,470 Q 435,520 440,570" stroke="#475569" stroke-width="4" fill="none" opacity="0.4" stroke-linecap="round"/>
+                <text x="445" y="310" font-size="9" fill="#475569" transform="rotate(5,445,310)">溫泉街</text>
+
+                <!-- Cross road -->
+                <path d="M 280,350 L 580,330" stroke="#475569" stroke-width="3" fill="none" opacity="0.3" stroke-linecap="round"/>
+                <!-- Upper road to gondola -->
+                <path d="M 500,280 Q 580,260 680,215" stroke="#475569" stroke-width="3" fill="none" opacity="0.3" stroke-linecap="round"/>
+                <!-- Lower road -->
+                <path d="M 200,440 Q 300,450 440,470" stroke="#475569" stroke-width="2.5" fill="none" opacity="0.3" stroke-linecap="round"/>
+
+                <!-- Bus terminal -->
+                <rect x="350" y="560" width="85" height="32" rx="5" fill="#64748b" filter="url(#shadow)"/>
+                <text x="392" y="577" font-size="10" fill="white" text-anchor="middle" font-weight="600">🚌 巴士站</text>
+                <text x="392" y="588" font-size="8" fill="#cbd5e1" text-anchor="middle">→ 飯山 25分</text>
+
+                <!-- ===== ROUTE A: 雪猴+小布施 (Red) ===== -->
+                <g class="map-layer" data-layer="route-a">
+                    <!-- Route line: bus stop → Iiyama → Yudanaka → Snow Monkeys → Obuse → back -->
+                    <path d="M 392,592 L 392,640 Q 392,660 372,660 L 100,660" stroke="#ef4444" stroke-width="3" fill="none" stroke-dasharray="8,4" opacity="0.8" marker-end="url(#arrowRed)"/>
+                    <defs><marker id="arrowRed" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0,0 8,3 0,6" fill="#ef4444"/></marker></defs>
+                    <rect x="20" y="635" width="80" height="40" rx="8" fill="#fef2f2" stroke="#ef4444" stroke-width="1.5"/>
+                    <text x="60" y="651" font-size="9" fill="#991b1b" text-anchor="middle" font-weight="600">地獄谷雪猴</text>
+                    <text x="60" y="663" font-size="8" fill="#b91c1c" text-anchor="middle">Snow Monkeys</text>
+                    <text x="60" y="672" font-size="7" fill="#dc2626" text-anchor="middle">¥800 · 步行25分鐘</text>
+                    <!-- Obuse -->
+                    <rect x="120" y="635" width="70" height="40" rx="8" fill="#fef2f2" stroke="#ef4444" stroke-width="1.5"/>
+                    <text x="155" y="653" font-size="9" fill="#991b1b" text-anchor="middle" font-weight="600">小布施</text>
+                    <text x="155" y="665" font-size="8" fill="#b91c1c" text-anchor="middle">栗子+北齋</text>
+                    <!-- Route label -->
+                    <rect x="240" y="638" width="100" height="20" rx="10" fill="#ef4444" opacity="0.9"/>
+                    <text x="290" y="652" font-size="9" fill="white" text-anchor="middle" font-weight="600">路線A 約7–8小時</text>
+                </g>
+
+                <!-- ===== ROUTE B: 村內溫泉巡禮 (Purple, within village) ===== -->
+                <g class="map-layer" data-layer="route-b">
+                    <!-- Walking route through village: Ogama → Oyu → Kumano → Kawara → Sparena -->
+                    <path d="M 400,370 Q 380,390 360,400 Q 340,420 320,440 Q 290,460 260,470 Q 220,480 180,460" stroke="#8b5cf6" stroke-width="3" fill="none" stroke-dasharray="6,4" opacity="0.8"/>
+                    <!-- Numbered stops -->
+                    <circle cx="400" cy="370" r="10" fill="#8b5cf6" opacity="0.9"/>
+                    <text x="400" y="374" font-size="9" fill="white" text-anchor="middle" font-weight="700">1</text>
+                    <circle cx="350" cy="405" r="10" fill="#8b5cf6" opacity="0.9"/>
+                    <text x="350" y="409" font-size="9" fill="white" text-anchor="middle" font-weight="700">2</text>
+                    <circle cx="310" cy="440" r="10" fill="#8b5cf6" opacity="0.9"/>
+                    <text x="310" y="444" font-size="9" fill="white" text-anchor="middle" font-weight="700">3</text>
+                    <circle cx="255" cy="470" r="10" fill="#8b5cf6" opacity="0.9"/>
+                    <text x="255" y="474" font-size="9" fill="white" text-anchor="middle" font-weight="700">4</text>
+                    <circle cx="180" cy="460" r="10" fill="#8b5cf6" opacity="0.9"/>
+                    <text x="180" y="464" font-size="9" fill="white" text-anchor="middle" font-weight="700">5</text>
+                    <!-- Route legend -->
+                    <rect x="100" y="495" width="200" height="50" rx="8" fill="#faf5ff" stroke="#8b5cf6" stroke-width="1"/>
+                    <text x="110" y="510" font-size="8" fill="#6d28d9" font-weight="600">路線B 村內溫泉巡禮：</text>
+                    <text x="110" y="522" font-size="7.5" fill="#7c3aed">❶ 麻釜 → ❷ 大湯 → ❸ 熊之手洗湯</text>
+                    <text x="110" y="534" font-size="7.5" fill="#7c3aed">→ ❹ 河原湯 → ❺ Sparena SPA</text>
+                </g>
+
+                <!-- ===== ROUTE C: 善光寺 (Green) ===== -->
+                <g class="map-layer" data-layer="route-c">
+                    <!-- Route line to bottom-right (represents going to Nagano) -->
+                    <path d="M 392,592 L 500,610 Q 600,620 700,630 L 850,640" stroke="#059669" stroke-width="3" fill="none" stroke-dasharray="8,4" opacity="0.8" marker-end="url(#arrowGreen)"/>
+                    <defs><marker id="arrowGreen" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0,0 8,3 0,6" fill="#059669"/></marker></defs>
+                    <!-- Nagano / Zenkoji -->
+                    <rect x="760" y="615" width="120" height="40" rx="8" fill="#ecfdf5" stroke="#059669" stroke-width="1.5"/>
+                    <text x="820" y="631" font-size="9" fill="#065f46" text-anchor="middle" font-weight="600">善光寺（長野市）</text>
+                    <text x="820" y="643" font-size="8" fill="#047857" text-anchor="middle">1400年 · 戒壇巡り</text>
+                    <text x="820" y="653" font-size="7" fill="#059669" text-anchor="middle">新幹線12分+巴士 · ¥600</text>
+                    <!-- Route label -->
+                    <rect x="560" y="595" width="100" height="20" rx="10" fill="#059669" opacity="0.9"/>
+                    <text x="610" y="609" font-size="9" fill="white" text-anchor="middle" font-weight="600">路線C 約7小時</text>
+                </g>
+
+                <!-- ===== FOOD markers (Orange/Gold) ===== -->
+                <g class="map-layer" data-layer="food">
+                    <!-- Sanzoku (near village center) -->
+                    <g class="map-marker" data-tip="Sanzoku 山賊｜野味鍋・炭火燒｜¥2,000–3,000｜需預約">
+                        <circle cx="450" cy="340" r="9" fill="#f59e0b" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+                        <text x="450" y="344" font-size="8" fill="white" text-anchor="middle">🍲</text>
+                    </g>
+                    <!-- Den -->
+                    <g class="map-marker" data-tip="Den でん｜大阪燒・鐵板燒｜¥1,200–2,000｜人氣No.1">
+                        <circle cx="430" cy="380" r="9" fill="#f59e0b" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+                        <text x="430" y="384" font-size="8" fill="white" text-anchor="middle">🥘</text>
+                    </g>
+                    <!-- Kanetsu -->
+                    <g class="map-marker" data-tip="Kanetsu 兼津｜手打蕎麥麵｜¥900–1,500｜午餐推薦">
+                        <circle cx="410" cy="420" r="9" fill="#f59e0b" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+                        <text x="410" y="424" font-size="8" fill="white" text-anchor="middle">🍜</text>
+                    </g>
+                    <!-- Shin Ramen -->
+                    <g class="map-marker" data-tip="Shin しん｜味噌拉麵｜¥900–1,200｜濃厚信州味噌">
+                        <circle cx="380" cy="400" r="9" fill="#f59e0b" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+                        <text x="380" y="404" font-size="8" fill="white" text-anchor="middle">🍜</text>
+                    </g>
+                    <!-- Nozawa Brewing -->
+                    <g class="map-marker" data-tip="Nozawa Onsen Brewing｜精釀啤酒+披薩｜¥1,500–2,500｜氣氛佳">
+                        <circle cx="470" cy="360" r="9" fill="#f59e0b" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+                        <text x="470" y="364" font-size="8" fill="white" text-anchor="middle">🍺</text>
+                    </g>
+                    <!-- Haus St. Anton -->
+                    <g class="map-marker" data-tip="Haus St. Anton｜歐式料理｜¥2,500–4,000｜西式最佳">
+                        <circle cx="530" cy="310" r="9" fill="#f59e0b" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+                        <text x="530" y="314" font-size="8" fill="white" text-anchor="middle">🍷</text>
+                    </g>
+                    <!-- Nagai Pan -->
+                    <g class="map-marker" data-tip="Nagai Pan ナガイパン｜手工麵包｜¥200–500｜早餐推薦">
+                        <circle cx="360" cy="360" r="9" fill="#f59e0b" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+                        <text x="360" y="364" font-size="8" fill="white" text-anchor="middle">🍞</text>
+                    </g>
+                    <!-- Faust Bar -->
+                    <g class="map-marker" data-tip="Faust ファウスト｜酒吧｜¥800–1,500｜滑雪後飲酒推薦">
+                        <circle cx="490" cy="330" r="9" fill="#f59e0b" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+                        <text x="490" y="334" font-size="8" fill="white" text-anchor="middle">🍸</text>
+                    </g>
+                    <!-- Food labels (small) -->
+                    <text x="462" y="340" font-size="7" fill="#92400e" font-weight="600">Sanzoku</text>
+                    <text x="442" y="377" font-size="7" fill="#92400e" font-weight="600">Den</text>
+                    <text x="422" y="418" font-size="7" fill="#92400e" font-weight="600">Kanetsu</text>
+                    <text x="371" y="413" font-size="7" fill="#92400e" font-weight="600">Shin</text>
+                    <text x="483" y="360" font-size="7" fill="#92400e" font-weight="600">Brewing</text>
+                    <text x="543" y="310" font-size="7" fill="#92400e" font-weight="600">St.Anton</text>
+                    <text x="371" y="356" font-size="7" fill="#92400e" font-weight="600">Nagai</text>
+                    <text x="502" y="328" font-size="7" fill="#92400e" font-weight="600">Faust</text>
+                </g>
+
+                <!-- ===== ONSEN markers (Blue) ===== -->
+                <g class="map-layer" data-layer="onsen">
+                    <!-- Ogama 麻釜 -->
+                    <g class="map-marker" data-tip="麻釜（おがま）｜天然溫泉煮蛋｜免費｜90°C泉源">
+                        <circle cx="400" cy="370" r="11" fill="#0ea5e9" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+                        <text x="400" y="374" font-size="9" fill="white" text-anchor="middle">♨</text>
+                    </g>
+                    <!-- Oyu 大湯 -->
+                    <g class="map-marker" data-tip="大湯｜最有名外湯｜免費｜46°C 超高溫・地標">
+                        <circle cx="420" cy="400" r="11" fill="#0ea5e9" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+                        <text x="420" y="404" font-size="9" fill="white" text-anchor="middle">♨</text>
+                    </g>
+                    <!-- Kumano-te-arai 熊之手洗湯 -->
+                    <g class="map-marker" data-tip="熊之手洗湯｜歷史悠久外湯｜免費｜傳說熊來洗手">
+                        <circle cx="370" cy="430" r="11" fill="#0ea5e9" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+                        <text x="370" y="434" font-size="9" fill="white" text-anchor="middle">♨</text>
+                    </g>
+                    <!-- Kawara-yu 河原湯 -->
+                    <g class="map-marker" data-tip="河原湯｜開放感外湯｜免費｜水溫稍低・初心者向">
+                        <circle cx="320" cy="450" r="11" fill="#0ea5e9" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+                        <text x="320" y="454" font-size="9" fill="white" text-anchor="middle">♨</text>
+                    </g>
+                    <!-- Sparena -->
+                    <g class="map-marker" data-tip="Sparena SPA｜溫水泳池+露天溫泉+桑拿｜¥700｜可待半天">
+                        <circle cx="180" cy="480" r="11" fill="#0ea5e9" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+                        <text x="180" y="484" font-size="9" fill="white" text-anchor="middle">♨</text>
+                    </g>
+                    <!-- Onsen labels -->
+                    <text x="400" y="358" font-size="8" fill="#0369a1" font-weight="700" text-anchor="middle">麻釜</text>
+                    <text x="436" y="398" font-size="8" fill="#0369a1" font-weight="700">大湯</text>
+                    <text x="355" y="446" font-size="7" fill="#0369a1" font-weight="600">熊之手洗湯</text>
+                    <text x="305" y="466" font-size="7" fill="#0369a1" font-weight="600">河原湯</text>
+                    <text x="168" y="498" font-size="8" fill="#0369a1" font-weight="600">Sparena</text>
+                </g>
+
+                <!-- ===== SIGHTSEEING markers (Pink) ===== -->
+                <g class="map-layer" data-layer="sight">
+                    <!-- Tanakaya Sake 田中屋酒造 -->
+                    <g class="map-marker" data-tip="田中屋酒造店｜清酒「水尾」見學+試飲｜¥300–500｜需預約">
+                        <circle cx="480" cy="420" r="9" fill="#ec4899" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+                        <text x="480" y="424" font-size="8" fill="white" text-anchor="middle">🍶</text>
+                    </g>
+                    <!-- Oborozukiyo 朧月夜之館 -->
+                    <g class="map-marker" data-tip="朧月夜之館｜音樂博物館・高野辰之紀念｜¥300｜30–45分鐘">
+                        <circle cx="440" cy="450" r="9" fill="#ec4899" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+                        <text x="440" y="454" font-size="8" fill="white" text-anchor="middle">🎵</text>
+                    </g>
+                    <!-- Onsen street shopping 溫泉街 -->
+                    <g class="map-marker" data-tip="溫泉街散步｜土產店・野沢菜・おやき｜免費逛｜晚上更有氣氛">
+                        <circle cx="420" cy="330" r="9" fill="#ec4899" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+                        <text x="420" y="334" font-size="8" fill="white" text-anchor="middle">🛍</text>
+                    </g>
+                    <!-- Night skiing -->
+                    <g class="map-marker" data-tip="夜間滑雪（日影）｜ナイター 17:00–20:00｜¥1,500｜人少好練習">
+                        <circle cx="130" cy="440" r="9" fill="#ec4899" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+                        <text x="130" y="444" font-size="8" fill="white" text-anchor="middle">🌙</text>
+                    </g>
+                    <!-- Snow shoe -->
+                    <g class="map-marker" data-tip="雪鞋健行｜2–3小時・含裝備｜¥5,000–8,000｜需預約">
+                        <circle cx="620" cy="180" r="9" fill="#ec4899" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+                        <text x="620" y="184" font-size="8" fill="white" text-anchor="middle">👟</text>
+                    </g>
+                    <!-- Sight labels -->
+                    <text x="493" y="420" font-size="7" fill="#9d174d" font-weight="600">田中屋酒造</text>
+                    <text x="452" y="448" font-size="7" fill="#9d174d" font-weight="600">朧月夜之館</text>
+                    <text x="432" y="328" font-size="7" fill="#9d174d" font-weight="600">溫泉街</text>
+                    <text x="143" y="440" font-size="7" fill="#9d174d" font-weight="600">夜滑</text>
+                    <text x="633" y="180" font-size="7" fill="#9d174d" font-weight="600">雪鞋</text>
+                </g>
+
+                <!-- ===== Fixed landmarks (always shown) ===== -->
+                <!-- Village name -->
+                <text x="420" y="270" font-size="16" fill="#1e293b" text-anchor="middle" font-weight="800" opacity="0.7">野沢溫泉村</text>
+                <text x="420" y="288" font-size="10" fill="#475569" text-anchor="middle" opacity="0.6">Nozawa Onsen Village</text>
+
+                <!-- Compass -->
+                <g transform="translate(840,40)">
+                    <circle cx="0" cy="0" r="18" fill="white" opacity="0.8" stroke="#94a3b8" stroke-width="1"/>
+                    <text x="0" y="-5" font-size="10" fill="#1e293b" text-anchor="middle" font-weight="700">N</text>
+                    <polygon points="0,-14 -3,-8 3,-8" fill="#ef4444"/>
+                    <polygon points="0,14 -3,8 3,8" fill="#94a3b8"/>
+                </g>
+
+                <!-- Scale bar -->
+                <line x1="30" y1="620" x2="130" y2="620" stroke="#475569" stroke-width="2"/>
+                <line x1="30" y1="616" x2="30" y2="624" stroke="#475569" stroke-width="2"/>
+                <line x1="130" y1="616" x2="130" y2="624" stroke="#475569" stroke-width="2"/>
+                <text x="80" y="614" font-size="8" fill="#475569" text-anchor="middle">~500m</text>
+
+                <!-- Altitude indicator -->
+                <text x="800" y="200" font-size="8" fill="#64748b">▲ 高處</text>
+                <text x="800" y="560" font-size="8" fill="#64748b">▼ 低處</text>
+                <line x1="815" y1="210" x2="815" y2="545" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3,3" opacity="0.4"/>
+
+            </svg>
+        </div>
+        <div class="map-legend">
+            <div class="map-legend-item"><div class="map-legend-dot" style="background:#ef4444"></div>路線A：雪猴+小布施（外部一日遊）</div>
+            <div class="map-legend-item"><div class="map-legend-dot" style="background:#8b5cf6"></div>路線B：村內溫泉巡禮（步行即可）</div>
+            <div class="map-legend-item"><div class="map-legend-dot" style="background:#059669"></div>路線C：善光寺+長野（新幹線）</div>
+            <div class="map-legend-item"><div class="map-legend-dot" style="background:#f59e0b"></div>推薦餐廳</div>
+            <div class="map-legend-item"><div class="map-legend-dot" style="background:#0ea5e9"></div>溫泉/外湯</div>
+            <div class="map-legend-item"><div class="map-legend-dot" style="background:#ec4899"></div>觀光景點</div>
+        </div>
+    </div>
+
+    <!-- 休息日計劃 (Jan 27) -->
+    <h2 class="section-title">1月27日（三）休息觀光日 — 建議行程</h2>
+
+    <div class="dining-tip">
+        <h3>📋 為何安排休息日？</h3>
+        <ul>
+            <li>連續滑雪2天後肌肉需要恢復，休息一天第3天表現更好</li>
+            <li>野沢周邊有很多值得探索的景點，不滑雪也不會悶</li>
+            <li>初學者膝蓋和大腿會特別酸痛，給身體一天恢復時間</li>
+            <li>團體8人可以分組行動，晚上再集合吃飯</li>
+        </ul>
+    </div>
+
+    <!-- 方案 A: 雪猴 + 小布施 -->
+    <div class="day-plan">
+        <h3>🐒 方案 A：地獄谷雪猴 + 小布施半日遊（推薦）</h3>
+        <div class="day-plan-timeline">
+            <div class="plan-step">
+                <div class="step-time">08:30</div>
+                <div class="step-title">早餐後出發</div>
+                <div class="step-desc">從野沢搭巴士到飯山站（25分鐘），轉 JR 到湯田中站（約40分鐘）</div>
+            </div>
+            <div class="plan-step">
+                <div class="step-time">10:00</div>
+                <div class="step-title">抵達地獄谷野猿公苑</div>
+                <div class="step-desc">從停車場步行約25分鐘雪路到達猴子溫泉。看野生日本獼猴泡溫泉！冬天猴子最多。入場 ¥800</div>
+            </div>
+            <div class="plan-step">
+                <div class="step-time">11:30</div>
+                <div class="step-title">返回湯田中，搭車前往小布施</div>
+                <div class="step-desc">長野電鐵約20分鐘到小布施站</div>
+            </div>
+            <div class="plan-step">
+                <div class="step-time">12:00</div>
+                <div class="step-title">小布施午餐 + 散步</div>
+                <div class="step-desc">栗子名物：栗子飯、Mont Blanc、栗子冰淇淋。逛北齋館（葛飾北齋晚年居住地）、竹風堂本店</div>
+            </div>
+            <div class="plan-step">
+                <div class="step-time">14:30</div>
+                <div class="step-title">返回野沢</div>
+                <div class="step-desc">小布施→長野→飯山→野沢（約1.5小時）</div>
+            </div>
+            <div class="plan-step">
+                <div class="step-time">16:00</div>
+                <div class="step-title">回到野沢，自由活動</div>
+                <div class="step-desc">泡外湯、逛溫泉街、休息按摩</div>
+            </div>
+            <div class="plan-step">
+                <div class="step-time">19:00</div>
+                <div class="step-title">全員集合晚餐</div>
+                <div class="step-desc">推薦 Sanzoku 野味鍋或 Den 大阪燒（休息日好好吃一頓！）</div>
+            </div>
+        </div>
+        <div class="route-details" style="margin-top:16px; font-size:0.83rem; color:#64748b;">
+            <span>🚌 交通費：約 ¥3,000–4,000 / 人（巴士+電車來回）</span>
+            <span>⏱️ 全程約 7–8 小時</span>
+            <span>👟 雪猴步道需防水鞋</span>
+        </div>
+    </div>
+
+    <!-- 方案 B: 村內深度遊 -->
+    <div class="day-plan">
+        <h3>♨️ 方案 B：野沢村內深度溫泉巡禮（輕鬆型）</h3>
+        <div class="day-plan-timeline">
+            <div class="plan-step">
+                <div class="step-time">09:00</div>
+                <div class="step-title">睡到自然醒，悠閒早餐</div>
+                <div class="step-desc">去 Nagai Pan 買新鮮麵包，或在旅館慢慢吃</div>
+            </div>
+            <div class="plan-step">
+                <div class="step-time">10:00</div>
+                <div class="step-title">麻釜（おがま）溫泉煮蛋體驗</div>
+                <div class="step-desc">在超市買蛋（¥200/包），到麻釜用天然溫泉水煮。90°C泉水約12分鐘熟。免費體驗！</div>
+            </div>
+            <div class="plan-step">
+                <div class="step-time">10:30</div>
+                <div class="step-title">外湯巡禮（目標 3–5 間）</div>
+                <div class="step-desc">13間免費公共溫泉各有特色。推薦：大湯（最有名）、熊之手洗湯、河原湯。每間泡10–15分鐘</div>
+            </div>
+            <div class="plan-step">
+                <div class="step-time">12:30</div>
+                <div class="step-title">溫泉街午餐</div>
+                <div class="step-desc">Kanetsu 手打蕎麥 或 Shin 拉麵，順便逛土產店買野沢菜手信</div>
+            </div>
+            <div class="plan-step">
+                <div class="step-time">14:00</div>
+                <div class="step-title">Sparena 溫泉SPA / 自由活動</div>
+                <div class="step-desc">Sparena 有溫水泳池 + 露天溫泉（¥700）。或去田中屋酒造見學品酒。或純休息</div>
+            </div>
+            <div class="plan-step">
+                <div class="step-time">16:00</div>
+                <div class="step-title">日影ゲレンデ 輕鬆滑 / 雪上散步</div>
+                <div class="step-desc">如果腿不太痛，可以在日影初學者區輕鬆滑1小時。或穿雪鞋散步</div>
+            </div>
+            <div class="plan-step">
+                <div class="step-time">18:00</div>
+                <div class="step-title">夕陽外湯 + 晚餐</div>
+                <div class="step-desc">推薦 Nozawa Onsen Brewing 精釀啤酒配披薩，或 Haus St. Anton</div>
+            </div>
+        </div>
+        <div class="route-details" style="margin-top:16px; font-size:0.83rem; color:#64748b;">
+            <span>💰 費用：幾乎免費（外湯免費，Sparena ¥700）</span>
+            <span>⏱️ 隨心安排，不趕行程</span>
+            <span>👍 適合想休息的人</span>
+        </div>
+    </div>
+
+    <!-- 方案 C: 善光寺 + 長野 -->
+    <div class="day-plan">
+        <h3>⛩️ 方案 C：長野善光寺 + 市區購物</h3>
+        <div class="day-plan-timeline">
+            <div class="plan-step">
+                <div class="step-time">09:00</div>
+                <div class="step-title">出發前往長野市</div>
+                <div class="step-desc">野沢→飯山（巴士25分）→長野（新幹線12分）。約1小時到達</div>
+            </div>
+            <div class="plan-step">
+                <div class="step-time">10:30</div>
+                <div class="step-title">善光寺參拜</div>
+                <div class="step-desc">日本最古老的佛像之一，1400年歷史。冬天雪景壯觀。可體驗「戒壇巡り」（地下暗道摸鎖）</div>
+            </div>
+            <div class="plan-step">
+                <div class="step-time">12:00</div>
+                <div class="step-title">表參道午餐 + 購物</div>
+                <div class="step-desc">善光寺門前的商店街。名物：おやき、七味唐辛子（八幡屋礒五郎）、蕎麥麵</div>
+            </div>
+            <div class="plan-step">
+                <div class="step-time">14:00</div>
+                <div class="step-title">長野站周邊</div>
+                <div class="step-desc">MIDORI 百貨購物、藥妝店補貨、信州土產購買</div>
+            </div>
+            <div class="plan-step">
+                <div class="step-time">16:00</div>
+                <div class="step-title">返回野沢</div>
+                <div class="step-desc">長野→飯山→野沢，約1小時</div>
+            </div>
+        </div>
+        <div class="route-details" style="margin-top:16px; font-size:0.83rem; color:#64748b;">
+            <span>🚄 交通費：約 ¥3,500–4,500 / 人（新幹線+巴士）</span>
+            <span>⏱️ 全程約 7 小時</span>
+            <span>🛍️ 適合想購物的人</span>
+        </div>
+    </div>
+
+    <!-- 村內觀光活動 -->
+    <h2 class="section-title">村內觀光活動（每天都可以做）</h2>
+
+    <div class="activity-section">
+        <div class="activity-grid">
+            <div class="activity-card">
+                <div class="act-title">外湯巡禮（13間免費溫泉）</div>
+                <div class="act-subtitle">十三の外湯めぐり</div>
+                <div class="act-desc">野沢最大特色！全村有13間免費公共溫泉，各有不同泉質和歷史。重點推薦：<strong>大湯</strong>（地標級）、<strong>熊之手洗湯</strong>（據說熊來洗手被發現的泉源）、<strong>河原湯</strong>（露天感）。注意：水溫很高（44–46°C），初次泡建議先適應。</div>
+                <div class="act-meta">
+                    <span class="act-tag act-tag-free">免費</span>
+                    <span class="act-tag act-tag-time">每間15–20分鐘</span>
+                    <span class="act-tag act-tag-tip">帶自己的毛巾</span>
+                    <span class="act-tag act-tag-tip">紋身OK</span>
+                </div>
+            </div>
+            <div class="activity-card">
+                <div class="act-title">麻釜（おがま）</div>
+                <div class="act-subtitle">天然溫泉煮食場</div>
+                <div class="act-desc">村中心的天然高溫泉源（90°C），當地人用來煮蛋、煮野菜。遊客也可以自己帶食材來煮！超市買蛋（¥200），放入泉水約12分鐘即熟。旁邊有足湯可以一邊泡腳一邊等。</div>
+                <div class="act-meta">
+                    <span class="act-tag act-tag-free">免費體驗</span>
+                    <span class="act-tag act-tag-time">30分鐘</span>
+                    <span class="act-tag act-tag-tip">超市買蛋 ¥200</span>
+                </div>
+            </div>
+            <div class="activity-card">
+                <div class="act-title">溫泉街散步 + 土產購物</div>
+                <div class="act-subtitle">温泉街ショッピング</div>
+                <div class="act-desc">石板路兩旁的小店充滿風情。必逛：野沢菜本舖（醃菜試吃）、おやき攤（現烤 ¥250）、溫泉饅頭店、手工藝品店。晚上點燈後更有氣氛。</div>
+                <div class="act-meta">
+                    <span class="act-tag act-tag-free">免費逛</span>
+                    <span class="act-tag act-tag-time">1–2小時</span>
+                    <span class="act-tag act-tag-tip">晚上更有氣氛</span>
+                </div>
+            </div>
+            <div class="activity-card">
+                <div class="act-title">田中屋酒造店見學</div>
+                <div class="act-subtitle">地酒「水尾」釀造參觀</div>
+                <div class="act-desc">野沢唯一的在地酒造，釀造「水尾」清酒超過150年。可以參觀釀造過程並試飲多款清酒。冬季是釀造旺季（寒造り），運氣好能看到實際作業。</div>
+                <div class="act-meta">
+                    <span class="act-tag act-tag-paid">試飲 ¥300–500</span>
+                    <span class="act-tag act-tag-time">45分鐘</span>
+                    <span class="act-tag act-tag-tip">需預約</span>
+                </div>
+            </div>
+            <div class="activity-card">
+                <div class="act-title">Sparena 溫泉 SPA</div>
+                <div class="act-subtitle">スパリーナ</div>
+                <div class="act-desc">村內最大的溫泉設施，有溫水泳池、露天溫泉、桑拿、按摩服務。滑雪後肌肉痠痛的最佳解方。可以待半天。有餐廳。</div>
+                <div class="act-meta">
+                    <span class="act-tag act-tag-paid">入場 ¥700</span>
+                    <span class="act-tag act-tag-time">2–3小時</span>
+                    <span class="act-tag act-tag-dist">村南部</span>
+                </div>
+            </div>
+            <div class="activity-card">
+                <div class="act-title">夜間滑雪</div>
+                <div class="act-subtitle">ナイター（日影ゲレンデ）</div>
+                <div class="act-desc">日影滑雪場部分雪道開放夜間滑雪（通常到 20:00）。燈光下滑雪感覺完全不同，而且人很少！適合已經有點基礎想多練習的人。</div>
+                <div class="act-meta">
+                    <span class="act-tag act-tag-paid">夜間券 ¥1,500</span>
+                    <span class="act-tag act-tag-time">17:00–20:00</span>
+                    <span class="act-tag act-tag-tip">需有基礎</span>
+                </div>
+            </div>
+            <div class="activity-card">
+                <div class="act-title">おぼろ月夜の館</div>
+                <div class="act-subtitle">朧月夜之館（音樂博物館）</div>
+                <div class="act-desc">紀念在野沢溫泉創作「朧月夜」等名曲的高野辰之。小巧的博物館展示日本唱歌的歷史。館內溫暖，下雪天的好去處。</div>
+                <div class="act-meta">
+                    <span class="act-tag act-tag-paid">¥300</span>
+                    <span class="act-tag act-tag-time">30–45分鐘</span>
+                    <span class="act-tag act-tag-dist">村中心</span>
+                </div>
+            </div>
+            <div class="activity-card">
+                <div class="act-title">雪鞋健行</div>
+                <div class="act-subtitle">スノーシュー体験</div>
+                <div class="act-desc">穿上雪鞋在山林間散步，享受寧靜的雪景。野沢有幾家戶外導覽公司提供 2–3 小時的雪鞋健行。適合不想滑雪但想親近大自然的人。</div>
+                <div class="act-meta">
+                    <span class="act-tag act-tag-paid">¥5,000–8,000（含裝備）</span>
+                    <span class="act-tag act-tag-time">2–3小時</span>
+                    <span class="act-tag act-tag-tip">需預約</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 半日遊/一日遊選項 -->
+    <h2 class="section-title">周邊半日遊 / 一日遊（休息日推薦）</h2>
+
+    <div class="activity-section">
+        <div class="activity-grid">
+            <div class="activity-card">
+                <div class="act-title">地獄谷野猿公苑（雪猴）</div>
+                <div class="act-subtitle">Snow Monkey Park</div>
+                <div class="act-desc">世界唯一泡溫泉的野生猴子！冬天是最佳觀賞季節，猴子為了取暖會泡進溫泉。非常上鏡。需步行25分鐘雪路進入園區，建議穿防水鞋。</div>
+                <div class="act-meta">
+                    <span class="act-tag act-tag-paid">入場 ¥800</span>
+                    <span class="act-tag act-tag-time">來回約4小時</span>
+                    <span class="act-tag act-tag-dist">距野沢約1.5小時</span>
+                    <span class="act-tag act-tag-tip">冬天必去</span>
+                </div>
+            </div>
+            <div class="activity-card">
+                <div class="act-title">小布施（栗子小鎮）</div>
+                <div class="act-subtitle">Obuse — 葛飾北齋晚年居住地</div>
+                <div class="act-desc">長野縣最精緻的小鎮。以栗子甜點聞名：竹風堂的栗子飯、小布施堂的 Mont Blanc、栗子冰淇淋。還有北齋館展出浮世繪大師的天花板畫。街道整潔適合散步拍照。</div>
+                <div class="act-meta">
+                    <span class="act-tag act-tag-paid">北齋館 ¥1,000</span>
+                    <span class="act-tag act-tag-time">來回約3–4小時</span>
+                    <span class="act-tag act-tag-dist">距野沢約1小時</span>
+                    <span class="act-tag act-tag-tip">栗子控必去</span>
+                </div>
+            </div>
+            <div class="activity-card">
+                <div class="act-title">善光寺（長野市）</div>
+                <div class="act-subtitle">Zenkoji Temple — 1400年歷史</div>
+                <div class="act-desc">日本最重要的寺院之一，供奉日本最古老佛像。冬天雪覆蓋的本堂非常壯觀。體驗「戒壇巡り」：在完全漆黑的地下通道摸索前進找到「極樂の鍵」。門前商店街可買七味粉（八幡屋礒五郎）。</div>
+                <div class="act-meta">
+                    <span class="act-tag act-tag-paid">本堂 ¥600</span>
+                    <span class="act-tag act-tag-time">來回約5–6小時</span>
+                    <span class="act-tag act-tag-dist">距野沢約1小時</span>
+                    <span class="act-tag act-tag-tip">歷史文化</span>
+                </div>
+            </div>
+            <div class="activity-card">
+                <div class="act-title">飯山市雪景散步</div>
+                <div class="act-subtitle">飯山 — 日本屈指の豪雪地帶</div>
+                <div class="act-desc">從野沢搭巴士25分鐘即達。飯山是日本著名的豪雪地帶，積雪可達3米。可參觀飯山寺町（22間寺院群）、高橋まゆみ人形館。比長野更近、更悠閒。</div>
+                <div class="act-meta">
+                    <span class="act-tag act-tag-paid">人形館 ¥620</span>
+                    <span class="act-tag act-tag-time">來回約3小時</span>
+                    <span class="act-tag act-tag-dist">巴士25分鐘</span>
+                    <span class="act-tag act-tag-tip">最近的選項</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 每日傍晚活動 -->
+    <h2 class="section-title">每日滑雪後活動建議（17:00–22:00）</h2>
+
+    <div class="day-plan">
+        <h3>🌙 滑雪日的傍晚/夜間行程模板</h3>
+        <div class="day-plan-timeline">
+            <div class="plan-step">
+                <div class="step-time">16:30</div>
+                <div class="step-title">結束滑雪，回旅館</div>
+                <div class="step-desc">放好裝備，換上輕便衣服和防水鞋</div>
+            </div>
+            <div class="plan-step">
+                <div class="step-time">17:00</div>
+                <div class="step-title">外湯時間</div>
+                <div class="step-desc">就近泡一間外湯。建議每天試不同間。大湯最有名但水溫極高，膽小者可試河原湯（稍涼）</div>
+            </div>
+            <div class="plan-step">
+                <div class="step-time">17:45</div>
+                <div class="step-title">溫泉街散步</div>
+                <div class="step-desc">邊走邊吃おやき（¥250）、看看土產店。入夜後街道點燈非常漂亮</div>
+            </div>
+            <div class="plan-step">
+                <div class="step-time">18:30</div>
+                <div class="step-title">晚餐</div>
+                <div class="step-desc">8人建議分2桌（4+4）比較容易找位。人氣店 17:30 就開始排隊</div>
+            </div>
+            <div class="plan-step">
+                <div class="step-time">20:30</div>
+                <div class="step-title">二次會 / 自由活動</div>
+                <div class="step-desc">想喝酒：Faust / Stay Bar / Kuranojo。想休息：回旅館泡內湯。想加練：日影夜滑到 20:00</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 實用資訊 -->
+    <div class="dining-tip">
+        <h3>📝 觀光實用資訊</h3>
+        <ul>
+            <li><strong>外湯禮儀</strong>：進湯前洗淨身體、長髮紮起、毛巾不入池、有紋身也OK（野沢比較開放）</li>
+            <li><strong>雪猴交通</strong>：可請旅館代訂包車（8人約 ¥40,000 來回），比公共交通方便很多</li>
+            <li><strong>防寒</strong>：1月底氣溫約 -5°C 到 -10°C，散步時需保暖外套、手套、帽子</li>
+            <li><strong>現金</strong>：村內很多店只收現金。建議飯山站或長野站的 ATM 先提款（7-11 ATM 接受海外卡）</li>
+            <li><strong>營業時間</strong>：外湯大多 5:00–23:00。土產店約 9:00–18:00。餐廳晚餐 17:30 開始</li>
+        </ul>
+    </div>
+
+</div>

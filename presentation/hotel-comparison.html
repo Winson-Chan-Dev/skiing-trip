@@ -1,0 +1,2611 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🦊 Ski Babies 2027 — 住宿比較</title>
+    <style>
+        :root {
+            --snow: #f8fafc;
+            --ice: #e2e8f0;
+            --mountain: #1e293b;
+            --sky: #0ea5e9;
+            --gold: #f59e0b;
+            --forest: #059669;
+            --danger: #ef4444;
+            --warm: #f97316;
+            --purple: #8b5cf6;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Microsoft JhengHei', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%);
+            color: var(--mountain);
+            min-height: 100vh;
+        }
+
+        .hero {
+            background: linear-gradient(180deg, rgba(14,165,233,0.3) 0%, rgba(15,23,42,0.9) 100%),
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400"><polygon points="0,400 200,200 400,300 600,100 800,250 1000,150 1200,400" fill="%23ffffff20"/><polygon points="0,400 300,250 500,350 700,180 900,300 1200,400" fill="%23ffffff10"/></svg>');
+            background-size: cover;
+            padding: 60px 40px;
+            text-align: center;
+            color: white;
+        }
+
+        .hero h1 { font-size: 3rem; margin-bottom: 10px; text-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+        .hero .subtitle { font-size: 1.3rem; opacity: 0.9; margin-bottom: 20px; }
+        .hero .meta { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; font-size: 0.95rem; opacity: 0.85; }
+        .hero .meta span { background: rgba(255,255,255,0.15); padding: 6px 16px; border-radius: 20px; backdrop-filter: blur(4px); }
+
+        /* Tabs */
+        .tab-nav {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            padding: 20px 20px 0;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .tab-btn {
+            padding: 12px 28px;
+            border: none;
+            background: rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.7);
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 12px 12px 0 0;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .tab-btn:hover { background: rgba(255,255,255,0.2); color: white; }
+        .tab-btn.active { background: white; color: var(--mountain); }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .section-title {
+            color: white;
+            font-size: 1.8rem;
+            margin-bottom: 24px;
+            padding-left: 16px;
+            border-left: 4px solid var(--sky);
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 50px;
+        }
+
+        .summary-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .summary-card:hover { transform: translateY(-4px); }
+        .summary-card .icon { font-size: 2rem; margin-bottom: 10px; }
+        .summary-card h3 { font-size: 1.1rem; margin-bottom: 6px; color: var(--mountain); }
+        .summary-card p { color: #64748b; font-size: 0.9rem; line-height: 1.5; }
+
+        .hotel-grid { display: grid; grid-template-columns: 1fr; gap: 24px; margin-bottom: 50px; }
+
+        .hotel-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .hotel-card:hover { transform: translateY(-2px); }
+        .hotel-card.recommended { border: 3px solid var(--gold); }
+
+        .hotel-header { display: flex; justify-content: space-between; align-items: flex-start; padding: 24px 24px 0; }
+        .hotel-header h3 { font-size: 1.3rem; color: var(--mountain); }
+        .hotel-header .badge { background: var(--gold); color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; }
+
+        .hotel-body { padding: 16px 24px 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        @media (max-width: 768px) { .hotel-body { grid-template-columns: 1fr; } }
+
+        .hotel-details { font-size: 0.9rem; color: #475569; }
+        .hotel-details dt { font-weight: 600; color: var(--mountain); margin-top: 8px; }
+        .hotel-details dd { margin-left: 0; margin-top: 2px; }
+
+        .score-section { display: flex; flex-direction: column; gap: 8px; }
+        .score-bar { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; }
+        .score-bar label { width: 100px; color: #64748b; flex-shrink: 0; }
+        .bar-track { flex: 1; height: 8px; background: var(--ice); border-radius: 4px; overflow: hidden; }
+        .bar-fill { height: 100%; border-radius: 4px; transition: width 0.6s ease; }
+        .bar-fill.loc { background: var(--sky); }
+        .bar-fill.grp { background: var(--forest); }
+        .bar-fill.val { background: var(--gold); }
+        .bar-fill.exp { background: var(--warm); }
+        .bar-fill.avl { background: var(--purple); }
+        .score-total { font-size: 1.8rem; font-weight: 800; color: var(--sky); margin-top: 8px; }
+
+        .pros-cons { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 24px 24px; font-size: 0.85rem; }
+        .pros h4 { color: var(--forest); margin-bottom: 6px; }
+        .cons h4 { color: var(--danger); margin-bottom: 6px; }
+        .pros li, .cons li { margin-left: 16px; margin-bottom: 4px; color: #475569; }
+
+        .ranking-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 50px;
+        }
+
+        .ranking-table th { background: var(--mountain); color: white; padding: 12px 10px; text-align: left; font-size: 0.78rem; cursor: pointer; user-select: none; white-space: nowrap; position: relative; }
+        .ranking-table th:hover { background: #334155; }
+        .ranking-table th .sort-icon { opacity: 0.5; margin-left: 3px; font-size: 0.7rem; }
+        .ranking-table th.sorted-asc .sort-icon, .ranking-table th.sorted-desc .sort-icon { opacity: 1; color: var(--gold); }
+        .ranking-table td { padding: 10px 10px; border-bottom: 1px solid var(--ice); font-size: 0.82rem; vertical-align: middle; }
+        .ranking-table tr:hover { background: #f1f5f9; }
+        .ranking-table .sub-text { display: block; font-size: 0.72rem; color: #94a3b8; margin-top: 2px; }
+        .slope-up { color: var(--danger); font-weight: 600; }
+        .slope-down { color: var(--forest); font-weight: 600; }
+        .slope-flat { color: #64748b; }
+        .meal-tag { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 600; }
+        .meal-full { background: #dcfce7; color: #166534; }
+        .meal-breakfast { background: #fef9c3; color: #854d0e; }
+        .meal-none { background: #f1f5f9; color: #64748b; }
+        .price-total { font-weight: 700; color: var(--mountain); }
+
+        .stars { color: var(--gold); letter-spacing: 2px; }
+
+        .tag { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; }
+        .tag-open { background: #dcfce7; color: #166534; }
+        .tag-soon { background: #fef9c3; color: #854d0e; }
+        .tag-full { background: #fee2e2; color: #991b1b; }
+        .tag-unknown { background: #e2e8f0; color: #475569; }
+
+        .distance-badge { display: inline-flex; align-items: center; gap: 4px; background: #f0f9ff; color: var(--sky); padding: 3px 8px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; }
+
+        .footnote { color: rgba(255,255,255,0.6); text-align: center; padding: 40px 20px; font-size: 0.85rem; }
+
+        /* Booking Tab Styles */
+        .timeline {
+            position: relative;
+            padding-left: 40px;
+            margin-bottom: 50px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 16px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, var(--danger), var(--gold), var(--forest));
+            border-radius: 2px;
+        }
+
+        .timeline-item {
+            position: relative;
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -32px;
+            top: 28px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 0 3px var(--sky);
+        }
+
+        .timeline-item.urgent::before { box-shadow: 0 0 0 3px var(--danger); background: var(--danger); }
+        .timeline-item.upcoming::before { box-shadow: 0 0 0 3px var(--gold); background: var(--gold); }
+        .timeline-item.later::before { box-shadow: 0 0 0 3px var(--forest); background: var(--forest); }
+
+        .timeline-date {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .timeline-item.urgent .timeline-date { color: var(--danger); }
+        .timeline-item.upcoming .timeline-date { color: var(--gold); }
+        .timeline-item.later .timeline-date { color: var(--forest); }
+
+        .timeline-item h3 { font-size: 1.1rem; margin-bottom: 8px; }
+        .timeline-item p { color: #64748b; font-size: 0.9rem; line-height: 1.6; }
+
+        .booking-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 50px;
+        }
+
+        .booking-table th { background: var(--mountain); color: white; padding: 14px 16px; text-align: left; font-size: 0.85rem; }
+        .booking-table td { padding: 14px 16px; border-bottom: 1px solid var(--ice); font-size: 0.88rem; vertical-align: top; }
+        .booking-table tr:hover { background: #f1f5f9; }
+
+        .booking-method {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            margin: 2px 0;
+        }
+
+        .method-web { background: #ede9fe; color: #5b21b6; }
+        .method-whatsapp { background: #dcfce7; color: #166534; }
+        .method-phone { background: #fef3c7; color: #92400e; }
+        .method-email { background: #e0f2fe; color: #075985; }
+        .method-platform { background: #fce7f3; color: #9d174d; }
+
+        .countdown {
+            background: linear-gradient(135deg, #1e293b, #334155);
+            border-radius: 16px;
+            padding: 30px;
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .countdown h3 { font-size: 1.2rem; margin-bottom: 16px; opacity: 0.9; }
+
+        .countdown-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .countdown-item {
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .countdown-item .days {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--gold);
+        }
+
+        .countdown-item .label {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            margin-top: 4px;
+        }
+
+        .action-box {
+            background: linear-gradient(135deg, #fef2f2, #fff1f2);
+            border: 2px solid #fecaca;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 30px;
+        }
+
+        .action-box h3 { color: var(--danger); margin-bottom: 12px; font-size: 1.1rem; }
+        .action-box ul { list-style: none; padding: 0; }
+        .action-box li { padding: 8px 0; border-bottom: 1px solid #fecaca; color: #475569; font-size: 0.9rem; }
+        .action-box li:last-child { border-bottom: none; }
+        .action-box li strong { color: var(--mountain); }
+
+        /* Dining Tab Styles */
+        .dining-category {
+            margin-bottom: 40px;
+        }
+
+        .dining-category-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .dining-category-header .cat-icon {
+            font-size: 2rem;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+        }
+
+        .dining-category-header h3 {
+            color: white;
+            font-size: 1.3rem;
+        }
+
+        .dining-category-header p {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.85rem;
+            margin-top: 2px;
+        }
+
+        .dining-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 16px;
+        }
+
+        .dining-card {
+            background: white;
+            border-radius: 14px;
+            padding: 20px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            transition: transform 0.2s;
+            position: relative;
+        }
+
+        .dining-card:hover { transform: translateY(-3px); }
+
+        .dining-card .resto-name {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--mountain);
+            margin-bottom: 2px;
+        }
+
+        .dining-card .resto-name-jp {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            margin-bottom: 10px;
+        }
+
+        .dining-card .resto-desc {
+            font-size: 0.85rem;
+            color: #475569;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .dining-card .resto-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        .dining-card .resto-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 10px;
+            border-top: 1px solid var(--ice);
+        }
+
+        .price-tag {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        .price-budget { background: #dcfce7; color: #166534; }
+        .price-mid { background: #fef9c3; color: #854d0e; }
+        .price-high { background: #fee2e2; color: #991b1b; }
+
+        .rec-stars { color: var(--gold); font-size: 0.85rem; letter-spacing: 1px; }
+
+        .food-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            background: #f0f9ff;
+            color: #0369a1;
+        }
+
+        .food-tag.tag-vibe { background: #faf5ff; color: #7c3aed; }
+        .food-tag.tag-lang { background: #ecfdf5; color: #047857; }
+        .food-tag.tag-time { background: #fff7ed; color: #c2410c; }
+
+        .specialty-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 16px;
+        }
+
+        .specialty-card {
+            background: white;
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        }
+
+        .specialty-card .spec-icon { font-size: 2.5rem; margin-bottom: 10px; }
+        .specialty-card h4 { font-size: 1rem; color: var(--mountain); margin-bottom: 4px; }
+        .specialty-card .spec-jp { font-size: 0.8rem; color: #94a3b8; margin-bottom: 8px; }
+        .specialty-card p { font-size: 0.85rem; color: #475569; line-height: 1.5; }
+
+        .dining-tip {
+            background: linear-gradient(135deg, #1e293b, #334155);
+            border-radius: 14px;
+            padding: 24px;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .dining-tip h3 { margin-bottom: 12px; font-size: 1.1rem; }
+        .dining-tip ul { list-style: none; padding: 0; }
+        .dining-tip li { padding: 6px 0; font-size: 0.88rem; opacity: 0.9; }
+        .dining-tip li::before { content: '💡 '; }
+
+        /* Sightseeing Tab Styles */
+        .day-plan {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .day-plan h3 {
+            font-size: 1.2rem;
+            color: var(--mountain);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .day-plan-timeline {
+            position: relative;
+            padding-left: 28px;
+        }
+
+        .day-plan-timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 6px;
+            bottom: 6px;
+            width: 2px;
+            background: linear-gradient(180deg, var(--sky), var(--forest));
+            border-radius: 2px;
+        }
+
+        .plan-step {
+            position: relative;
+            padding: 10px 0 10px 16px;
+        }
+
+        .plan-step::before {
+            content: '';
+            position: absolute;
+            left: -24px;
+            top: 16px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--sky);
+            border: 2px solid white;
+            box-shadow: 0 0 0 2px var(--sky);
+        }
+
+        .plan-step .step-time {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--sky);
+            margin-bottom: 2px;
+        }
+
+        .plan-step .step-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--mountain);
+        }
+
+        .plan-step .step-desc {
+            font-size: 0.83rem;
+            color: #64748b;
+            margin-top: 2px;
+        }
+
+        .activity-section { margin-bottom: 40px; }
+
+        .activity-section-header {
+            color: white;
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .activity-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 16px;
+        }
+
+        .activity-card {
+            background: white;
+            border-radius: 14px;
+            padding: 20px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            transition: transform 0.2s;
+        }
+
+        .activity-card:hover { transform: translateY(-3px); }
+
+        .activity-card .act-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--mountain);
+            margin-bottom: 2px;
+        }
+
+        .activity-card .act-subtitle {
+            font-size: 0.78rem;
+            color: #94a3b8;
+            margin-bottom: 10px;
+        }
+
+        .activity-card .act-desc {
+            font-size: 0.85rem;
+            color: #475569;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .activity-card .act-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .act-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            font-weight: 600;
+        }
+
+        .act-tag-free { background: #dcfce7; color: #166534; }
+        .act-tag-paid { background: #fef9c3; color: #854d0e; }
+        .act-tag-time { background: #e0f2fe; color: #075985; }
+        .act-tag-dist { background: #faf5ff; color: #7c3aed; }
+        .act-tag-tip { background: #fff7ed; color: #c2410c; }
+
+        .route-option {
+            background: white;
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            border-left: 4px solid var(--sky);
+        }
+
+        .route-option.recommended { border-left-color: var(--gold); }
+
+        .route-option h4 {
+            font-size: 1rem;
+            color: var(--mountain);
+            margin-bottom: 8px;
+        }
+
+        .route-option p {
+            font-size: 0.85rem;
+            color: #475569;
+            line-height: 1.5;
+        }
+
+        .route-option .route-details {
+            margin-top: 10px;
+            font-size: 0.82rem;
+            color: #64748b;
+        }
+
+        .route-option .route-details span {
+            display: inline-block;
+            margin-right: 16px;
+        }
+
+        /* ===== Village Map Styles ===== */
+        .map-container {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .map-container h2 {
+            font-size: 1.3rem;
+            margin-bottom: 16px;
+            color: var(--mountain);
+        }
+
+        .map-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .map-toggle {
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .map-toggle:hover { border-color: var(--sky); }
+        .map-toggle.active { background: var(--sky); color: white; border-color: var(--sky); }
+        .map-toggle.active-route-a { background: #ef4444; color: white; border-color: #ef4444; }
+        .map-toggle.active-route-b { background: #8b5cf6; color: white; border-color: #8b5cf6; }
+        .map-toggle.active-route-c { background: #059669; color: white; border-color: #059669; }
+        .map-toggle.active-food { background: #f59e0b; color: white; border-color: #f59e0b; }
+        .map-toggle.active-onsen { background: #0ea5e9; color: white; border-color: #0ea5e9; }
+        .map-toggle.active-sight { background: #ec4899; color: white; border-color: #ec4899; }
+
+        .map-svg-wrap {
+            position: relative;
+            width: 100%;
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .map-svg-wrap svg {
+            display: block;
+            width: 100%;
+            min-width: 700px;
+            height: auto;
+        }
+
+        .map-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-top: 14px;
+            font-size: 0.78rem;
+            color: #64748b;
+        }
+
+        .map-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .map-legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .map-tooltip {
+            position: absolute;
+            background: #1e293b;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.15s;
+            z-index: 100;
+            max-width: 220px;
+            line-height: 1.4;
+            white-space: normal;
+        }
+
+        .map-tooltip.visible { opacity: 1; }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <h1>🦊 Ski Babies 2027 🦊</h1>
+    <p class="subtitle">野沢溫泉 住宿比較研究報告 — 方案 B 確認</p>
+    <div class="meta">
+        <span>📅 2027年1月24日–29日（5晚）</span>
+        <span>👥 8人</span>
+        <span>🏔️ 野沢溫泉，日本</span>
+        <span>💰 預算：待定</span>
+    </div>
+</div>
+
+<div class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('comparison')">🏨 住宿比較</button>
+    <button class="tab-btn" onclick="switchTab('dining')">🍜 餐飲推薦</button>
+    <button class="tab-btn" onclick="switchTab('sightseeing')">🗺️ 觀光活動</button>
+    <button class="tab-btn" onclick="switchTab('booking')">📅 預訂資訊</button>
+</div>
+
+<!-- ==================== TAB 1: 住宿比較 ==================== -->
+<div id="tab-comparison" class="tab-content active">
+<div class="container">
+
+    <h2 class="section-title">精選推薦</h2>
+    <div class="summary-cards">
+        <div class="summary-card">
+            <div class="icon">🥇</div>
+            <h3>最佳綜合選擇</h3>
+            <p><strong>Schanze Nozawa シャンツェ野沢</strong> — 步行3分鐘到纜車站，性價比最高，服務一流。即將額滿，盡快聯絡！</p>
+        </div>
+        <div class="summary-card">
+            <div class="icon">🥈</div>
+            <h3>最佳傳統體驗</h3>
+            <p><strong>Tamayura たまゆら</strong> — 步行2分鐘到纜車站，道地手作日式料理，溫馨民宿氛圍。7月1日開放預訂。</p>
+        </div>
+        <div class="summary-card">
+            <div class="icon">🥉</div>
+            <h3>最佳團體體驗</h3>
+            <p><strong>Lodge Denbey でんべえ</strong> — 8人同住一間大和室，位於日影滑雪場內（ski-in），食物超讚。7月1日開放。</p>
+        </div>
+        <div class="summary-card">
+            <div class="icon">💎</div>
+            <h3>最佳豪華選擇</h3>
+            <p><strong>HETA 蔕</strong> — 設計感極強，剛好可容納8人（套房+雙人房）。但僅有3晚空房。</p>
+        </div>
+    </div>
+
+    <h2 class="section-title">完整排名</h2>
+    <p style="color:rgba(255,255,255,0.6); margin-bottom:16px; font-size:0.85rem;">💡 點擊欄位標題可排序 | 所有價格為每人5晚總計（HKD）</p>
+    <div style="overflow-x:auto;">
+    <table class="ranking-table" id="mainRankTable">
+        <thead>
+            <tr>
+                <th data-col="rank" data-type="num"># <span class="sort-icon">⇅</span></th>
+                <th data-col="name">住宿名稱</th>
+                <th data-col="type">類型</th>
+                <th data-col="nagasaka" data-type="num">長坂纜車站 <span class="sort-icon">⇅</span></th>
+                <th data-col="yuroad" data-type="num">Yu-Road <span class="sort-icon">⇅</span></th>
+                <th data-col="hikage" data-type="num">日影滑雪場 <span class="sort-icon">⇅</span></th>
+                <th data-col="group">容納8人？</th>
+                <th data-col="meal">餐食安排</th>
+                <th data-col="hotelprice" data-type="num">住宿費 /人 <span class="sort-icon">⇅</span></th>
+                <th data-col="mealprice" data-type="num">餐費 /人 <span class="sort-icon">⇅</span></th>
+                <th data-col="totalprice" data-type="num">合計 /人 <span class="sort-icon">⇅</span></th>
+                <th data-col="score" data-type="num">評分 <span class="sort-icon">⇅</span></th>
+                <th data-col="status">空房</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td data-sort="1">1</td>
+                <td><strong>Schanze Nozawa</strong><br><small>シャンツェ野沢</small></td>
+                <td>民宿</td>
+                <td data-sort="3"><span class="distance-badge">3分鐘</span><br><span class="slope-up sub-text">⬆ 上坡</span></td>
+                <td data-sort="11"><span class="distance-badge">11分鐘</span><br><span class="slope-down sub-text">⬇ 下坡</span></td>
+                <td data-sort="8"><span class="distance-badge">8分鐘</span><br><span class="slope-flat sub-text">— 平路</span></td>
+                <td>✅ 可以</td>
+                <td><span class="meal-tag meal-breakfast">含早餐</span></td>
+                <td data-sort="700">$600–800</td>
+                <td data-sort="500">~$500<span class="sub-text">5晚晚餐外食</span></td>
+                <td data-sort="1200" class="price-total">$1,100–1,300</td>
+                <td data-sort="4.3"><span class="stars">★★★★☆</span> 4.3</td>
+                <td><span class="tag tag-full">即將額滿</span></td>
+            </tr>
+            <tr>
+                <td data-sort="2">2</td>
+                <td><strong>Tamayura たまゆら</strong></td>
+                <td>民宿</td>
+                <td data-sort="2"><span class="distance-badge">2分鐘</span><br><span class="slope-up sub-text">⬆ 上坡</span></td>
+                <td data-sort="9"><span class="distance-badge">9分鐘</span><br><span class="slope-down sub-text">⬇ 下坡</span></td>
+                <td data-sort="7"><span class="distance-badge">7分鐘</span><br><span class="slope-flat sub-text">— 平路</span></td>
+                <td>⚠️ 需分房(4+3+?)</td>
+                <td><span class="meal-tag meal-full">一泊二食</span><span class="sub-text">早+晚餐（手作）</span></td>
+                <td data-sort="1166">$1,166<span class="sub-text">含二食</span></td>
+                <td data-sort="0">已含<span class="sub-text">一泊二食</span></td>
+                <td data-sort="1166" class="price-total">$1,166</td>
+                <td data-sort="4.0"><span class="stars">★★★★☆</span> 4.0</td>
+                <td><span class="tag tag-soon">7/1開放</span></td>
+            </tr>
+            <tr>
+                <td data-sort="3">3</td>
+                <td><strong>Gondola Apartments</strong><br><small>新選項</small></td>
+                <td>公寓</td>
+                <td data-sort="3"><span class="distance-badge">3分鐘</span><br><span class="slope-up sub-text">⬆ 上坡</span></td>
+                <td data-sort="10"><span class="distance-badge">10分鐘</span><br><span class="slope-down sub-text">⬇ 下坡</span></td>
+                <td data-sort="8"><span class="distance-badge">8分鐘</span><br><span class="slope-flat sub-text">— 平路</span></td>
+                <td>⚠️ 需多間</td>
+                <td><span class="meal-tag meal-none">自炊</span><span class="sub-text">有廚房</span></td>
+                <td data-sort="1400">$1,200–1,600</td>
+                <td data-sort="400">~$400<span class="sub-text">自煮/外食</span></td>
+                <td data-sort="1800" class="price-total">$1,600–2,000</td>
+                <td data-sort="4.0"><span class="stars">★★★★☆</span> 4.0</td>
+                <td><span class="tag tag-unknown">待確認</span></td>
+            </tr>
+            <tr>
+                <td data-sort="4">4</td>
+                <td><strong>Lodge Denbey でんべえ</strong></td>
+                <td>滑雪小屋</td>
+                <td data-sort="14"><span class="distance-badge">14分鐘</span><br><span class="slope-up sub-text">⬆ 上坡</span></td>
+                <td data-sort="18"><span class="distance-badge">18分鐘</span><br><span class="slope-down sub-text">⬇ 下坡</span></td>
+                <td data-sort="0"><span class="distance-badge" style="background:#dcfce7;color:#166534;">Ski-in!</span><br><span class="slope-flat sub-text">就在場內</span></td>
+                <td>✅ 全員同房</td>
+                <td><span class="meal-tag meal-full">一泊二食</span><span class="sub-text">早+晚餐（名物）</span></td>
+                <td data-sort="1000">$800–1,200<span class="sub-text">含二食</span></td>
+                <td data-sort="0">已含<span class="sub-text">一泊二食</span></td>
+                <td data-sort="1000" class="price-total">$800–1,200</td>
+                <td data-sort="3.9"><span class="stars">★★★★☆</span> 3.9</td>
+                <td><span class="tag tag-soon">7/1開放</span></td>
+            </tr>
+            <tr>
+                <td data-sort="5">5</td>
+                <td><strong>野沢溫泉ロッヂ</strong><br><small>Nozawa Onsen Lodge</small></td>
+                <td>旅舍</td>
+                <td data-sort="3"><span class="distance-badge">3分鐘</span><br><span class="slope-up sub-text">⬆ 上坡</span></td>
+                <td data-sort="10"><span class="distance-badge">10分鐘</span><br><span class="slope-down sub-text">⬇ 下坡</span></td>
+                <td data-sort="7"><span class="distance-badge">7分鐘</span><br><span class="slope-flat sub-text">— 平路</span></td>
+                <td>✅ 可以</td>
+                <td><span class="meal-tag meal-breakfast">含早餐</span><span class="sub-text">有酒吧</span></td>
+                <td data-sort="850">$700–1,000</td>
+                <td data-sort="500">~$500<span class="sub-text">5晚晚餐外食</span></td>
+                <td data-sort="1350" class="price-total">$1,200–1,500</td>
+                <td data-sort="3.8"><span class="stars">★★★★☆</span> 3.8</td>
+                <td><span class="tag tag-soon">約8月開放</span></td>
+            </tr>
+            <tr>
+                <td data-sort="6">6</td>
+                <td><strong>Tanuki Apartments</strong></td>
+                <td>公寓</td>
+                <td data-sort="11"><span class="distance-badge">11分鐘</span><br><span class="slope-up sub-text">⬆ 上坡</span></td>
+                <td data-sort="4"><span class="distance-badge">4分鐘</span><br><span class="slope-flat sub-text">— 平路</span></td>
+                <td data-sort="5"><span class="distance-badge">5分鐘</span><br><span class="slope-flat sub-text">— 平路</span></td>
+                <td>✅ 3-4房單位</td>
+                <td><span class="meal-tag meal-none">自炊</span><span class="sub-text">全廚房+壁爐</span></td>
+                <td data-sort="1250">$1,000–1,500</td>
+                <td data-sort="350">~$350<span class="sub-text">自煮為主</span></td>
+                <td data-sort="1600" class="price-total">$1,350–1,850</td>
+                <td data-sort="3.8"><span class="stars">★★★★☆</span> 3.8</td>
+                <td><span class="tag tag-unknown">待確認</span></td>
+            </tr>
+            <tr>
+                <td data-sort="7">7</td>
+                <td><strong>住吉屋 Sumiyosiya</strong></td>
+                <td>高級旅館</td>
+                <td data-sort="14"><span class="distance-badge">14分鐘</span><br><span class="slope-up sub-text">⬆ 上坡</span></td>
+                <td data-sort="2"><span class="distance-badge">2分鐘</span><br><span class="slope-flat sub-text">— 平路</span></td>
+                <td data-sort="3"><span class="distance-badge">3分鐘</span><br><span class="slope-flat sub-text">— 平路</span></td>
+                <td>⚠️ 需分房</td>
+                <td><span class="meal-tag meal-full">一泊二食</span><span class="sub-text">懷石料理</span></td>
+                <td data-sort="1625">$1,625+<span class="sub-text">含懷石</span></td>
+                <td data-sort="0">已含<span class="sub-text">一泊二食</span></td>
+                <td data-sort="1625" class="price-total">$1,625+</td>
+                <td data-sort="3.7"><span class="stars">★★★★☆</span> 3.7</td>
+                <td><span class="tag tag-soon">未開放</span></td>
+            </tr>
+            <tr>
+                <td data-sort="8">8</td>
+                <td><strong>河一屋 Kawaichiya</strong></td>
+                <td>旅館</td>
+                <td data-sort="17"><span class="distance-badge">17分鐘</span><br><span class="slope-up sub-text">⬆ 上坡</span></td>
+                <td data-sort="9"><span class="distance-badge">9分鐘</span><br><span class="slope-down sub-text">⬇ 下坡</span></td>
+                <td data-sort="12"><span class="distance-badge">12分鐘</span><br><span class="slope-flat sub-text">— 平路</span></td>
+                <td>✅ 大和室</td>
+                <td><span class="meal-tag meal-full">一泊二食</span><span class="sub-text">日式家庭料理</span></td>
+                <td data-sort="1000">$800–1,200<span class="sub-text">含二食</span></td>
+                <td data-sort="0">已含<span class="sub-text">一泊二食</span></td>
+                <td data-sort="1000" class="price-total">$800–1,200</td>
+                <td data-sort="3.6"><span class="stars">★★★★☆</span> 3.6</td>
+                <td><span class="tag tag-soon">約7/25</span></td>
+            </tr>
+            <tr>
+                <td data-sort="9">9</td>
+                <td><strong>Address Nozawa</strong></td>
+                <td>公寓酒店</td>
+                <td data-sort="10"><span class="distance-badge">10分鐘</span><br><span class="slope-up sub-text">⬆ 上坡</span></td>
+                <td data-sort="5"><span class="distance-badge">5分鐘</span><br><span class="slope-down sub-text">⬇ 下坡</span></td>
+                <td data-sort="4"><span class="distance-badge">4分鐘</span><br><span class="slope-flat sub-text">— 平路</span></td>
+                <td>❌ 最多6人</td>
+                <td><span class="meal-tag meal-none">無餐食</span><span class="sub-text">需外食</span></td>
+                <td data-sort="2000">~$2,000</td>
+                <td data-sort="600">~$600<span class="sub-text">全外食</span></td>
+                <td data-sort="2600" class="price-total">~$2,600</td>
+                <td data-sort="3.5"><span class="stars">★★★☆☆</span> 3.5</td>
+                <td><span class="tag tag-open">有房（僅6人）</span></td>
+            </tr>
+            <tr>
+                <td data-sort="10">10</td>
+                <td><strong>桐屋旅館 Kiriya</strong><br><small>新選項</small></td>
+                <td>旅館</td>
+                <td data-sort="8"><span class="distance-badge">8分鐘</span><br><span class="slope-up sub-text">⬆ 上坡</span></td>
+                <td data-sort="6"><span class="distance-badge">6分鐘</span><br><span class="slope-down sub-text">⬇ 下坡</span></td>
+                <td data-sort="5"><span class="distance-badge">5分鐘</span><br><span class="slope-flat sub-text">— 平路</span></td>
+                <td>✅ 可以</td>
+                <td><span class="meal-tag meal-full">一泊二食</span><span class="sub-text">日式定食</span></td>
+                <td data-sort="850">$700–1,000<span class="sub-text">含二食</span></td>
+                <td data-sort="0">已含<span class="sub-text">一泊二食</span></td>
+                <td data-sort="850" class="price-total">$700–1,000</td>
+                <td data-sort="3.5"><span class="stars">★★★☆☆</span> 3.5</td>
+                <td><span class="tag tag-unknown">待確認</span></td>
+            </tr>
+            <tr>
+                <td data-sort="11">11</td>
+                <td><strong>Lodge Nagano</strong><br><small>新選項</small></td>
+                <td>旅舍</td>
+                <td data-sort="5"><span class="distance-badge">5分鐘</span><br><span class="slope-up sub-text">⬆ 上坡</span></td>
+                <td data-sort="8"><span class="distance-badge">8分鐘</span><br><span class="slope-down sub-text">⬇ 下坡</span></td>
+                <td data-sort="6"><span class="distance-badge">6分鐘</span><br><span class="slope-flat sub-text">— 平路</span></td>
+                <td>✅ 可以</td>
+                <td><span class="meal-tag meal-breakfast">含早餐</span></td>
+                <td data-sort="600">$500–700</td>
+                <td data-sort="500">~$500<span class="sub-text">5晚晚餐外食</span></td>
+                <td data-sort="1100" class="price-total">$1,000–1,200</td>
+                <td data-sort="3.4"><span class="stars">★★★☆☆</span> 3.4</td>
+                <td><span class="tag tag-unknown">待確認</span></td>
+            </tr>
+            <tr>
+                <td data-sort="12">12</td>
+                <td><strong>HETA 蔕</strong></td>
+                <td>精品設計屋</td>
+                <td data-sort="7"><span class="distance-badge">7分鐘</span><br><span class="slope-up sub-text">⬆ 上坡</span></td>
+                <td data-sort="8"><span class="distance-badge">8分鐘</span><br><span class="slope-down sub-text">⬇ 下坡</span></td>
+                <td data-sort="6"><span class="distance-badge">6分鐘</span><br><span class="slope-flat sub-text">— 平路</span></td>
+                <td>✅ 套房+雙人房</td>
+                <td><span class="meal-tag meal-none">無餐食</span><span class="sub-text">需外食</span></td>
+                <td data-sort="1700">~$1,700<span class="sub-text">僅3晚</span></td>
+                <td data-sort="600">~$600<span class="sub-text">全外食</span></td>
+                <td data-sort="2300" class="price-total">~$2,300</td>
+                <td data-sort="3.3"><span class="stars">★★★☆☆</span> 3.3</td>
+                <td><span class="tag tag-full">僅3晚</span></td>
+            </tr>
+            <tr>
+                <td data-sort="13">13</td>
+                <td><strong>SKI INN Nozawa</strong></td>
+                <td>公寓</td>
+                <td data-sort="13"><span class="distance-badge">13分鐘</span><br><span class="slope-up sub-text">⬆ 上坡</span></td>
+                <td data-sort="10"><span class="distance-badge">10分鐘</span><br><span class="slope-down sub-text">⬇ 下坡</span></td>
+                <td data-sort="8"><span class="distance-badge">8分鐘</span><br><span class="slope-flat sub-text">— 平路</span></td>
+                <td>❌ 最多6人</td>
+                <td><span class="meal-tag meal-none">自炊</span><span class="sub-text">有廚房</span></td>
+                <td data-sort="1782">$1,782</td>
+                <td data-sort="350">~$350<span class="sub-text">自煮為主</span></td>
+                <td data-sort="2132" class="price-total">~$2,130</td>
+                <td data-sort="3.2"><span class="stars">★★★☆☆</span> 3.2</td>
+                <td><span class="tag tag-unknown">待確認</span></td>
+            </tr>
+        </tbody>
+    </table>
+    </div>
+    <p style="color:rgba(255,255,255,0.5); font-size:0.78rem; margin-top:-40px; margin-bottom:40px; padding-left:4px;">
+        📌 距離說明：長坂纜車站位於山腰（從村落上坡走）| Yu-Road/日影位於村落下方（下坡走）<br>
+        📌 餐費估算：外食晚餐 ~¥2,000–3,000/人/餐（~$100–120 HKD），5晚 ≈ $500–600 | 自煮 ≈ $300–400<br>
+        📌 一泊二食：住宿費已含早晚餐，無額外餐費
+    </p>
+
+    <h2 class="section-title">詳細分析 — 首選推薦</h2>
+    <div class="hotel-grid">
+
+        <div class="hotel-card recommended">
+            <div class="hotel-header">
+                <div>
+                    <h3>🥇 Schanze Nozawa シャンツェ野沢</h3>
+                    <small>schanzenozawa.com</small>
+                </div>
+                <span class="badge">首選推薦</span>
+            </div>
+            <div class="hotel-body">
+                <dl class="hotel-details">
+                    <dt>類型</dt><dd>家庭經營民宿</dd>
+                    <dt>到長坂纜車站距離</dt><dd>160米 — 步行3分鐘 🎿</dd>
+                    <dt>到Yu-Road電動步道</dt><dd>750米 — 步行11分鐘</dd>
+                    <dt>容量</dt><dd>大型家庭房，可容納8人團體</dd>
+                    <dt>預估價格</dt><dd>$600–800 HKD / 每人（5晚）</dd>
+                    <dt>餐食</dt><dd>包含優質自製早餐</dd>
+                    <dt>預訂方式</dt><dd>已開放 — 透過 WhatsApp 聯絡，1月份即將額滿</dd>
+                </dl>
+                <div class="score-section">
+                    <div class="score-bar"><label>地理位置</label><div class="bar-track"><div class="bar-fill loc" style="width:90%"></div></div></div>
+                    <div class="score-bar"><label>團體適合度</label><div class="bar-track"><div class="bar-fill grp" style="width:80%"></div></div></div>
+                    <div class="score-bar"><label>性價比</label><div class="bar-track"><div class="bar-fill val" style="width:95%"></div></div></div>
+                    <div class="score-bar"><label>體驗感</label><div class="bar-track"><div class="bar-fill exp" style="width:80%"></div></div></div>
+                    <div class="score-bar"><label>可預訂性</label><div class="bar-track"><div class="bar-fill avl" style="width:40%"></div></div></div>
+                    <div class="score-total">4.3 / 5</div>
+                </div>
+            </div>
+            <div class="pros-cons">
+                <div class="pros">
+                    <h4>✅ 優點</h4>
+                    <ul>
+                        <li>超近長坂纜車站（主要纜車）</li>
+                        <li>所有選項中性價比最高</li>
+                        <li>各訂房平台服務評分極高</li>
+                        <li>可能提供飯山站接送服務</li>
+                    </ul>
+                </div>
+                <div class="cons">
+                    <h4>❌ 缺點</h4>
+                    <ul>
+                        <li>2027年1月已近乎額滿</li>
+                        <li>設施偏基本/傳統（非豪華路線）</li>
+                        <li>距離溫泉街夜生活較遠</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="hotel-card recommended">
+            <div class="hotel-header">
+                <div>
+                    <h3>🥈 Tamayura たまゆら</h3>
+                    <small>nozawa-tamayura.com</small>
+                </div>
+                <span class="badge">亞軍推薦</span>
+            </div>
+            <div class="hotel-body">
+                <dl class="hotel-details">
+                    <dt>類型</dt><dd>傳統日式民宿</dd>
+                    <dt>到長坂纜車站距離</dt><dd>90米 — 步行2分鐘 🎿</dd>
+                    <dt>到Yu-Road電動步道</dt><dd>650米 — 步行9分鐘</dd>
+                    <dt>容量</dt><dd>4人房 + 3人房（第8人需確認）</dd>
+                    <dt>預估價格</dt><dd>~$1,166 HKD / 每人（5晚，一泊二食）</dd>
+                    <dt>餐食</dt><dd>手作日式晚餐及早餐（一泊二食）</dd>
+                    <dt>預訂方式</dt><dd>2026年7月1日 日本時間下午1:00 開放（4晚以上）</dd>
+                </dl>
+                <div class="score-section">
+                    <div class="score-bar"><label>地理位置</label><div class="bar-track"><div class="bar-fill loc" style="width:95%"></div></div></div>
+                    <div class="score-bar"><label>團體適合度</label><div class="bar-track"><div class="bar-fill grp" style="width:70%"></div></div></div>
+                    <div class="score-bar"><label>性價比</label><div class="bar-track"><div class="bar-fill val" style="width:75%"></div></div></div>
+                    <div class="score-bar"><label>體驗感</label><div class="bar-track"><div class="bar-fill exp" style="width:90%"></div></div></div>
+                    <div class="score-bar"><label>可預訂性</label><div class="bar-track"><div class="bar-fill avl" style="width:70%"></div></div></div>
+                    <div class="score-total">4.0 / 5</div>
+                </div>
+            </div>
+            <div class="pros-cons">
+                <div class="pros">
+                    <h4>✅ 優點</h4>
+                    <ul>
+                        <li>距離長坂纜車站最近（僅90米！）</li>
+                        <li>道地日式民宿，手作料理一流</li>
+                        <li>老闆一家人溫暖親切</li>
+                        <li>一泊二食省去覓食麻煩</li>
+                    </ul>
+                </div>
+                <div class="cons">
+                    <h4>❌ 缺點</h4>
+                    <ul>
+                        <li>公共衛浴/廁所（傳統風格）</li>
+                        <li>8人需分住2-3間房</li>
+                        <li>晚上從溫泉街回來是上坡路</li>
+                        <li>熱門時段名額有限 — 必須7月1日搶訂</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="hotel-card">
+            <div class="hotel-header">
+                <div>
+                    <h3>🥉 Lodge Denbey でんべえ</h3>
+                    <small>nozawa-denbey.com</small>
+                </div>
+            </div>
+            <div class="hotel-body">
+                <dl class="hotel-details">
+                    <dt>類型</dt><dd>滑雪小屋 / 民宿</dd>
+                    <dt>到長坂纜車站距離</dt><dd>1.1公里 — 步行14分鐘（可滑雪互通）</dd>
+                    <dt>到日影滑雪場</dt><dd>就在場內 — Ski-in！</dd>
+                    <dt>容量</dt><dd>大和室可容納全部8人同住 ✓</dd>
+                    <dt>預估價格</dt><dd>$800–1,200 HKD / 每人（5晚，一泊二食）</dd>
+                    <dt>餐食</dt><dd>口碑極佳的自製餐食（一泊二食），館內大浴場</dd>
+                    <dt>預訂方式</dt><dd>2026年7月1日上午10:00開放（4晚以上）</dd>
+                </dl>
+                <div class="score-section">
+                    <div class="score-bar"><label>地理位置</label><div class="bar-track"><div class="bar-fill loc" style="width:55%"></div></div></div>
+                    <div class="score-bar"><label>團體適合度</label><div class="bar-track"><div class="bar-fill grp" style="width:95%"></div></div></div>
+                    <div class="score-bar"><label>性價比</label><div class="bar-track"><div class="bar-fill val" style="width:80%"></div></div></div>
+                    <div class="score-bar"><label>體驗感</label><div class="bar-track"><div class="bar-fill exp" style="width:85%"></div></div></div>
+                    <div class="score-bar"><label>可預訂性</label><div class="bar-track"><div class="bar-fill avl" style="width:70%"></div></div></div>
+                    <div class="score-total">3.9 / 5</div>
+                </div>
+            </div>
+            <div class="pros-cons">
+                <div class="pros">
+                    <h4>✅ 優點</h4>
+                    <ul>
+                        <li>全部8人住同一間大和室 — 最有團體感</li>
+                        <li>就在日影滑雪場裡面（Ski-in）</li>
+                        <li>滑雪客圈中傳說級的美食</li>
+                        <li>可透過連絡雪道滑到長坂區域</li>
+                    </ul>
+                </div>
+                <div class="cons">
+                    <h4>❌ 缺點</h4>
+                    <ul>
+                        <li>穿雪鞋走到長坂 = 14分鐘上坡</li>
+                        <li>距離溫泉街餐廳及夜生活較遠</li>
+                        <li>日影是初學者區 — 進階滑雪者想去長坂</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <h2 class="section-title">決策矩陣</h2>
+    <table class="ranking-table">
+        <thead>
+            <tr>
+                <th>優先考量</th>
+                <th>最佳選擇</th>
+                <th>原因</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>💰 預算友善</td><td>Schanze / Lodge Nagano</td><td>5晚每人 $500–800</td></tr>
+            <tr><td>🎿 最近纜車站</td><td>Tamayura (2分鐘) / Schanze (3分鐘)</td><td>穿雪鞋走路最短</td></tr>
+            <tr><td>👥 8人全員同住</td><td>Lodge Denbey / 河一屋</td><td>一間大和室全員搞定</td></tr>
+            <tr><td>🍶 溫泉街夜生活</td><td>Tanuki / Address Nozawa</td><td>出門就是居酒屋和酒吧</td></tr>
+            <tr><td>🍲 自己煮（打邊爐！）</td><td>Tanuki / SKI INN</td><td>完整廚房，一起下廚</td></tr>
+            <tr><td>✨ 豪華 / 設計感</td><td>HETA 蔕 / 住吉屋</td><td>極致美感，頂級體驗</td></tr>
+            <tr><td>🔰 初學者友善位置</td><td>Lodge Denbey / 住吉屋</td><td>就在日影初學區旁邊</td></tr>
+        </tbody>
+    </table>
+
+</div>
+</div>
+
+<!-- ==================== TAB 2: 餐飲推薦 ==================== -->
+<div id="tab-dining" class="tab-content">
+<div class="container">
+
+    <!-- 實用貼士 -->
+    <div class="dining-tip">
+        <h3>🍽️ 野沢溫泉餐飲小貼士</h3>
+        <ul>
+            <li>村內餐廳選擇豐富但座位有限，旺季建議提前預約或早到</li>
+            <li>大部分餐廳營業時間為晚餐 17:30–21:00，最後點餐通常 20:30</li>
+            <li>山上餐廳午餐 11:00–14:30，滑雪日不用下山吃飯</li>
+            <li>多數小店只收現金，建議帶夠日圓</li>
+            <li>居酒屋通常有座位費（お通し）¥300–500</li>
+        </ul>
+    </div>
+
+    <!-- 分類 1: 居酒屋・酒吧 -->
+    <div class="dining-category">
+        <div class="dining-category-header">
+            <div class="cat-icon">🍺</div>
+            <div>
+                <h3>居酒屋・酒吧</h3>
+                <p>滑雪後最佳去處，暖身飲酒配小食</p>
+            </div>
+        </div>
+        <div class="dining-grid">
+            <div class="dining-card">
+                <div class="resto-name">Haus St. Anton</div>
+                <div class="resto-name-jp">ハウス・セント・アントン</div>
+                <div class="resto-meta">
+                    <span class="food-tag">披薩</span>
+                    <span class="food-tag">炸豬排</span>
+                    <span class="food-tag">意粉</span>
+                    <span class="food-tag tag-vibe">外國人氣</span>
+                    <span class="food-tag tag-lang">英文OK</span>
+                </div>
+                <div class="resto-desc">奧地利風格小木屋，野沢最人氣的國際餐廳。融合日式與歐洲料理，窯烤披薩出名好吃。氣氛熱鬧，座位搶手，建議 17:30 前到。</div>
+                <div class="resto-footer">
+                    <span class="price-tag price-mid">¥1,500–3,000 / 人</span>
+                    <span class="rec-stars">★★★★★</span>
+                </div>
+            </div>
+            <div class="dining-card">
+                <div class="resto-name">Faust</div>
+                <div class="resto-name-jp">ファウスト</div>
+                <div class="resto-meta">
+                    <span class="food-tag">手工啤酒</span>
+                    <span class="food-tag">漢堡</span>
+                    <span class="food-tag">炸物</span>
+                    <span class="food-tag tag-vibe">酒吧氛圍</span>
+                    <span class="food-tag tag-lang">英文OK</span>
+                </div>
+                <div class="resto-desc">村內最受歡迎的精釀啤酒吧。漢堡厚實多汁，薯條配啤酒是滑雪後經典組合。人多時較嘈雜，適合團體放鬆聚會。</div>
+                <div class="resto-footer">
+                    <span class="price-tag price-mid">¥1,200–2,500 / 人</span>
+                    <span class="rec-stars">★★★★☆</span>
+                </div>
+            </div>
+            <div class="dining-card">
+                <div class="resto-name">Sakura</div>
+                <div class="resto-name-jp">さくら</div>
+                <div class="resto-meta">
+                    <span class="food-tag">燒鳥</span>
+                    <span class="food-tag">日本酒</span>
+                    <span class="food-tag">刺身</span>
+                    <span class="food-tag tag-vibe">正宗居酒屋</span>
+                </div>
+                <div class="resto-desc">地道日式居酒屋，燒鳥串每串現烤。推薦搭配當地地酒。老闆親切，適合想體驗正統居酒屋文化的人。小店座位有限。</div>
+                <div class="resto-footer">
+                    <span class="price-tag price-mid">¥2,000–3,500 / 人</span>
+                    <span class="rec-stars">★★★★☆</span>
+                </div>
+            </div>
+            <div class="dining-card">
+                <div class="resto-name">Stay Bar</div>
+                <div class="resto-name-jp">ステイ</div>
+                <div class="resto-meta">
+                    <span class="food-tag">雞尾酒</span>
+                    <span class="food-tag">威士忌</span>
+                    <span class="food-tag tag-time">深夜營業</span>
+                    <span class="food-tag tag-vibe">Chill</span>
+                </div>
+                <div class="resto-desc">村內最晚關門的酒吧之一，營業至凌晨。雞尾酒調配用心，適合晚餐後二次會或宵夜小酌。氛圍輕鬆。</div>
+                <div class="resto-footer">
+                    <span class="price-tag price-budget">¥800–2,000 / 人</span>
+                    <span class="rec-stars">★★★☆☆</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 分類 2: 拉麵・蕎麥麵 -->
+    <div class="dining-category">
+        <div class="dining-category-header">
+            <div class="cat-icon">🍜</div>
+            <div>
+                <h3>拉麵・蕎麥麵</h3>
+                <p>快速飽腹，冬天暖胃首選</p>
+            </div>
+        </div>
+        <div class="dining-grid">
+            <div class="dining-card">
+                <div class="resto-name">Shin</div>
+                <div class="resto-name-jp">しん</div>
+                <div class="resto-meta">
+                    <span class="food-tag">味噌拉麵</span>
+                    <span class="food-tag">煎餃</span>
+                    <span class="food-tag tag-vibe">人氣排隊店</span>
+                </div>
+                <div class="resto-desc">野沢最受歡迎的拉麵店，濃厚味噌湯頭是招牌。配合手工煎餃，性價比極高。旺季常排隊 20–30 分鐘。</div>
+                <div class="resto-footer">
+                    <span class="price-tag price-budget">¥900–1,300 / 人</span>
+                    <span class="rec-stars">★★★★★</span>
+                </div>
+            </div>
+            <div class="dining-card">
+                <div class="resto-name">Kanetsu</div>
+                <div class="resto-name-jp">かねつ</div>
+                <div class="resto-meta">
+                    <span class="food-tag">手打蕎麥</span>
+                    <span class="food-tag">天婦羅</span>
+                    <span class="food-tag tag-vibe">傳統老店</span>
+                </div>
+                <div class="resto-desc">老字號手打蕎麥麵店。使用信州本地蕎麥粉，麵條彈滑。天婦羅蕎麥套餐是人氣選項。午餐時段尤其推薦。</div>
+                <div class="resto-footer">
+                    <span class="price-tag price-budget">¥900–1,500 / 人</span>
+                    <span class="rec-stars">★★★★☆</span>
+                </div>
+            </div>
+            <div class="dining-card">
+                <div class="resto-name">Ozeki</div>
+                <div class="resto-name-jp">大関</div>
+                <div class="resto-meta">
+                    <span class="food-tag">拉麵</span>
+                    <span class="food-tag">炒飯</span>
+                    <span class="food-tag tag-time">營業較晚</span>
+                </div>
+                <div class="resto-desc">深夜肚餓的好去處，營業到較晚。拉麵湯頭家常味道，炒飯份量十足。不算最驚艷但穩定出品，宵夜首選。</div>
+                <div class="resto-footer">
+                    <span class="price-tag price-budget">¥800–1,200 / 人</span>
+                    <span class="rec-stars">★★★☆☆</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 分類 3: 鄉土料理・日本料理 -->
+    <div class="dining-category">
+        <div class="dining-category-header">
+            <div class="cat-icon">🏔️</div>
+            <div>
+                <h3>鄉土料理・日本料理</h3>
+                <p>野沢特色與信州風味，旅行必體驗</p>
+            </div>
+        </div>
+        <div class="dining-grid">
+            <div class="dining-card">
+                <div class="resto-name">Sanzoku</div>
+                <div class="resto-name-jp">さんぞく（山賊）</div>
+                <div class="resto-meta">
+                    <span class="food-tag">野味（ジビエ）</span>
+                    <span class="food-tag">鍋物</span>
+                    <span class="food-tag">熊肉</span>
+                    <span class="food-tag tag-vibe">獨特體驗</span>
+                </div>
+                <div class="resto-desc">野沢唯一的野味專門店！提供熊肉、鹿肉、野豬鍋。味道出乎意料地好，完全沒有腥味。適合大膽嘗新的團體，一生人試一次。</div>
+                <div class="resto-footer">
+                    <span class="price-tag price-high">¥2,500–4,000 / 人</span>
+                    <span class="rec-stars">★★★★★</span>
+                </div>
+            </div>
+            <div class="dining-card">
+                <div class="resto-name">Buna</div>
+                <div class="resto-name-jp">ブナ</div>
+                <div class="resto-meta">
+                    <span class="food-tag">家庭料理</span>
+                    <span class="food-tag">定食</span>
+                    <span class="food-tag">野沢菜</span>
+                    <span class="food-tag tag-vibe">溫暖家常</span>
+                </div>
+                <div class="resto-desc">以當地食材烹調的家庭式料理。每日菜單隨季節變化，野沢菜料理和信州味噌湯是固定出品。像在日本媽媽家吃飯的感覺。</div>
+                <div class="resto-footer">
+                    <span class="price-tag price-mid">¥1,500–2,500 / 人</span>
+                    <span class="rec-stars">★★★★☆</span>
+                </div>
+            </div>
+            <div class="dining-card">
+                <div class="resto-name">Den</div>
+                <div class="resto-name-jp">でん</div>
+                <div class="resto-meta">
+                    <span class="food-tag">大阪燒</span>
+                    <span class="food-tag">鐵板燒</span>
+                    <span class="food-tag">文字燒</span>
+                    <span class="food-tag tag-vibe">互動好玩</span>
+                </div>
+                <div class="resto-desc">鐵板前自己動手做大阪燒或文字燒，適合朋友一起邊煮邊吃。配啤酒超歡樂，8人團體一定開心。預約推薦。</div>
+                <div class="resto-footer">
+                    <span class="price-tag price-mid">¥1,200–2,000 / 人</span>
+                    <span class="rec-stars">★★★★☆</span>
+                </div>
+            </div>
+            <div class="dining-card">
+                <div class="resto-name">Kuranojo</div>
+                <div class="resto-name-jp">蔵之助</div>
+                <div class="resto-meta">
+                    <span class="food-tag">地酒</span>
+                    <span class="food-tag">日本酒</span>
+                    <span class="food-tag">小食</span>
+                    <span class="food-tag tag-vibe">品酒體驗</span>
+                </div>
+                <div class="resto-desc">地酒專門吧，提供多款長野縣清酒和本地「水尾」酒造的限定酒。小食配酒恰到好處。適合晚餐後慢慢品味。</div>
+                <div class="resto-footer">
+                    <span class="price-tag price-mid">¥1,500–3,000 / 人</span>
+                    <span class="rec-stars">★★★★☆</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 分類 4: 西式餐廳・咖啡廳 -->
+    <div class="dining-category">
+        <div class="dining-category-header">
+            <div class="cat-icon">☕</div>
+            <div>
+                <h3>西式餐廳・咖啡廳</h3>
+                <p>吃膩日式時的好選擇，早餐麵包推薦</p>
+            </div>
+        </div>
+        <div class="dining-grid">
+            <div class="dining-card">
+                <div class="resto-name">Nozawa Onsen Brewing</div>
+                <div class="resto-name-jp">野沢温泉ブルーイング</div>
+                <div class="resto-meta">
+                    <span class="food-tag">手工啤酒</span>
+                    <span class="food-tag">窯烤披薩</span>
+                    <span class="food-tag tag-lang">英文OK</span>
+                    <span class="food-tag tag-vibe">本地釀造</span>
+                </div>
+                <div class="resto-desc">野沢本地精釀啤酒廠直營 taproom。招牌 IPA 和 Pale Ale 用溫泉水釀造，搭配窯烤披薩。空間寬敞適合團體。</div>
+                <div class="resto-footer">
+                    <span class="price-tag price-mid">¥1,200–2,500 / 人</span>
+                    <span class="rec-stars">★★★★★</span>
+                </div>
+            </div>
+            <div class="dining-card">
+                <div class="resto-name">Nagai Pan</div>
+                <div class="resto-name-jp">ナガイパン</div>
+                <div class="resto-meta">
+                    <span class="food-tag">麵包</span>
+                    <span class="food-tag">甜點</span>
+                    <span class="food-tag tag-time">早餐推薦</span>
+                </div>
+                <div class="resto-desc">村內知名老字號麵包店。每朝新鮮出爐的牛角包和紅豆包是必買。適合早起買了帶上山當午餐。便宜又好吃。</div>
+                <div class="resto-footer">
+                    <span class="price-tag price-budget">¥300–800 / 人</span>
+                    <span class="rec-stars">★★★★☆</span>
+                </div>
+            </div>
+            <div class="dining-card">
+                <div class="resto-name">Sparena</div>
+                <div class="resto-name-jp">スパリーナ</div>
+                <div class="resto-meta">
+                    <span class="food-tag">定食</span>
+                    <span class="food-tag">溫水泳池</span>
+                    <span class="food-tag tag-vibe">休憩日推薦</span>
+                </div>
+                <div class="resto-desc">溫泉 SPA 綜合設施內的餐廳。有溫水泳池和露天溫泉。餐食普通但適合休息日消磨大半天。套票划算。</div>
+                <div class="resto-footer">
+                    <span class="price-tag price-budget">¥1,000–1,800 / 人</span>
+                    <span class="rec-stars">★★★☆☆</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 分類 5: 山上餐廳 -->
+    <div class="dining-category">
+        <div class="dining-category-header">
+            <div class="cat-icon">⛷️</div>
+            <div>
+                <h3>山上餐廳</h3>
+                <p>滑雪中途午餐，不用下山</p>
+            </div>
+        </div>
+        <div class="dining-grid">
+            <div class="dining-card">
+                <div class="resto-name">Yamabiko Restaurant</div>
+                <div class="resto-name-jp">やまびこレストラン</div>
+                <div class="resto-meta">
+                    <span class="food-tag">咖哩飯</span>
+                    <span class="food-tag">拉麵</span>
+                    <span class="food-tag">豬排飯</span>
+                    <span class="food-tag tag-vibe">山頂景觀</span>
+                </div>
+                <div class="resto-desc">位於 Yamabiko 區域，搭長坂纜車上去後的主要午餐點。咖哩飯是人氣首選，份量大味道好。窗邊位可看雪景。</div>
+                <div class="resto-footer">
+                    <span class="price-tag price-budget">¥900–1,500 / 人</span>
+                    <span class="rec-stars">★★★★☆</span>
+                </div>
+            </div>
+            <div class="dining-card">
+                <div class="resto-name">Hikage Rest House</div>
+                <div class="resto-name-jp">日影レストハウス</div>
+                <div class="resto-meta">
+                    <span class="food-tag">定食</span>
+                    <span class="food-tag">烏冬</span>
+                    <span class="food-tag tag-vibe">初學者區</span>
+                </div>
+                <div class="resto-desc">日影滑雪場山腳的休息站。提供簡單定食和熱飲。初學者練完可直接在這裡吃午餐休息，不用走遠。</div>
+                <div class="resto-footer">
+                    <span class="price-tag price-budget">¥700–1,200 / 人</span>
+                    <span class="rec-stars">★★★☆☆</span>
+                </div>
+            </div>
+            <div class="dining-card">
+                <div class="resto-name">Uenotaira Hütte</div>
+                <div class="resto-name-jp">上ノ平ヒュッテ</div>
+                <div class="resto-meta">
+                    <span class="food-tag">輕食</span>
+                    <span class="food-tag">熱飲</span>
+                    <span class="food-tag tag-vibe">中級區域</span>
+                </div>
+                <div class="resto-desc">上ノ平區域的山中小屋。提供簡單熱食和飲品。位置方便中級滑雪者中途休息補充能量。</div>
+                <div class="resto-footer">
+                    <span class="price-tag price-budget">¥600–1,000 / 人</span>
+                    <span class="rec-stars">★★★☆☆</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 分類 6: 必試名物 -->
+    <div class="dining-category">
+        <div class="dining-category-header">
+            <div class="cat-icon">🌟</div>
+            <div>
+                <h3>野沢必試名物</h3>
+                <p>來到野沢溫泉不能錯過的在地美食</p>
+            </div>
+        </div>
+        <div class="specialty-grid">
+            <div class="specialty-card">
+                <div class="spec-icon">🥬</div>
+                <h4>野沢菜漬</h4>
+                <div class="spec-jp">のざわな</div>
+                <p>野沢溫泉的代名詞！用溫泉水醃漬的芥菜，只有這裡才正宗。配白飯或做成炒飯都一流。各旅館都會提供。</p>
+            </div>
+            <div class="specialty-card">
+                <div class="spec-icon">🥟</div>
+                <h4>信州おやき</h4>
+                <div class="spec-jp">Oyaki</div>
+                <p>長野縣代表小食。蕎麥粉或小麥粉皮包入野沢菜、茄子或南瓜等餡料，蒸或烤製。街邊小攤就有賣，¥200–350一個。</p>
+            </div>
+            <div class="specialty-card">
+                <div class="spec-icon">🥚</div>
+                <h4>溫泉卵</h4>
+                <div class="spec-jp">温泉たまご</div>
+                <p>在「麻釜（おがま）」溫泉池用高溫泉水煮熟的雞蛋。可以自己帶蛋去煮（當地超市有賣）！免費體驗。</p>
+            </div>
+            <div class="specialty-card">
+                <div class="spec-icon">🍶</div>
+                <h4>水尾地酒</h4>
+                <div class="spec-jp">みずお</div>
+                <p>野沢溫泉唯一的在地酒造「田中屋酒造店」釀造。用北信州的米和水製成的清酒，冬天喝溫燗最讚。各居酒屋都有。</p>
+            </div>
+            <div class="specialty-card">
+                <div class="spec-icon">🦌</div>
+                <h4>ジビエ（野味）</h4>
+                <div class="spec-jp">Gibier</div>
+                <p>冬季限定的山間野味。鹿肉、野豬、偶爾有熊肉。在 Sanzoku 可以吃到完整的野味鍋料理。值得挑戰！</p>
+            </div>
+            <div class="specialty-card">
+                <div class="spec-icon">🍺</div>
+                <h4>野沢溫泉精釀啤酒</h4>
+                <div class="spec-jp">Nozawa Onsen Brewing</div>
+                <p>用當地溫泉水源釀造的手工啤酒。IPA、Pale Ale、季節限定款都有。在 Brewing 直營店或部分居酒屋可喝到。</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 用餐預算估算 -->
+    <div class="dining-tip">
+        <h3>💰 每日餐飲預算參考（每人）</h3>
+        <ul>
+            <li><strong>節省型</strong>：¥3,000–4,000 / 日（山上午餐 + 拉麵晚餐 + 便利店早餐）≈ HKD $160–210</li>
+            <li><strong>標準型</strong>：¥5,000–7,000 / 日（麵包早餐 + 山上午餐 + 居酒屋晚餐）≈ HKD $260–370</li>
+            <li><strong>豐富型</strong>：¥8,000–12,000 / 日（咖啡廳早餐 + 餐廳午餐 + 高檔晚餐 + 酒吧）≈ HKD $420–630</li>
+            <li><strong>5天合計估算</strong>：每人 HKD $1,000–2,500（視乎住宿是否包餐）</li>
+        </ul>
+    </div>
+
+</div>
+</div>
+
+<!-- ==================== TAB 3: 觀光活動 ==================== -->
+<div id="tab-sightseeing" class="tab-content">
+<div class="container">
+
+    <!-- ===== 野沢溫泉村地圖 ===== -->
+    <div class="map-container">
+        <h2>🗺️ 野沢溫泉村地圖 — 觀光路線 & 推薦地點
+            <a href="nozawa-map.html" style="font-size:0.7rem; margin-left:16px; padding:5px 14px; background:#0ea5e9; color:white; border-radius:20px; text-decoration:none; font-weight:600; vertical-align:middle;">📍 開啟 Google Map 版本 →</a>
+        </h2>
+        <div class="map-controls">
+            <button class="map-toggle active-route-a" data-layer="route-a" onclick="toggleMapLayer(this)">🐒 路線A：雪猴+小布施</button>
+            <button class="map-toggle active-route-b" data-layer="route-b" onclick="toggleMapLayer(this)">♨️ 路線B：村內溫泉巡禮</button>
+            <button class="map-toggle active-route-c" data-layer="route-c" onclick="toggleMapLayer(this)">⛩️ 路線C：善光寺</button>
+            <button class="map-toggle active-food" data-layer="food" onclick="toggleMapLayer(this)">🍜 餐廳</button>
+            <button class="map-toggle active-onsen" data-layer="onsen" onclick="toggleMapLayer(this)">♨️ 溫泉</button>
+            <button class="map-toggle active-sight" data-layer="sight" onclick="toggleMapLayer(this)">📍 觀光景點</button>
+        </div>
+        <div class="map-svg-wrap">
+            <div class="map-tooltip" id="mapTooltip"></div>
+            <svg viewBox="0 0 900 680" xmlns="http://www.w3.org/2000/svg" id="villageMap">
+                <!-- Background terrain -->
+                <defs>
+                    <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="#bae6fd"/>
+                        <stop offset="100%" stop-color="#e0f2fe"/>
+                    </linearGradient>
+                    <linearGradient id="mountainGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="#94a3b8"/>
+                        <stop offset="100%" stop-color="#cbd5e1"/>
+                    </linearGradient>
+                    <pattern id="snowPattern" width="20" height="20" patternUnits="userSpaceOnUse">
+                        <circle cx="3" cy="5" r="1" fill="#ffffff" opacity="0.5"/>
+                        <circle cx="12" cy="14" r="0.8" fill="#ffffff" opacity="0.4"/>
+                        <circle cx="18" cy="3" r="0.6" fill="#ffffff" opacity="0.3"/>
+                    </pattern>
+                    <filter id="shadow">
+                        <feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.15"/>
+                    </filter>
+                </defs>
+
+                <!-- Sky -->
+                <rect width="900" height="680" fill="url(#skyGrad)"/>
+                <!-- Snow overlay -->
+                <rect width="900" height="680" fill="url(#snowPattern)"/>
+
+                <!-- Mountains background -->
+                <polygon points="0,180 80,90 160,130 250,60 350,110 430,40 520,100 600,70 680,120 770,50 850,90 900,130 900,300 0,300" fill="url(#mountainGrad)" opacity="0.4"/>
+                <polygon points="0,220 100,160 200,190 320,130 420,170 530,120 650,160 750,130 850,170 900,190 900,340 0,340" fill="#94a3b8" opacity="0.3"/>
+
+                <!-- Ski slopes (top area) -->
+                <path d="M 650,80 Q 700,140 720,200 L 760,200 Q 740,140 690,80 Z" fill="#f0fdf4" stroke="#86efac" stroke-width="1" opacity="0.6"/>
+                <path d="M 720,100 Q 760,160 770,220 L 810,210 Q 790,150 750,90 Z" fill="#f0fdf4" stroke="#86efac" stroke-width="1" opacity="0.5"/>
+                <text x="710" y="110" font-size="11" fill="#166534" font-weight="600">滑雪場</text>
+
+                <!-- Nagasaka Gondola station -->
+                <rect x="680" y="195" width="90" height="40" rx="6" fill="#1e40af" opacity="0.85" filter="url(#shadow)"/>
+                <text x="725" y="213" font-size="10" fill="white" text-anchor="middle" font-weight="700">長坂ゴンドラ</text>
+                <text x="725" y="227" font-size="9" fill="#bfdbfe" text-anchor="middle">Nagasaka Gondola</text>
+                <!-- Gondola line -->
+                <line x1="720" y1="195" x2="700" y2="100" stroke="#1e40af" stroke-width="2" stroke-dasharray="6,3" opacity="0.5"/>
+
+                <!-- Hikage area (south-west) -->
+                <rect x="80" y="410" width="100" height="36" rx="6" fill="#1e40af" opacity="0.7" filter="url(#shadow)"/>
+                <text x="130" y="428" font-size="10" fill="white" text-anchor="middle" font-weight="600">日影ゲレンデ</text>
+                <text x="130" y="440" font-size="9" fill="#bfdbfe" text-anchor="middle">Hikage Ski Area</text>
+
+                <!-- Yu-Road area -->
+                <path d="M 200,350 L 200,440" stroke="#7c3aed" stroke-width="3" stroke-dasharray="4,2" opacity="0.5"/>
+                <text x="215" y="395" font-size="9" fill="#7c3aed" font-weight="600">Yu-Road</text>
+
+                <!-- Village roads -->
+                <!-- Main road (温泉街 / Onsen Street) - runs roughly N-S in center -->
+                <path d="M 400,250 Q 410,320 420,380 Q 425,420 430,470 Q 435,520 440,570" stroke="#475569" stroke-width="4" fill="none" opacity="0.4" stroke-linecap="round"/>
+                <text x="445" y="310" font-size="9" fill="#475569" transform="rotate(5,445,310)">溫泉街</text>
+
+                <!-- Cross road -->
+                <path d="M 280,350 L 580,330" stroke="#475569" stroke-width="3" fill="none" opacity="0.3" stroke-linecap="round"/>
+                <!-- Upper road to gondola -->
+                <path d="M 500,280 Q 580,260 680,215" stroke="#475569" stroke-width="3" fill="none" opacity="0.3" stroke-linecap="round"/>
+                <!-- Lower road -->
+                <path d="M 200,440 Q 300,450 440,470" stroke="#475569" stroke-width="2.5" fill="none" opacity="0.3" stroke-linecap="round"/>
+
+                <!-- Bus terminal -->
+                <rect x="350" y="560" width="85" height="32" rx="5" fill="#64748b" filter="url(#shadow)"/>
+                <text x="392" y="577" font-size="10" fill="white" text-anchor="middle" font-weight="600">🚌 巴士站</text>
+                <text x="392" y="588" font-size="8" fill="#cbd5e1" text-anchor="middle">→ 飯山 25分</text>
+
+                <!-- ===== ROUTE A: 雪猴+小布施 (Red) ===== -->
+                <g class="map-layer" data-layer="route-a">
+                    <!-- Route line: bus stop → Iiyama → Yudanaka → Snow Monkeys → Obuse → back -->
+                    <path d="M 392,592 L 392,640 Q 392,660 372,660 L 100,660" stroke="#ef4444" stroke-width="3" fill="none" stroke-dasharray="8,4" opacity="0.8" marker-end="url(#arrowRed)"/>
+                    <defs><marker id="arrowRed" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0,0 8,3 0,6" fill="#ef4444"/></marker></defs>
+                    <rect x="20" y="635" width="80" height="40" rx="8" fill="#fef2f2" stroke="#ef4444" stroke-width="1.5"/>
+                    <text x="60" y="651" font-size="9" fill="#991b1b" text-anchor="middle" font-weight="600">地獄谷雪猴</text>
+                    <text x="60" y="663" font-size="8" fill="#b91c1c" text-anchor="middle">Snow Monkeys</text>
+                    <text x="60" y="672" font-size="7" fill="#dc2626" text-anchor="middle">¥800 · 步行25分鐘</text>
+                    <!-- Obuse -->
+                    <rect x="120" y="635" width="70" height="40" rx="8" fill="#fef2f2" stroke="#ef4444" stroke-width="1.5"/>
+                    <text x="155" y="653" font-size="9" fill="#991b1b" text-anchor="middle" font-weight="600">小布施</text>
+                    <text x="155" y="665" font-size="8" fill="#b91c1c" text-anchor="middle">栗子+北齋</text>
+                    <!-- Route label -->
+                    <rect x="240" y="638" width="100" height="20" rx="10" fill="#ef4444" opacity="0.9"/>
+                    <text x="290" y="652" font-size="9" fill="white" text-anchor="middle" font-weight="600">路線A 約7–8小時</text>
+                </g>
+
+                <!-- ===== ROUTE B: 村內溫泉巡禮 (Purple, within village) ===== -->
+                <g class="map-layer" data-layer="route-b">
+                    <!-- Walking route through village: Ogama → Oyu → Kumano → Kawara → Sparena -->
+                    <path d="M 400,370 Q 380,390 360,400 Q 340,420 320,440 Q 290,460 260,470 Q 220,480 180,460" stroke="#8b5cf6" stroke-width="3" fill="none" stroke-dasharray="6,4" opacity="0.8"/>
+                    <!-- Numbered stops -->
+                    <circle cx="400" cy="370" r="10" fill="#8b5cf6" opacity="0.9"/>
+                    <text x="400" y="374" font-size="9" fill="white" text-anchor="middle" font-weight="700">1</text>
+                    <circle cx="350" cy="405" r="10" fill="#8b5cf6" opacity="0.9"/>
+                    <text x="350" y="409" font-size="9" fill="white" text-anchor="middle" font-weight="700">2</text>
+                    <circle cx="310" cy="440" r="10" fill="#8b5cf6" opacity="0.9"/>
+                    <text x="310" y="444" font-size="9" fill="white" text-anchor="middle" font-weight="700">3</text>
+                    <circle cx="255" cy="470" r="10" fill="#8b5cf6" opacity="0.9"/>
+                    <text x="255" y="474" font-size="9" fill="white" text-anchor="middle" font-weight="700">4</text>
+                    <circle cx="180" cy="460" r="10" fill="#8b5cf6" opacity="0.9"/>
+                    <text x="180" y="464" font-size="9" fill="white" text-anchor="middle" font-weight="700">5</text>
+                    <!-- Route legend -->
+                    <rect x="100" y="495" width="200" height="50" rx="8" fill="#faf5ff" stroke="#8b5cf6" stroke-width="1"/>
+                    <text x="110" y="510" font-size="8" fill="#6d28d9" font-weight="600">路線B 村內溫泉巡禮：</text>
+                    <text x="110" y="522" font-size="7.5" fill="#7c3aed">❶ 麻釜 → ❷ 大湯 → ❸ 熊之手洗湯</text>
+                    <text x="110" y="534" font-size="7.5" fill="#7c3aed">→ ❹ 河原湯 → ❺ Sparena SPA</text>
+                </g>
+
+                <!-- ===== ROUTE C: 善光寺 (Green) ===== -->
+                <g class="map-layer" data-layer="route-c">
+                    <!-- Route line to bottom-right (represents going to Nagano) -->
+                    <path d="M 392,592 L 500,610 Q 600,620 700,630 L 850,640" stroke="#059669" stroke-width="3" fill="none" stroke-dasharray="8,4" opacity="0.8" marker-end="url(#arrowGreen)"/>
+                    <defs><marker id="arrowGreen" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0,0 8,3 0,6" fill="#059669"/></marker></defs>
+                    <!-- Nagano / Zenkoji -->
+                    <rect x="760" y="615" width="120" height="40" rx="8" fill="#ecfdf5" stroke="#059669" stroke-width="1.5"/>
+                    <text x="820" y="631" font-size="9" fill="#065f46" text-anchor="middle" font-weight="600">善光寺（長野市）</text>
+                    <text x="820" y="643" font-size="8" fill="#047857" text-anchor="middle">1400年 · 戒壇巡り</text>
+                    <text x="820" y="653" font-size="7" fill="#059669" text-anchor="middle">新幹線12分+巴士 · ¥600</text>
+                    <!-- Route label -->
+                    <rect x="560" y="595" width="100" height="20" rx="10" fill="#059669" opacity="0.9"/>
+                    <text x="610" y="609" font-size="9" fill="white" text-anchor="middle" font-weight="600">路線C 約7小時</text>
+                </g>
+
+                <!-- ===== FOOD markers (Orange/Gold) ===== -->
+                <g class="map-layer" data-layer="food">
+                    <!-- Sanzoku (near village center) -->
+                    <g class="map-marker" data-tip="Sanzoku 山賊｜野味鍋・炭火燒｜¥2,000–3,000｜需預約">
+                        <circle cx="450" cy="340" r="9" fill="#f59e0b" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+                        <text x="450" y="344" font-size="8" fill="white" text-anchor="middle">🍲</text>
+                    </g>
+                    <!-- Den -->
+                    <g class="map-marker" data-tip="Den でん｜大阪燒・鐵板燒｜¥1,200–2,000｜人氣No.1">
+                        <circle cx="430" cy="380" r="9" fill="#f59e0b" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+                        <text x="430" y="384" font-size="8" fill="white" text-anchor="middle">🥘</text>
+                    </g>
+                    <!-- Kanetsu -->
+                    <g class="map-marker" data-tip="Kanetsu 兼津｜手打蕎麥麵｜¥900–1,500｜午餐推薦">
+                        <circle cx="410" cy="420" r="9" fill="#f59e0b" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+                        <text x="410" y="424" font-size="8" fill="white" text-anchor="middle">🍜</text>
+                    </g>
+                    <!-- Shin Ramen -->
+                    <g class="map-marker" data-tip="Shin しん｜味噌拉麵｜¥900–1,200｜濃厚信州味噌">
+                        <circle cx="380" cy="400" r="9" fill="#f59e0b" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+                        <text x="380" y="404" font-size="8" fill="white" text-anchor="middle">🍜</text>
+                    </g>
+                    <!-- Nozawa Brewing -->
+                    <g class="map-marker" data-tip="Nozawa Onsen Brewing｜精釀啤酒+披薩｜¥1,500–2,500｜氣氛佳">
+                        <circle cx="470" cy="360" r="9" fill="#f59e0b" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+                        <text x="470" y="364" font-size="8" fill="white" text-anchor="middle">🍺</text>
+                    </g>
+                    <!-- Haus St. Anton -->
+                    <g class="map-marker" data-tip="Haus St. Anton｜歐式料理｜¥2,500–4,000｜西式最佳">
+                        <circle cx="530" cy="310" r="9" fill="#f59e0b" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+                        <text x="530" y="314" font-size="8" fill="white" text-anchor="middle">🍷</text>
+                    </g>
+                    <!-- Nagai Pan -->
+                    <g class="map-marker" data-tip="Nagai Pan ナガイパン｜手工麵包｜¥200–500｜早餐推薦">
+                        <circle cx="360" cy="360" r="9" fill="#f59e0b" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+                        <text x="360" y="364" font-size="8" fill="white" text-anchor="middle">🍞</text>
+                    </g>
+                    <!-- Faust Bar -->
+                    <g class="map-marker" data-tip="Faust ファウスト｜酒吧｜¥800–1,500｜滑雪後飲酒推薦">
+                        <circle cx="490" cy="330" r="9" fill="#f59e0b" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+                        <text x="490" y="334" font-size="8" fill="white" text-anchor="middle">🍸</text>
+                    </g>
+                    <!-- Food labels (small) -->
+                    <text x="462" y="340" font-size="7" fill="#92400e" font-weight="600">Sanzoku</text>
+                    <text x="442" y="377" font-size="7" fill="#92400e" font-weight="600">Den</text>
+                    <text x="422" y="418" font-size="7" fill="#92400e" font-weight="600">Kanetsu</text>
+                    <text x="371" y="413" font-size="7" fill="#92400e" font-weight="600">Shin</text>
+                    <text x="483" y="360" font-size="7" fill="#92400e" font-weight="600">Brewing</text>
+                    <text x="543" y="310" font-size="7" fill="#92400e" font-weight="600">St.Anton</text>
+                    <text x="371" y="356" font-size="7" fill="#92400e" font-weight="600">Nagai</text>
+                    <text x="502" y="328" font-size="7" fill="#92400e" font-weight="600">Faust</text>
+                </g>
+
+                <!-- ===== ONSEN markers (Blue) ===== -->
+                <g class="map-layer" data-layer="onsen">
+                    <!-- Ogama 麻釜 -->
+                    <g class="map-marker" data-tip="麻釜（おがま）｜天然溫泉煮蛋｜免費｜90°C泉源">
+                        <circle cx="400" cy="370" r="11" fill="#0ea5e9" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+                        <text x="400" y="374" font-size="9" fill="white" text-anchor="middle">♨</text>
+                    </g>
+                    <!-- Oyu 大湯 -->
+                    <g class="map-marker" data-tip="大湯｜最有名外湯｜免費｜46°C 超高溫・地標">
+                        <circle cx="420" cy="400" r="11" fill="#0ea5e9" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+                        <text x="420" y="404" font-size="9" fill="white" text-anchor="middle">♨</text>
+                    </g>
+                    <!-- Kumano-te-arai 熊之手洗湯 -->
+                    <g class="map-marker" data-tip="熊之手洗湯｜歷史悠久外湯｜免費｜傳說熊來洗手">
+                        <circle cx="370" cy="430" r="11" fill="#0ea5e9" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+                        <text x="370" y="434" font-size="9" fill="white" text-anchor="middle">♨</text>
+                    </g>
+                    <!-- Kawara-yu 河原湯 -->
+                    <g class="map-marker" data-tip="河原湯｜開放感外湯｜免費｜水溫稍低・初心者向">
+                        <circle cx="320" cy="450" r="11" fill="#0ea5e9" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+                        <text x="320" y="454" font-size="9" fill="white" text-anchor="middle">♨</text>
+                    </g>
+                    <!-- Sparena -->
+                    <g class="map-marker" data-tip="Sparena SPA｜溫水泳池+露天溫泉+桑拿｜¥700｜可待半天">
+                        <circle cx="180" cy="480" r="11" fill="#0ea5e9" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+                        <text x="180" y="484" font-size="9" fill="white" text-anchor="middle">♨</text>
+                    </g>
+                    <!-- Onsen labels -->
+                    <text x="400" y="358" font-size="8" fill="#0369a1" font-weight="700" text-anchor="middle">麻釜</text>
+                    <text x="436" y="398" font-size="8" fill="#0369a1" font-weight="700">大湯</text>
+                    <text x="355" y="446" font-size="7" fill="#0369a1" font-weight="600">熊之手洗湯</text>
+                    <text x="305" y="466" font-size="7" fill="#0369a1" font-weight="600">河原湯</text>
+                    <text x="168" y="498" font-size="8" fill="#0369a1" font-weight="600">Sparena</text>
+                </g>
+
+                <!-- ===== SIGHTSEEING markers (Pink) ===== -->
+                <g class="map-layer" data-layer="sight">
+                    <!-- Tanakaya Sake 田中屋酒造 -->
+                    <g class="map-marker" data-tip="田中屋酒造店｜清酒「水尾」見學+試飲｜¥300–500｜需預約">
+                        <circle cx="480" cy="420" r="9" fill="#ec4899" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+                        <text x="480" y="424" font-size="8" fill="white" text-anchor="middle">🍶</text>
+                    </g>
+                    <!-- Oborozukiyo 朧月夜之館 -->
+                    <g class="map-marker" data-tip="朧月夜之館｜音樂博物館・高野辰之紀念｜¥300｜30–45分鐘">
+                        <circle cx="440" cy="450" r="9" fill="#ec4899" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+                        <text x="440" y="454" font-size="8" fill="white" text-anchor="middle">🎵</text>
+                    </g>
+                    <!-- Onsen street shopping 溫泉街 -->
+                    <g class="map-marker" data-tip="溫泉街散步｜土產店・野沢菜・おやき｜免費逛｜晚上更有氣氛">
+                        <circle cx="420" cy="330" r="9" fill="#ec4899" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+                        <text x="420" y="334" font-size="8" fill="white" text-anchor="middle">🛍</text>
+                    </g>
+                    <!-- Night skiing -->
+                    <g class="map-marker" data-tip="夜間滑雪（日影）｜ナイター 17:00–20:00｜¥1,500｜人少好練習">
+                        <circle cx="130" cy="440" r="9" fill="#ec4899" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+                        <text x="130" y="444" font-size="8" fill="white" text-anchor="middle">🌙</text>
+                    </g>
+                    <!-- Snow shoe -->
+                    <g class="map-marker" data-tip="雪鞋健行｜2–3小時・含裝備｜¥5,000–8,000｜需預約">
+                        <circle cx="620" cy="180" r="9" fill="#ec4899" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+                        <text x="620" y="184" font-size="8" fill="white" text-anchor="middle">👟</text>
+                    </g>
+                    <!-- Sight labels -->
+                    <text x="493" y="420" font-size="7" fill="#9d174d" font-weight="600">田中屋酒造</text>
+                    <text x="452" y="448" font-size="7" fill="#9d174d" font-weight="600">朧月夜之館</text>
+                    <text x="432" y="328" font-size="7" fill="#9d174d" font-weight="600">溫泉街</text>
+                    <text x="143" y="440" font-size="7" fill="#9d174d" font-weight="600">夜滑</text>
+                    <text x="633" y="180" font-size="7" fill="#9d174d" font-weight="600">雪鞋</text>
+                </g>
+
+                <!-- ===== Fixed landmarks (always shown) ===== -->
+                <!-- Village name -->
+                <text x="420" y="270" font-size="16" fill="#1e293b" text-anchor="middle" font-weight="800" opacity="0.7">野沢溫泉村</text>
+                <text x="420" y="288" font-size="10" fill="#475569" text-anchor="middle" opacity="0.6">Nozawa Onsen Village</text>
+
+                <!-- Compass -->
+                <g transform="translate(840,40)">
+                    <circle cx="0" cy="0" r="18" fill="white" opacity="0.8" stroke="#94a3b8" stroke-width="1"/>
+                    <text x="0" y="-5" font-size="10" fill="#1e293b" text-anchor="middle" font-weight="700">N</text>
+                    <polygon points="0,-14 -3,-8 3,-8" fill="#ef4444"/>
+                    <polygon points="0,14 -3,8 3,8" fill="#94a3b8"/>
+                </g>
+
+                <!-- Scale bar -->
+                <line x1="30" y1="620" x2="130" y2="620" stroke="#475569" stroke-width="2"/>
+                <line x1="30" y1="616" x2="30" y2="624" stroke="#475569" stroke-width="2"/>
+                <line x1="130" y1="616" x2="130" y2="624" stroke="#475569" stroke-width="2"/>
+                <text x="80" y="614" font-size="8" fill="#475569" text-anchor="middle">~500m</text>
+
+                <!-- Altitude indicator -->
+                <text x="800" y="200" font-size="8" fill="#64748b">▲ 高處</text>
+                <text x="800" y="560" font-size="8" fill="#64748b">▼ 低處</text>
+                <line x1="815" y1="210" x2="815" y2="545" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3,3" opacity="0.4"/>
+
+            </svg>
+        </div>
+        <div class="map-legend">
+            <div class="map-legend-item"><div class="map-legend-dot" style="background:#ef4444"></div>路線A：雪猴+小布施（外部一日遊）</div>
+            <div class="map-legend-item"><div class="map-legend-dot" style="background:#8b5cf6"></div>路線B：村內溫泉巡禮（步行即可）</div>
+            <div class="map-legend-item"><div class="map-legend-dot" style="background:#059669"></div>路線C：善光寺+長野（新幹線）</div>
+            <div class="map-legend-item"><div class="map-legend-dot" style="background:#f59e0b"></div>推薦餐廳</div>
+            <div class="map-legend-item"><div class="map-legend-dot" style="background:#0ea5e9"></div>溫泉/外湯</div>
+            <div class="map-legend-item"><div class="map-legend-dot" style="background:#ec4899"></div>觀光景點</div>
+        </div>
+    </div>
+
+    <!-- 休息日計劃 (Jan 27) -->
+    <h2 class="section-title">1月27日（三）休息觀光日 — 建議行程</h2>
+
+    <div class="dining-tip">
+        <h3>📋 為何安排休息日？</h3>
+        <ul>
+            <li>連續滑雪2天後肌肉需要恢復，休息一天第3天表現更好</li>
+            <li>野沢周邊有很多值得探索的景點，不滑雪也不會悶</li>
+            <li>初學者膝蓋和大腿會特別酸痛，給身體一天恢復時間</li>
+            <li>團體8人可以分組行動，晚上再集合吃飯</li>
+        </ul>
+    </div>
+
+    <!-- 方案 A: 雪猴 + 小布施 -->
+    <div class="day-plan">
+        <h3>🐒 方案 A：地獄谷雪猴 + 小布施半日遊（推薦）</h3>
+        <div class="day-plan-timeline">
+            <div class="plan-step">
+                <div class="step-time">08:30</div>
+                <div class="step-title">早餐後出發</div>
+                <div class="step-desc">從野沢搭巴士到飯山站（25分鐘），轉 JR 到湯田中站（約40分鐘）</div>
+            </div>
+            <div class="plan-step">
+                <div class="step-time">10:00</div>
+                <div class="step-title">抵達地獄谷野猿公苑</div>
+                <div class="step-desc">從停車場步行約25分鐘雪路到達猴子溫泉。看野生日本獼猴泡溫泉！冬天猴子最多。入場 ¥800</div>
+            </div>
+            <div class="plan-step">
+                <div class="step-time">11:30</div>
+                <div class="step-title">返回湯田中，搭車前往小布施</div>
+                <div class="step-desc">長野電鐵約20分鐘到小布施站</div>
+            </div>
+            <div class="plan-step">
+                <div class="step-time">12:00</div>
+                <div class="step-title">小布施午餐 + 散步</div>
+                <div class="step-desc">栗子名物：栗子飯、Mont Blanc、栗子冰淇淋。逛北齋館（葛飾北齋晚年居住地）、竹風堂本店</div>
+            </div>
+            <div class="plan-step">
+                <div class="step-time">14:30</div>
+                <div class="step-title">返回野沢</div>
+                <div class="step-desc">小布施→長野→飯山→野沢（約1.5小時）</div>
+            </div>
+            <div class="plan-step">
+                <div class="step-time">16:00</div>
+                <div class="step-title">回到野沢，自由活動</div>
+                <div class="step-desc">泡外湯、逛溫泉街、休息按摩</div>
+            </div>
+            <div class="plan-step">
+                <div class="step-time">19:00</div>
+                <div class="step-title">全員集合晚餐</div>
+                <div class="step-desc">推薦 Sanzoku 野味鍋或 Den 大阪燒（休息日好好吃一頓！）</div>
+            </div>
+        </div>
+        <div class="route-details" style="margin-top:16px; font-size:0.83rem; color:#64748b;">
+            <span>🚌 交通費：約 ¥3,000–4,000 / 人（巴士+電車來回）</span>
+            <span>⏱️ 全程約 7–8 小時</span>
+            <span>👟 雪猴步道需防水鞋</span>
+        </div>
+    </div>
+
+    <!-- 方案 B: 村內深度遊 -->
+    <div class="day-plan">
+        <h3>♨️ 方案 B：野沢村內深度溫泉巡禮（輕鬆型）</h3>
+        <div class="day-plan-timeline">
+            <div class="plan-step">
+                <div class="step-time">09:00</div>
+                <div class="step-title">睡到自然醒，悠閒早餐</div>
+                <div class="step-desc">去 Nagai Pan 買新鮮麵包，或在旅館慢慢吃</div>
+            </div>
+            <div class="plan-step">
+                <div class="step-time">10:00</div>
+                <div class="step-title">麻釜（おがま）溫泉煮蛋體驗</div>
+                <div class="step-desc">在超市買蛋（¥200/包），到麻釜用天然溫泉水煮。90°C泉水約12分鐘熟。免費體驗！</div>
+            </div>
+            <div class="plan-step">
+                <div class="step-time">10:30</div>
+                <div class="step-title">外湯巡禮（目標 3–5 間）</div>
+                <div class="step-desc">13間免費公共溫泉各有特色。推薦：大湯（最有名）、熊之手洗湯、河原湯。每間泡10–15分鐘</div>
+            </div>
+            <div class="plan-step">
+                <div class="step-time">12:30</div>
+                <div class="step-title">溫泉街午餐</div>
+                <div class="step-desc">Kanetsu 手打蕎麥 或 Shin 拉麵，順便逛土產店買野沢菜手信</div>
+            </div>
+            <div class="plan-step">
+                <div class="step-time">14:00</div>
+                <div class="step-title">Sparena 溫泉SPA / 自由活動</div>
+                <div class="step-desc">Sparena 有溫水泳池 + 露天溫泉（¥700）。或去田中屋酒造見學品酒。或純休息</div>
+            </div>
+            <div class="plan-step">
+                <div class="step-time">16:00</div>
+                <div class="step-title">日影ゲレンデ 輕鬆滑 / 雪上散步</div>
+                <div class="step-desc">如果腿不太痛，可以在日影初學者區輕鬆滑1小時。或穿雪鞋散步</div>
+            </div>
+            <div class="plan-step">
+                <div class="step-time">18:00</div>
+                <div class="step-title">夕陽外湯 + 晚餐</div>
+                <div class="step-desc">推薦 Nozawa Onsen Brewing 精釀啤酒配披薩，或 Haus St. Anton</div>
+            </div>
+        </div>
+        <div class="route-details" style="margin-top:16px; font-size:0.83rem; color:#64748b;">
+            <span>💰 費用：幾乎免費（外湯免費，Sparena ¥700）</span>
+            <span>⏱️ 隨心安排，不趕行程</span>
+            <span>👍 適合想休息的人</span>
+        </div>
+    </div>
+
+    <!-- 方案 C: 善光寺 + 長野 -->
+    <div class="day-plan">
+        <h3>⛩️ 方案 C：長野善光寺 + 市區購物</h3>
+        <div class="day-plan-timeline">
+            <div class="plan-step">
+                <div class="step-time">09:00</div>
+                <div class="step-title">出發前往長野市</div>
+                <div class="step-desc">野沢→飯山（巴士25分）→長野（新幹線12分）。約1小時到達</div>
+            </div>
+            <div class="plan-step">
+                <div class="step-time">10:30</div>
+                <div class="step-title">善光寺參拜</div>
+                <div class="step-desc">日本最古老的佛像之一，1400年歷史。冬天雪景壯觀。可體驗「戒壇巡り」（地下暗道摸鎖）</div>
+            </div>
+            <div class="plan-step">
+                <div class="step-time">12:00</div>
+                <div class="step-title">表參道午餐 + 購物</div>
+                <div class="step-desc">善光寺門前的商店街。名物：おやき、七味唐辛子（八幡屋礒五郎）、蕎麥麵</div>
+            </div>
+            <div class="plan-step">
+                <div class="step-time">14:00</div>
+                <div class="step-title">長野站周邊</div>
+                <div class="step-desc">MIDORI 百貨購物、藥妝店補貨、信州土產購買</div>
+            </div>
+            <div class="plan-step">
+                <div class="step-time">16:00</div>
+                <div class="step-title">返回野沢</div>
+                <div class="step-desc">長野→飯山→野沢，約1小時</div>
+            </div>
+        </div>
+        <div class="route-details" style="margin-top:16px; font-size:0.83rem; color:#64748b;">
+            <span>🚄 交通費：約 ¥3,500–4,500 / 人（新幹線+巴士）</span>
+            <span>⏱️ 全程約 7 小時</span>
+            <span>🛍️ 適合想購物的人</span>
+        </div>
+    </div>
+
+    <!-- 村內觀光活動 -->
+    <h2 class="section-title">村內觀光活動（每天都可以做）</h2>
+
+    <div class="activity-section">
+        <div class="activity-grid">
+            <div class="activity-card">
+                <div class="act-title">外湯巡禮（13間免費溫泉）</div>
+                <div class="act-subtitle">十三の外湯めぐり</div>
+                <div class="act-desc">野沢最大特色！全村有13間免費公共溫泉，各有不同泉質和歷史。重點推薦：<strong>大湯</strong>（地標級）、<strong>熊之手洗湯</strong>（據說熊來洗手被發現的泉源）、<strong>河原湯</strong>（露天感）。注意：水溫很高（44–46°C），初次泡建議先適應。</div>
+                <div class="act-meta">
+                    <span class="act-tag act-tag-free">免費</span>
+                    <span class="act-tag act-tag-time">每間15–20分鐘</span>
+                    <span class="act-tag act-tag-tip">帶自己的毛巾</span>
+                    <span class="act-tag act-tag-tip">紋身OK</span>
+                </div>
+            </div>
+            <div class="activity-card">
+                <div class="act-title">麻釜（おがま）</div>
+                <div class="act-subtitle">天然溫泉煮食場</div>
+                <div class="act-desc">村中心的天然高溫泉源（90°C），當地人用來煮蛋、煮野菜。遊客也可以自己帶食材來煮！超市買蛋（¥200），放入泉水約12分鐘即熟。旁邊有足湯可以一邊泡腳一邊等。</div>
+                <div class="act-meta">
+                    <span class="act-tag act-tag-free">免費體驗</span>
+                    <span class="act-tag act-tag-time">30分鐘</span>
+                    <span class="act-tag act-tag-tip">超市買蛋 ¥200</span>
+                </div>
+            </div>
+            <div class="activity-card">
+                <div class="act-title">溫泉街散步 + 土產購物</div>
+                <div class="act-subtitle">温泉街ショッピング</div>
+                <div class="act-desc">石板路兩旁的小店充滿風情。必逛：野沢菜本舖（醃菜試吃）、おやき攤（現烤 ¥250）、溫泉饅頭店、手工藝品店。晚上點燈後更有氣氛。</div>
+                <div class="act-meta">
+                    <span class="act-tag act-tag-free">免費逛</span>
+                    <span class="act-tag act-tag-time">1–2小時</span>
+                    <span class="act-tag act-tag-tip">晚上更有氣氛</span>
+                </div>
+            </div>
+            <div class="activity-card">
+                <div class="act-title">田中屋酒造店見學</div>
+                <div class="act-subtitle">地酒「水尾」釀造參觀</div>
+                <div class="act-desc">野沢唯一的在地酒造，釀造「水尾」清酒超過150年。可以參觀釀造過程並試飲多款清酒。冬季是釀造旺季（寒造り），運氣好能看到實際作業。</div>
+                <div class="act-meta">
+                    <span class="act-tag act-tag-paid">試飲 ¥300–500</span>
+                    <span class="act-tag act-tag-time">45分鐘</span>
+                    <span class="act-tag act-tag-tip">需預約</span>
+                </div>
+            </div>
+            <div class="activity-card">
+                <div class="act-title">Sparena 溫泉 SPA</div>
+                <div class="act-subtitle">スパリーナ</div>
+                <div class="act-desc">村內最大的溫泉設施，有溫水泳池、露天溫泉、桑拿、按摩服務。滑雪後肌肉痠痛的最佳解方。可以待半天。有餐廳。</div>
+                <div class="act-meta">
+                    <span class="act-tag act-tag-paid">入場 ¥700</span>
+                    <span class="act-tag act-tag-time">2–3小時</span>
+                    <span class="act-tag act-tag-dist">村南部</span>
+                </div>
+            </div>
+            <div class="activity-card">
+                <div class="act-title">夜間滑雪</div>
+                <div class="act-subtitle">ナイター（日影ゲレンデ）</div>
+                <div class="act-desc">日影滑雪場部分雪道開放夜間滑雪（通常到 20:00）。燈光下滑雪感覺完全不同，而且人很少！適合已經有點基礎想多練習的人。</div>
+                <div class="act-meta">
+                    <span class="act-tag act-tag-paid">夜間券 ¥1,500</span>
+                    <span class="act-tag act-tag-time">17:00–20:00</span>
+                    <span class="act-tag act-tag-tip">需有基礎</span>
+                </div>
+            </div>
+            <div class="activity-card">
+                <div class="act-title">おぼろ月夜の館</div>
+                <div class="act-subtitle">朧月夜之館（音樂博物館）</div>
+                <div class="act-desc">紀念在野沢溫泉創作「朧月夜」等名曲的高野辰之。小巧的博物館展示日本唱歌的歷史。館內溫暖，下雪天的好去處。</div>
+                <div class="act-meta">
+                    <span class="act-tag act-tag-paid">¥300</span>
+                    <span class="act-tag act-tag-time">30–45分鐘</span>
+                    <span class="act-tag act-tag-dist">村中心</span>
+                </div>
+            </div>
+            <div class="activity-card">
+                <div class="act-title">雪鞋健行</div>
+                <div class="act-subtitle">スノーシュー体験</div>
+                <div class="act-desc">穿上雪鞋在山林間散步，享受寧靜的雪景。野沢有幾家戶外導覽公司提供 2–3 小時的雪鞋健行。適合不想滑雪但想親近大自然的人。</div>
+                <div class="act-meta">
+                    <span class="act-tag act-tag-paid">¥5,000–8,000（含裝備）</span>
+                    <span class="act-tag act-tag-time">2–3小時</span>
+                    <span class="act-tag act-tag-tip">需預約</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 半日遊/一日遊選項 -->
+    <h2 class="section-title">周邊半日遊 / 一日遊（休息日推薦）</h2>
+
+    <div class="activity-section">
+        <div class="activity-grid">
+            <div class="activity-card">
+                <div class="act-title">地獄谷野猿公苑（雪猴）</div>
+                <div class="act-subtitle">Snow Monkey Park</div>
+                <div class="act-desc">世界唯一泡溫泉的野生猴子！冬天是最佳觀賞季節，猴子為了取暖會泡進溫泉。非常上鏡。需步行25分鐘雪路進入園區，建議穿防水鞋。</div>
+                <div class="act-meta">
+                    <span class="act-tag act-tag-paid">入場 ¥800</span>
+                    <span class="act-tag act-tag-time">來回約4小時</span>
+                    <span class="act-tag act-tag-dist">距野沢約1.5小時</span>
+                    <span class="act-tag act-tag-tip">冬天必去</span>
+                </div>
+            </div>
+            <div class="activity-card">
+                <div class="act-title">小布施（栗子小鎮）</div>
+                <div class="act-subtitle">Obuse — 葛飾北齋晚年居住地</div>
+                <div class="act-desc">長野縣最精緻的小鎮。以栗子甜點聞名：竹風堂的栗子飯、小布施堂的 Mont Blanc、栗子冰淇淋。還有北齋館展出浮世繪大師的天花板畫。街道整潔適合散步拍照。</div>
+                <div class="act-meta">
+                    <span class="act-tag act-tag-paid">北齋館 ¥1,000</span>
+                    <span class="act-tag act-tag-time">來回約3–4小時</span>
+                    <span class="act-tag act-tag-dist">距野沢約1小時</span>
+                    <span class="act-tag act-tag-tip">栗子控必去</span>
+                </div>
+            </div>
+            <div class="activity-card">
+                <div class="act-title">善光寺（長野市）</div>
+                <div class="act-subtitle">Zenkoji Temple — 1400年歷史</div>
+                <div class="act-desc">日本最重要的寺院之一，供奉日本最古老佛像。冬天雪覆蓋的本堂非常壯觀。體驗「戒壇巡り」：在完全漆黑的地下通道摸索前進找到「極樂の鍵」。門前商店街可買七味粉（八幡屋礒五郎）。</div>
+                <div class="act-meta">
+                    <span class="act-tag act-tag-paid">本堂 ¥600</span>
+                    <span class="act-tag act-tag-time">來回約5–6小時</span>
+                    <span class="act-tag act-tag-dist">距野沢約1小時</span>
+                    <span class="act-tag act-tag-tip">歷史文化</span>
+                </div>
+            </div>
+            <div class="activity-card">
+                <div class="act-title">飯山市雪景散步</div>
+                <div class="act-subtitle">飯山 — 日本屈指の豪雪地帶</div>
+                <div class="act-desc">從野沢搭巴士25分鐘即達。飯山是日本著名的豪雪地帶，積雪可達3米。可參觀飯山寺町（22間寺院群）、高橋まゆみ人形館。比長野更近、更悠閒。</div>
+                <div class="act-meta">
+                    <span class="act-tag act-tag-paid">人形館 ¥620</span>
+                    <span class="act-tag act-tag-time">來回約3小時</span>
+                    <span class="act-tag act-tag-dist">巴士25分鐘</span>
+                    <span class="act-tag act-tag-tip">最近的選項</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 每日傍晚活動 -->
+    <h2 class="section-title">每日滑雪後活動建議（17:00–22:00）</h2>
+
+    <div class="day-plan">
+        <h3>🌙 滑雪日的傍晚/夜間行程模板</h3>
+        <div class="day-plan-timeline">
+            <div class="plan-step">
+                <div class="step-time">16:30</div>
+                <div class="step-title">結束滑雪，回旅館</div>
+                <div class="step-desc">放好裝備，換上輕便衣服和防水鞋</div>
+            </div>
+            <div class="plan-step">
+                <div class="step-time">17:00</div>
+                <div class="step-title">外湯時間</div>
+                <div class="step-desc">就近泡一間外湯。建議每天試不同間。大湯最有名但水溫極高，膽小者可試河原湯（稍涼）</div>
+            </div>
+            <div class="plan-step">
+                <div class="step-time">17:45</div>
+                <div class="step-title">溫泉街散步</div>
+                <div class="step-desc">邊走邊吃おやき（¥250）、看看土產店。入夜後街道點燈非常漂亮</div>
+            </div>
+            <div class="plan-step">
+                <div class="step-time">18:30</div>
+                <div class="step-title">晚餐</div>
+                <div class="step-desc">8人建議分2桌（4+4）比較容易找位。人氣店 17:30 就開始排隊</div>
+            </div>
+            <div class="plan-step">
+                <div class="step-time">20:30</div>
+                <div class="step-title">二次會 / 自由活動</div>
+                <div class="step-desc">想喝酒：Faust / Stay Bar / Kuranojo。想休息：回旅館泡內湯。想加練：日影夜滑到 20:00</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 實用資訊 -->
+    <div class="dining-tip">
+        <h3>📝 觀光實用資訊</h3>
+        <ul>
+            <li><strong>外湯禮儀</strong>：進湯前洗淨身體、長髮紮起、毛巾不入池、有紋身也OK（野沢比較開放）</li>
+            <li><strong>雪猴交通</strong>：可請旅館代訂包車（8人約 ¥40,000 來回），比公共交通方便很多</li>
+            <li><strong>防寒</strong>：1月底氣溫約 -5°C 到 -10°C，散步時需保暖外套、手套、帽子</li>
+            <li><strong>現金</strong>：村內很多店只收現金。建議飯山站或長野站的 ATM 先提款（7-11 ATM 接受海外卡）</li>
+            <li><strong>營業時間</strong>：外湯大多 5:00–23:00。土產店約 9:00–18:00。餐廳晚餐 17:30 開始</li>
+        </ul>
+    </div>
+
+</div>
+</div>
+
+<!-- ==================== TAB 4: 預訂資訊 ==================== -->
+<div id="tab-booking" class="tab-content">
+<div class="container">
+
+    <h2 class="section-title">預訂時間倒數</h2>
+    <div class="countdown">
+        <h3>距離關鍵預訂日期</h3>
+        <div class="countdown-grid">
+            <div class="countdown-item">
+                <div class="days" id="countdown-schanze">⚠️ 即刻</div>
+                <div class="label">Schanze Nozawa<br>（已開放，即將額滿）</div>
+            </div>
+            <div class="countdown-item">
+                <div class="days" id="countdown-jul1">—</div>
+                <div class="label">Tamayura / Denbey<br>（2026年7月1日開放）</div>
+            </div>
+            <div class="countdown-item">
+                <div class="days" id="countdown-jul25">—</div>
+                <div class="label">河一屋 Kawaichiya<br>（約2026年7月25日開放）</div>
+            </div>
+            <div class="countdown-item">
+                <div class="days" id="countdown-aug">—</div>
+                <div class="label">野沢溫泉Lodge<br>（約2026年8月開放）</div>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="section-title">⚡ 立即行動清單</h2>
+    <div class="action-box">
+        <h3>🚨 緊急 — 現在就要做的事</h3>
+        <ul>
+            <li>📱 <strong>WhatsApp 聯絡 Schanze Nozawa</strong> — 確認1月24-29日是否還有8人空位，Jan 2027已近乎額滿</li>
+            <li>📱 <strong>WhatsApp 聯絡 HETA 蔕</strong> — 確認1/25-28能否延長或調整日期</li>
+            <li>🌐 <strong>確認 Address Nozawa</strong> — 是否有更大房型釋出，或可否訂2間</li>
+            <li>⏰ <strong>設定日曆提醒</strong> — 2026年7月1日（搶訂 Tamayura & Denbey）</li>
+        </ul>
+    </div>
+
+    <h2 class="section-title">各住宿預訂詳情</h2>
+    <table class="booking-table">
+        <thead>
+            <tr>
+                <th>住宿名稱</th>
+                <th>開放預訂日期</th>
+                <th>預訂方式</th>
+                <th>預訂規則 / 限制</th>
+                <th>取消政策</th>
+                <th>目前狀態</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Schanze Nozawa</strong><br>シャンツェ野沢</td>
+                <td>已開放</td>
+                <td><span class="booking-method method-whatsapp">WhatsApp</span></td>
+                <td>直接聯絡老闆預約，無最低住宿天數限制</td>
+                <td>待確認</td>
+                <td><span class="tag tag-full">即將額滿 — 立即聯絡</span></td>
+            </tr>
+            <tr>
+                <td><strong>Tamayura たまゆら</strong></td>
+                <td><strong>2026年7月1日</strong><br>日本時間下午1:00<br>（4晚以上）</td>
+                <td><span class="booking-method method-web">官網預訂</span></td>
+                <td>
+                    • 4晚以上：7月1日開放<br>
+                    • 2晚以上：9月1日開放<br>
+                    • 1晚住宿：10月1日開放<br>
+                    • 需預訂4人房+3人房
+                </td>
+                <td>待確認（官網查詢）</td>
+                <td><span class="tag tag-soon">尚未開放</span></td>
+            </tr>
+            <tr>
+                <td><strong>Lodge Denbey でんべえ</strong></td>
+                <td><strong>2026年7月1日</strong><br>上午10:00</td>
+                <td><span class="booking-method method-web">官網預訂</span></td>
+                <td>
+                    • 接受4晚以上預訂<br>
+                    • 大和室可住7-8人<br>
+                    • 一泊二食制
+                </td>
+                <td>待確認</td>
+                <td><span class="tag tag-soon">尚未開放</span></td>
+            </tr>
+            <tr>
+                <td><strong>野沢溫泉 Lodge</strong><br>Nozawa Onsen Lodge</td>
+                <td>預計<strong>2026年8月中</strong></td>
+                <td><span class="booking-method method-web">官網預訂</span><br><span class="booking-method method-email">Email</span></td>
+                <td>
+                    • 通常8月對外開放冬季預約<br>
+                    • 具體日期待官網公布<br>
+                    • 適合外國團體
+                </td>
+                <td>待確認</td>
+                <td><span class="tag tag-soon">約8月開放</span></td>
+            </tr>
+            <tr>
+                <td><strong>HETA 蔕</strong></td>
+                <td>已開放</td>
+                <td><span class="booking-method method-web">官網預訂</span></td>
+                <td>
+                    • 官網最低3晚連住<br>
+                    • 僅1/25-28有空房（3晚）<br>
+                    • 1 Suite (6人) + 1 Double (2人)<br>
+                    • 不符合我們5晚需求
+                </td>
+                <td>待確認</td>
+                <td><span class="tag tag-full">僅3晚可用</span></td>
+            </tr>
+            <tr>
+                <td><strong>住吉屋 Sumiyosiya</strong></td>
+                <td>目前僅開放至12月<br>1月份<strong>尚未開放</strong></td>
+                <td><span class="booking-method method-web">官網（日文）</span><br><span class="booking-method method-platform">Jalan</span></td>
+                <td>
+                    • 建議直接看日文官網<br>
+                    • Jalan可能未釋放2027庫存<br>
+                    • 需分2-3間傳統和室<br>
+                    • 一泊二食（懷石料理）
+                </td>
+                <td>依官網政策</td>
+                <td><span class="tag tag-soon">未開放1月</span></td>
+            </tr>
+            <tr>
+                <td><strong>河一屋 Kawaichiya</strong></td>
+                <td>約<strong>2026年7月25日</strong><br>（6個月前開放）</td>
+                <td><span class="booking-method method-web">官網預訂</span></td>
+                <td>
+                    • 只接受6個月內的預訂<br>
+                    • 大和室（12-15疊）<br>
+                    • 雙源泉溫泉
+                </td>
+                <td>待確認</td>
+                <td><span class="tag tag-soon">約7月25日</span></td>
+            </tr>
+            <tr>
+                <td><strong>SKI INN Nozawa</strong></td>
+                <td>已開放</td>
+                <td><span class="booking-method method-web">官網預訂</span></td>
+                <td>
+                    • 最多容納6人<br>
+                    • 不夠8人使用（需另訂）<br>
+                    • 自炊型公寓
+                </td>
+                <td>待確認</td>
+                <td><span class="tag tag-open">有空房（僅6人）</span></td>
+            </tr>
+            <tr>
+                <td><strong>Address Nozawa</strong></td>
+                <td>已開放</td>
+                <td><span class="booking-method method-web">官網預訂</span></td>
+                <td>
+                    • 只剩6人房<br>
+                    • 必須連續住5晚<br>
+                    • 每晚 ¥122,400（6人）
+                </td>
+                <td>待確認</td>
+                <td><span class="tag tag-open">有房（6人/5晚限制）</span></td>
+            </tr>
+            <tr>
+                <td><strong>Tanuki Apartments</strong></td>
+                <td>待確認</td>
+                <td><span class="booking-method method-web">staynozawa.com</span></td>
+                <td>
+                    • 3-4房公寓單位<br>
+                    • 含廚房、壁爐<br>
+                    • 自炊型
+                </td>
+                <td>依平台政策</td>
+                <td><span class="tag tag-unknown">待確認</span></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2 class="section-title">預訂時間線</h2>
+    <div class="timeline">
+        <div class="timeline-item urgent">
+            <div class="timeline-date">🚨 現在 — 2026年6月</div>
+            <h3>立即行動</h3>
+            <p>
+                <strong>Schanze Nozawa</strong> — 透過 WhatsApp 聯絡確認1月24-29日空房<br>
+                <strong>HETA 蔕</strong> — 確認日期是否可延長<br>
+                <strong>Address / SKI INN</strong> — 確認是否可訂2間湊夠8人
+            </p>
+        </div>
+
+        <div class="timeline-item upcoming">
+            <div class="timeline-date">📅 2026年7月1日</div>
+            <h3>搶訂日 — 最關鍵！</h3>
+            <p>
+                <strong>Tamayura たまゆら</strong> — 下午1:00 (JST) 開放4晚以上預訂<br>
+                <strong>Lodge Denbey でんべえ</strong> — 上午10:00 (JST) 開放4晚以上預訂<br><br>
+                ⚠️ 建議：提前在官網註冊帳號，開放第一秒就下單。這兩間是熱門選項，動作要快！
+            </p>
+        </div>
+
+        <div class="timeline-item upcoming">
+            <div class="timeline-date">📅 2026年7月25日（估計）</div>
+            <h3>河一屋開放</h3>
+            <p>
+                <strong>河一屋 Kawaichiya</strong> — 6個月前開放預訂<br>
+                作為後備選項。如果7月1日的兩間都沒搶到，可以等這間。
+            </p>
+        </div>
+
+        <div class="timeline-item later">
+            <div class="timeline-date">📅 2026年8月中</div>
+            <h3>Western-style 選項開放</h3>
+            <p>
+                <strong>野沢溫泉 Lodge</strong> — 預計8月對外開放冬季住房預約<br>
+                西式旅舍風格，適合外國團體，有酒吧和公共休息區。
+            </p>
+        </div>
+
+        <div class="timeline-item later">
+            <div class="timeline-date">📅 2026年9月1日</div>
+            <h3>短住選項開放</h3>
+            <p>
+                <strong>Tamayura</strong> — 開放2晚以上的預訂<br>
+                如果之前4晚以上沒搶到，可能還有機會訂到較短天數。
+            </p>
+        </div>
+
+        <div class="timeline-item later">
+            <div class="timeline-date">📅 2026年12月前</div>
+            <h3>最終確認</h3>
+            <p>
+                所有預訂應在12月前確認完畢。<br>
+                同時請旅館代為預約餐廳（野沢1月份的人氣餐廳非常搶手）。
+            </p>
+        </div>
+    </div>
+
+    <h2 class="section-title">預訂策略建議</h2>
+    <div class="summary-cards">
+        <div class="summary-card">
+            <div class="icon">🎯</div>
+            <h3>策略一：穩紮穩打</h3>
+            <p>立即聯絡 Schanze → 如果有房就訂下。同時設定7/1提醒搶 Tamayura 作為升級選項。兩邊都成功的話比較後取消一間。</p>
+        </div>
+        <div class="summary-card">
+            <div class="icon">🏆</div>
+            <h3>策略二：全力搶訂</h3>
+            <p>7月1日同時搶 Tamayura + Denbey（兩人分工），哪間先搶到就定哪間。Schanze 作為即時後備。</p>
+        </div>
+        <div class="summary-card">
+            <div class="icon">🔄</div>
+            <h3>策略三：組合住宿</h3>
+            <p>前2晚住 HETA 蔕（1/24-26），後3晚住 Tamayura 或 Schanze（1/26-29）。享受兩種不同風格。搬家略麻煩。</p>
+        </div>
+        <div class="summary-card">
+            <div class="icon">💡</div>
+            <h3>重要提醒</h3>
+            <p>野沢溫泉的人氣住宿在旺季極度搶手，尤其是能容納大團體的選項。<strong>能訂就先訂，別等！</strong></p>
+        </div>
+    </div>
+
+</div>
+</div>
+
+<div class="footnote">
+    <p>🦊 Ski Babies 2027 — 住宿研究報告</p>
+    <p>製作日期：2026年6月 | 價格以港幣估算 | 空房情況隨時變動</p>
+    <p>⚠️ 需要行動：立即聯絡 Schanze，設定7月1日提醒搶訂 Tamayura & Denbey</p>
+</div>
+
+<script>
+function switchTab(tabName) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById('tab-' + tabName).classList.add('active');
+    event.target.classList.add('active');
+}
+
+// Sorting
+(function() {
+    const table = document.getElementById('mainRankTable');
+    if (!table) return;
+    const headers = table.querySelectorAll('th');
+    let currentSort = { col: null, dir: 'asc' };
+
+    headers.forEach((th, colIdx) => {
+        th.addEventListener('click', function() {
+            const isNum = th.dataset.type === 'num';
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+
+            if (currentSort.col === colIdx) {
+                currentSort.dir = currentSort.dir === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSort.col = colIdx;
+                currentSort.dir = 'asc';
+            }
+
+            headers.forEach(h => h.classList.remove('sorted-asc', 'sorted-desc'));
+            th.classList.add('sorted-' + currentSort.dir);
+
+            rows.sort((a, b) => {
+                const cellA = a.cells[colIdx];
+                const cellB = b.cells[colIdx];
+                let valA = cellA.dataset.sort || cellA.textContent.trim();
+                let valB = cellB.dataset.sort || cellB.textContent.trim();
+
+                if (isNum) {
+                    valA = parseFloat(valA) || 0;
+                    valB = parseFloat(valB) || 0;
+                    return currentSort.dir === 'asc' ? valA - valB : valB - valA;
+                } else {
+                    return currentSort.dir === 'asc'
+                        ? valA.localeCompare(valB, 'zh-Hant')
+                        : valB.localeCompare(valA, 'zh-Hant');
+                }
+            });
+
+            rows.forEach(r => tbody.appendChild(r));
+        });
+    });
+})();
+
+// Countdown calculator
+(function() {
+    const now = new Date();
+    const targets = [
+        { id: 'countdown-jul1', date: new Date('2026-07-01T04:00:00Z') },
+        { id: 'countdown-jul25', date: new Date('2026-07-25') },
+        { id: 'countdown-aug', date: new Date('2026-08-15') },
+    ];
+
+    targets.forEach(t => {
+        const diff = Math.ceil((t.date - now) / (1000 * 60 * 60 * 24));
+        const el = document.getElementById(t.id);
+        if (el) {
+            if (diff > 0) {
+                el.textContent = diff + ' 天';
+            } else if (diff === 0) {
+                el.textContent = '今天！';
+            } else {
+                el.textContent = '已過期';
+            }
+        }
+    });
+})();
+
+// Map layer toggle
+function toggleMapLayer(btn) {
+    var layer = btn.dataset.layer;
+    var activeClass = 'active';
+    if (layer === 'route-a') activeClass = 'active-route-a';
+    else if (layer === 'route-b') activeClass = 'active-route-b';
+    else if (layer === 'route-c') activeClass = 'active-route-c';
+    else if (layer === 'food') activeClass = 'active-food';
+    else if (layer === 'onsen') activeClass = 'active-onsen';
+    else if (layer === 'sight') activeClass = 'active-sight';
+
+    btn.classList.toggle(activeClass);
+    var isActive = btn.classList.contains(activeClass);
+    var layers = document.querySelectorAll('.map-layer[data-layer="' + layer + '"]');
+    layers.forEach(function(el) {
+        el.style.display = isActive ? '' : 'none';
+    });
+}
+
+// Map tooltip
+(function() {
+    var tooltip = document.getElementById('mapTooltip');
+    var svgWrap = document.querySelector('.map-svg-wrap');
+    if (!tooltip || !svgWrap) return;
+
+    var markers = document.querySelectorAll('.map-marker');
+    markers.forEach(function(marker) {
+        marker.style.cursor = 'pointer';
+        marker.addEventListener('mouseenter', function(e) {
+            var tip = marker.dataset.tip;
+            if (!tip) return;
+            tooltip.textContent = tip;
+            tooltip.classList.add('visible');
+            positionTooltip(e);
+        });
+        marker.addEventListener('mousemove', positionTooltip);
+        marker.addEventListener('mouseleave', function() {
+            tooltip.classList.remove('visible');
+        });
+    });
+
+    function positionTooltip(e) {
+        var rect = svgWrap.getBoundingClientRect();
+        var x = e.clientX - rect.left + 12;
+        var y = e.clientY - rect.top - 30;
+        if (x + 220 > rect.width) x = x - 240;
+        if (y < 0) y = e.clientY - rect.top + 15;
+        tooltip.style.left = x + 'px';
+        tooltip.style.top = y + 'px';
+    }
+})();
+</script>
+
+</body>
+</html>

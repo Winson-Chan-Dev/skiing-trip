@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🗺️ 野沢溫泉村 互動地圖 — Ski Babies 2027</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        :root {
+            --mountain: #1e293b;
+            --sky: #0ea5e9;
+            --snow: #f8fafc;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Microsoft JhengHei', 'Segoe UI', -apple-system, sans-serif;
+            background: var(--mountain);
+            color: var(--mountain);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0f172a, #1e3a5f);
+            padding: 20px 30px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .header h1 { font-size: 1.4rem; }
+        .header .subtitle { font-size: 0.85rem; opacity: 0.7; }
+
+        .header-right {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .header-right a {
+            color: white;
+            text-decoration: none;
+            font-size: 0.82rem;
+            padding: 6px 14px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.15);
+            transition: background 0.2s;
+        }
+
+        .header-right a:hover { background: rgba(255,255,255,0.3); }
+
+        #map {
+            width: 100%;
+            height: calc(100vh - 70px);
+        }
+
+        .legend-panel {
+            position: absolute;
+            bottom: 30px;
+            left: 10px;
+            background: white;
+            border-radius: 12px;
+            padding: 14px 18px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            z-index: 1000;
+            font-size: 0.78rem;
+            max-width: 250px;
+        }
+
+        .legend-panel h3 {
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+            color: var(--mountain);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 3px 0;
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            border: 2px solid white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .legend-line {
+            width: 24px;
+            height: 3px;
+            flex-shrink: 0;
+            border-radius: 2px;
+        }
+
+        .layer-toggle {
+            position: absolute;
+            top: 80px;
+            right: 10px;
+            background: white;
+            border-radius: 12px;
+            padding: 14px 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            z-index: 1000;
+            font-size: 0.8rem;
+            min-width: 200px;
+        }
+
+        .layer-toggle h3 {
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+            color: var(--mountain);
+        }
+
+        .layer-toggle label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 0;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .layer-toggle input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--sky);
+        }
+
+        .layer-divider {
+            height: 1px;
+            background: #e2e8f0;
+            margin: 6px 0;
+        }
+
+        .custom-popup .leaflet-popup-content-wrapper {
+            border-radius: 10px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+
+        .popup-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+        }
+
+        .popup-subtitle {
+            font-size: 0.78rem;
+            color: #64748b;
+            margin-bottom: 6px;
+        }
+
+        .popup-desc {
+            font-size: 0.82rem;
+            color: #475569;
+            line-height: 1.5;
+            margin-bottom: 6px;
+        }
+
+        .popup-meta {
+            font-size: 0.75rem;
+            color: #0ea5e9;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div>
+        <h1>🗺️ 野沢溫泉村 互動地圖</h1>
+        <div class="subtitle">🦊 Ski Babies 2027 · Jan 24–29 · 觀光路線 & 推薦地點</div>
+    </div>
+    <div class="header-right">
+        <a href="https://www.google.com/maps/d/u/0/edit?mid=&ll=36.9225,138.628&z=15" target="_blank" style="background:#1a73e8;">🗺️ Google My Maps</a>
+        <a href="https://www.google.com/maps/@36.9225,138.6280,16z" target="_blank">📍 在Google Maps開啟</a>
+        <a href="hotel-comparison.html">← 返回總覽</a>
+    </div>
+</div>
+
+<div id="map"></div>
+
+<div class="layer-toggle" id="layerToggle">
+    <h3>📍 圖層控制</h3>
+    <label><input type="checkbox" checked data-layer="routeA"> 🐒 路線A：雪猴+小布施</label>
+    <label><input type="checkbox" checked data-layer="routeB"> ♨️ 路線B：村內溫泉巡禮</label>
+    <label><input type="checkbox" checked data-layer="routeC"> ⛩️ 路線C：善光寺+長野</label>
+    <div class="layer-divider"></div>
+    <label><input type="checkbox" checked data-layer="food"> 🍜 推薦餐廳</label>
+    <label><input type="checkbox" checked data-layer="onsen"> ♨️ 溫泉 / 外湯</label>
+    <label><input type="checkbox" checked data-layer="sight"> 📍 觀光景點</label>
+    <label><input type="checkbox" checked data-layer="ski"> ⛷️ 滑雪設施</label>
+    <div class="layer-divider"></div>
+    <label><input type="checkbox" checked data-layer="hotel"> 🏨 住宿選項</label>
+    <div class="layer-divider"></div>
+    <label><input type="checkbox" data-layer="regional"> 🚄 周邊區域（縮小看）</label>
+</div>
+
+<div class="legend-panel">
+    <h3>圖例</h3>
+    <div class="legend-item"><div class="legend-line" style="background:#ef4444; border: 1px dashed #ef4444;"></div> 路線A 雪猴+小布施</div>
+    <div class="legend-item"><div class="legend-line" style="background:#8b5cf6;"></div> 路線B 村內溫泉巡禮</div>
+    <div class="legend-item"><div class="legend-line" style="background:#059669; border: 1px dashed #059669;"></div> 路線C 善光寺</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f59e0b;"></div> 餐廳</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#0ea5e9;"></div> 溫泉</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#ec4899;"></div> 觀光景點</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#1e40af;"></div> 滑雪設施</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#10b981;"></div> 住宿</div>
+</div>
+
+<script>
+// Initialize map centered on Nozawa Onsen village
+var map = L.map('map', {
+    center: [36.9225, 138.6280],
+    zoom: 16,
+    zoomControl: true
+});
+
+// OpenStreetMap tiles
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors',
+    maxZoom: 19
+}).addTo(map);
+
+// Custom marker icons
+function makeIcon(color, emoji) {
+    return L.divIcon({
+        html: '<div style="background:' + color + '; width:28px; height:28px; border-radius:50%; border:3px solid white; box-shadow:0 2px 8px rgba(0,0,0,0.3); display:flex; align-items:center; justify-content:center; font-size:13px;">' + emoji + '</div>',
+        iconSize: [28, 28],
+        iconAnchor: [14, 14],
+        popupAnchor: [0, -16],
+        className: ''
+    });
+}
+
+function makeNumberIcon(color, num) {
+    return L.divIcon({
+        html: '<div style="background:' + color + '; width:26px; height:26px; border-radius:50%; border:2px solid white; box-shadow:0 2px 8px rgba(0,0,0,0.3); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:white;">' + num + '</div>',
+        iconSize: [26, 26],
+        iconAnchor: [13, 13],
+        popupAnchor: [0, -14],
+        className: ''
+    });
+}
+
+function popup(title, subtitle, desc, meta, lat, lng) {
+    var gmapLink = '';
+    if (lat && lng) {
+        gmapLink = '<div style="margin-top:6px;"><a href="https://www.google.com/maps/search/?api=1&query=' + lat + ',' + lng + '" target="_blank" style="font-size:0.72rem; color:#1a73e8; text-decoration:none; font-weight:600;">📍 在 Google Maps 開啟 →</a></div>';
+    }
+    return '<div class="popup-title">' + title + '</div>' +
+           (subtitle ? '<div class="popup-subtitle">' + subtitle + '</div>' : '') +
+           '<div class="popup-desc">' + desc + '</div>' +
+           (meta ? '<div class="popup-meta">' + meta + '</div>' : '') +
+           gmapLink;
+}
+
+function popupHotel(title, subtitle, desc, meta, lat, lng) {
+    var gmapSearch = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(title.replace(/[🏨🥇🥈🥉⭐]/g, '').trim()) + '+Nozawa+Onsen';
+    return '<div class="popup-title">' + title + '</div>' +
+           (subtitle ? '<div class="popup-subtitle">' + subtitle + '</div>' : '') +
+           '<div class="popup-desc">' + desc + '</div>' +
+           (meta ? '<div class="popup-meta">' + meta + '</div>' : '') +
+           '<div style="margin-top:6px;"><a href="' + gmapSearch + '" target="_blank" style="font-size:0.72rem; color:#1a73e8; text-decoration:none; font-weight:600;">📍 在 Google Maps 搜尋 →</a></div>';
+}
+
+// ===== LAYER GROUPS =====
+var layers = {};
+
+// ----- HOTELS / ACCOMMODATION -----
+layers.hotel = L.layerGroup([
+    L.marker([36.9270, 138.6330], {icon: makeIcon('#10b981', '🥇')})
+        .bindPopup(popupHotel('🥇 Schanze シャンツェ野沢', '⭐4.3 · 家族經營民宿 · 160m (3分鐘) 到長坂', '距長坂纜車最近的平價民宿！早餐好評如潮。可能已滿，需盡早聯絡WhatsApp。', '💰 ~$600–800/人(5晚) · 👥 大房可住8人')),
+    L.marker([36.9275, 138.6340], {icon: makeIcon('#10b981', '🥉')})
+        .bindPopup(popupHotel('🥉 たまゆら Tamayura', '⭐4.0 · 傳統民宿 · 90m (2分鐘) 到長坂', '離Gondola最近！自家製料理、服務溫暖。共用浴室。適合早起滑雪的人。4晚以上7月1日開放預訂。', '💰 ¥48,000/2人/晚 → ~$1,166/人(5晚) · 4人房+3人房')),
+    L.marker([36.9265, 138.6320], {icon: makeIcon('#10b981', '🏨')})
+        .bindPopup(popupHotel('野沢温泉ロッヂ Nozawa Lodge', '⭐3.8 · 西式旅館 · 220m (3分鐘) 到長坂', '外國人友善，有酒吧+交誼廳。基本房型但團體聚會氣氛好。約8月開放預訂。', '💰 ~$700–1,000/人(5晚) · 👥 團體首選')),
+    L.marker([36.9200, 138.6240], {icon: makeIcon('#10b981', '🏨')})
+        .bindPopup(popupHotel('SKI INN Nozawa', '⭐3.2 · 北歐風公寓 · 700m (13分鐘) 到長坂', '私人廚房、洗衣機、現代設計。只能住6人需另找房。距離較遠但自成一格。', '💰 ¥220,000/6人/晚 → ~$1,782/人(5晚) · ⚠️ 只住6人')),
+    L.marker([36.9215, 138.6260], {icon: makeIcon('#10b981', '🏨')})
+        .bindPopup(popupHotel('Address Nozawa', '⭐3.5 · 現代公寓酒店 · 290m (5分鐘) 到Yu-Road', '近日影初學者區！位置方便在溫泉街上。只剩6人房、需住滿5晚。', '💰 ¥122,400/晚(6人房) · 🎿 近初學者區')),
+    L.marker([36.9245, 138.6270], {icon: makeIcon('#10b981', '🏨')})
+        .bindPopup(popupHotel('HETA 蔕 Nozawa', '⭐3.3 · 設計精品屋 · 400m (7分鐘) 到長坂', '超美設計！1 suite(6人)+1 double(2人)=可住8人。但只有Jan 25–28 三晚。', '💰 ~$1,700/人(3晚) · ⚠️ 只有3晚 · 🎨 設計感')),
+    L.marker([36.9210, 138.6295], {icon: makeIcon('#10b981', '🏨')})
+        .bindPopup(popupHotel('住吉屋 Sumiyosiya', '⭐3.7 · 高級旅館 · 80m (2分鐘) 到Yu-Road', '頂級溫泉+懷石料理。離日影最近但離長坂最遠(14分鐘)。2027/1尚未開放預訂。', '💰 ~$3,250/2人(半食宿) · ♨️ 旅館體驗最佳')),
+    L.marker([36.9185, 138.6210], {icon: makeIcon('#10b981', '🥈')})
+        .bindPopup(popupHotel('🥈 Lodge Denbey でんべえ', '⭐3.9 · 滑雪小屋 · 日影滑雪區內 (Ski-in)', '8人可住同一大房間！餐食極佳。Ski-in位置，可直接滑到門口。7月1日開放。', '💰 ~$800–1,200/人(5晚含半食宿) · 🎿 Ski-in!')),
+    L.marker([36.9220, 138.6245], {icon: makeIcon('#10b981', '🏨')})
+        .bindPopup(popupHotel('Tanuki Apartments', '⭐3.8 · 豪華自炊公寓 · 200m (4分鐘) 到Yu-Road', '全套廚房（可煮火鍋！）、壁爐、多浴室。自成一格適合團體自煮。', '💰 ~$1,000–1,500/人(5晚) · 🍲 有廚房')),
+    L.marker([36.9180, 138.6285], {icon: makeIcon('#10b981', '🏨')})
+        .bindPopup(popupHotel('河一屋 Kawaichiya', '⭐3.6 · 傳統中價旅館 · 450m (9分鐘) 到Yu-Road', '雙源泉天然溫泉！大和室(12–15疊)全員同房。料理好評。7月25日開放預訂。', '💰 ~$800–1,200/人(5晚) · ♨️ 雙源泉')),
+    L.marker([36.9260, 138.6335], {icon: makeIcon('#10b981', '🏨')})
+        .bindPopup(popupHotel('Nozawa Gondola Apartments', '⭐4.0 · 現代滑雪公寓 · ~200m 到長坂', '現代化、近纜車、自炊、有雪具儲存室。需訂多間房。旺季有限。', '💰 ~$1,200–1,600/人(5晚) · 🎿 近纜車')),
+]).addTo(map);
+
+// ----- SKI FACILITIES -----
+layers.ski = L.layerGroup([
+    L.marker([36.9280, 138.6345], {icon: makeIcon('#1e40af', '🚡')})
+        .bindPopup(popup('長坂ゴンドラ Nagasaka Gondola', '主要纜車站', '通往山頂的主纜車，連接所有中高級雪道。從村中心步行約10–15分鐘上坡。', '⏰ 08:30–16:00', 36.9280, 138.6345)),
+    L.marker([36.9195, 138.6215], {icon: makeIcon('#1e40af', '⛷️')})
+        .bindPopup(popup('日影ゲレンデ Hikage Ski Area', '初學者滑雪區', '適合初學者的緩坡區域，有Yu-Road初級雪道。也開放夜滑（17:00–20:00，¥1,500）。', '🟢 初級 · ナイター有', 36.9195, 138.6215)),
+    L.marker([36.9245, 138.6310], {icon: makeIcon('#1e40af', '🎿')})
+        .bindPopup(popup('上之平ゲレンデ Uenotaira', '初中級滑雪區', '寬闊緩坡，初學者第一天最佳練習場地。有餐廳和休息區。', '🟢🔵 初~中級', 36.9245, 138.6310)),
+]).addTo(map);
+
+// ----- FOOD -----
+layers.food = L.layerGroup([
+    L.marker([36.9233, 138.6268], {icon: makeIcon('#f59e0b', '🍲')})
+        .bindPopup(popup('Sanzoku 山賊', 'さんぞく', '野味鍋、炭火燒肉。野沢最有特色的餐廳之一，山中小屋風格。需預約。', '💰 ¥2,000–3,000/人 · 📞 需預約', 36.9233, 138.6268)),
+    L.marker([36.9218, 138.6272], {icon: makeIcon('#f59e0b', '🥘')})
+        .bindPopup(popup('Den でん', '大阪燒・鐵板燒', '人氣No.1！自己動手做大阪燒和鐵板燒。8人適合，氣氛熱鬧。17:30開始排隊。', '💰 ¥1,200–2,000/人 · ⭐ 人氣最高', 36.9218, 138.6272)),
+    L.marker([36.9222, 138.6258], {icon: makeIcon('#f59e0b', '🍜')})
+        .bindPopup(popup('Kanetsu 兼津', '手打蕎麥麵', '手工現打蕎麥麵，使用信州產蕎麥粉。天婦羅蕎麥推薦。午餐最佳選擇。', '💰 ¥900–1,500/人 · 🕐 午餐推薦', 36.9222, 138.6258)),
+    L.marker([36.9215, 138.6265], {icon: makeIcon('#f59e0b', '🍜')})
+        .bindPopup(popup('Shin しん', '味噌拉麵', '濃厚信州味噌湯底，自家製麵。冬天滑雪後的最佳暖身選擇。', '💰 ¥900–1,200/人 · 🔥 冬天必吃', 36.9215, 138.6265)),
+    L.marker([36.9240, 138.6285], {icon: makeIcon('#f59e0b', '🍺')})
+        .bindPopup(popup('Nozawa Onsen Brewing', '精釀啤酒+窯烤披薩', '村內唯一精釀啤酒廠。6種自釀啤酒配窯烤披薩。氣氛輕鬆，外國人多。', '💰 ¥1,500–2,500/人 · 🍕 披薩推薦', 36.9240, 138.6285)),
+    L.marker([36.9260, 138.6300], {icon: makeIcon('#f59e0b', '🍷')})
+        .bindPopup(popup('Haus St. Anton', '歐式料理', '奧地利風格餐廳，牛排、燉肉、紅酒。野沢最好的西式餐廳。需預約。', '💰 ¥2,500–4,000/人 · 📞 建議預約', 36.9260, 138.6300)),
+    L.marker([36.9228, 138.6252], {icon: makeIcon('#f59e0b', '🍞')})
+        .bindPopup(popup('Nagai Pan ナガイパン', '手工麵包店', '早上7:00開門。新鮮出爐麵包、咖啡。當地人也愛去的早餐選擇。', '💰 ¥200–500 · 🕐 07:00開門', 36.9228, 138.6252)),
+    L.marker([36.9248, 138.6290], {icon: makeIcon('#f59e0b', '🍸')})
+        .bindPopup(popup('Faust ファウスト', '酒吧', '滑雪後的熱門酒吧。精選威士忌、雞尾酒。氣氛好，可以認識各國滑雪客。', '💰 ¥800–1,500 · 🕐 17:00–24:00', 36.9248, 138.6290)),
+]).addTo(map);
+
+// ----- ONSEN -----
+layers.onsen = L.layerGroup([
+    L.marker([36.9232, 138.6275], {icon: makeIcon('#0ea5e9', '♨️')})
+        .bindPopup(popup('麻釜（おがま）', 'Ogama — 天然溫泉煮蛋', '90°C高溫泉源，可以自己煮蛋（超市買蛋¥200，約12分鐘熟）。旁邊有足湯。野沢最具特色的體驗之一。', '💰 免費 · ⏱️ 30分鐘', 36.9232, 138.6275)),
+    L.marker([36.9220, 138.6270], {icon: makeIcon('#0ea5e9', '♨️')})
+        .bindPopup(popup('大湯', 'Oyu — 最有名外湯', '野沢地標級溫泉。木造建築非常美。注意：水溫46°C極高！分「あつ湯」和「ぬる湯」兩池。', '💰 免費 · ⚠️ 水溫極高', 36.9220, 138.6270)),
+    L.marker([36.9210, 138.6260], {icon: makeIcon('#0ea5e9', '♨️')})
+        .bindPopup(popup('熊之手洗湯', 'Kumano-te-arai-yu', '傳說一隻受傷的熊在此洗手被村民發現的古老溫泉。歷史感十足，水溫相對適中。', '💰 免費 · 🐻 歷史傳說', 36.9210, 138.6260)),
+    L.marker([36.9200, 138.6248], {icon: makeIcon('#0ea5e9', '♨️')})
+        .bindPopup(popup('河原湯', 'Kawara-yu', '水溫相對較低的外湯，適合初次泡湯的人。有露天感。初心者推薦。', '💰 免費 · 👍 初心者向', 36.9200, 138.6248)),
+    L.marker([36.9175, 138.6210], {icon: makeIcon('#0ea5e9', '♨️')})
+        .bindPopup(popup('Sparena スパリーナ', '溫泉 SPA 設施', '村內最大溫泉設施。溫水泳池、露天溫泉、桑拿、按摩。可以待半天。有餐廳。滑雪後肌肉痠痛最佳去處。', '💰 ¥700 · ⏱️ 2–3小時', 36.9175, 138.6210)),
+    L.marker([36.9238, 138.6282], {icon: makeIcon('#0ea5e9', '♨️')})
+        .bindPopup(popup('真湯', 'Shin-yu', '村中心的外湯，水溫適中。位置方便，散步順路即可泡。', '💰 免費', 36.9238, 138.6282)),
+    L.marker([36.9205, 138.6278], {icon: makeIcon('#0ea5e9', '♨️')})
+        .bindPopup(popup('十王堂之湯', 'Juoudou-no-yu', '兩層建築的外湯，二樓有休息區。水溫適中，空間寬敞。', '💰 免費 · 🏛️ 二層建築', 36.9205, 138.6278)),
+]).addTo(map);
+
+// ----- SIGHTSEEING -----
+layers.sight = L.layerGroup([
+    L.marker([36.9212, 138.6290], {icon: makeIcon('#ec4899', '🍶')})
+        .bindPopup(popup('田中屋酒造店', '清酒「水尾」見學', '150年歷史的在地酒造。可參觀釀造過程並試飲多款清酒。冬季是釀造旺季（寒造り）。', '💰 試飲 ¥300–500 · 📞 需預約', 36.9212, 138.6290)),
+    L.marker([36.9205, 138.6285], {icon: makeIcon('#ec4899', '🎵')})
+        .bindPopup(popup('朧月夜之館', 'おぼろ月夜の館', '紀念在野沢創作「朧月夜」的高野辰之。展示日本唱歌歷史。小巧溫暖，下雪天好去處。', '💰 ¥300 · ⏱️ 30–45分鐘', 36.9205, 138.6285)),
+    L.marker([36.9225, 138.6262], {icon: makeIcon('#ec4899', '🛍️')})
+        .bindPopup(popup('溫泉街', '温泉街ショッピング', '石板路兩旁小店：野沢菜本舖（醃菜試吃）、おやき攤（¥250）、溫泉饅頭、手工藝品。晚上點燈特別美。', '💰 免費逛 · 🌙 夜景推薦', 36.9225, 138.6262)),
+    L.marker([36.9235, 138.6260], {icon: makeIcon('#ec4899', '🥚')})
+        .bindPopup(popup('湯澤神社', 'Yuzawa Shrine', '村內古老神社。冬天被雪覆蓋的鳥居很有意境。1月有道祖神火祭（但今年日期需確認）。', '💰 免費 · 📸 拍照景點', 36.9235, 138.6260)),
+    L.marker([36.9190, 138.6240], {icon: makeIcon('#ec4899', '🌙')})
+        .bindPopup(popup('日影ナイター（夜間滑雪）', '17:00–20:00', '燈光下滑雪感覺完全不同，人很少。適合有基礎想多練習的人。', '💰 ¥1,500 · ⛷️ 需有基礎', 36.9190, 138.6240)),
+]).addTo(map);
+
+// ----- ROUTE A: Snow Monkeys + Obuse (village portion) -----
+layers.routeA = L.layerGroup([
+    // Starting point at bus terminal
+    L.marker([36.9192, 138.6263], {icon: makeNumberIcon('#ef4444', '出')})
+        .bindPopup(popup('🚌 野沢溫泉巴士站', '路線A出發點', '搭巴士到飯山站（25分鐘），轉JR到湯田中站（40分鐘）', '08:30 出發')),
+    // Route line within visible area (bus terminal to edge)
+    L.polyline([
+        [36.9192, 138.6263],
+        [36.9100, 138.6200],
+        [36.8900, 138.6000],
+    ], {color: '#ef4444', weight: 4, dashArray: '10,8', opacity: 0.8})
+]).addTo(map);
+
+// ----- ROUTE B: Village onsen tour -----
+layers.routeB = L.layerGroup([
+    L.marker([36.9232, 138.6275], {icon: makeNumberIcon('#8b5cf6', '1')})
+        .bindPopup(popup('❶ 麻釜（おがま）', '10:00 — 煮蛋體驗', '買蛋放入90°C泉水，等12分鐘。一邊泡足湯一邊等。', '路線B 第1站')),
+    L.marker([36.9220, 138.6270], {icon: makeNumberIcon('#8b5cf6', '2')})
+        .bindPopup(popup('❷ 大湯', '10:30 — 最有名外湯', '木造建築地標。46°C超高溫！分兩池，先試「ぬる湯」。', '路線B 第2站')),
+    L.marker([36.9210, 138.6260], {icon: makeNumberIcon('#8b5cf6', '3')})
+        .bindPopup(popup('❸ 熊之手洗湯', '11:00 — 歷史外湯', '水溫較適中，泡15分鐘即可。', '路線B 第3站')),
+    L.marker([36.9200, 138.6248], {icon: makeNumberIcon('#8b5cf6', '4')})
+        .bindPopup(popup('❹ 河原湯', '11:30 — 初心者推薦', '水溫最低的外湯之一，有露天感。初次泡推薦。', '路線B 第4站')),
+    L.marker([36.9175, 138.6210], {icon: makeNumberIcon('#8b5cf6', '5')})
+        .bindPopup(popup('❺ Sparena SPA', '14:00 — 半天悠閒', '泳池+露天溫泉+桑拿。可以待2–3小時放鬆。¥700。', '路線B 第5站')),
+    // Walking route polyline
+    L.polyline([
+        [36.9232, 138.6275],
+        [36.9220, 138.6270],
+        [36.9210, 138.6260],
+        [36.9200, 138.6248],
+        [36.9188, 138.6230],
+        [36.9175, 138.6210],
+    ], {color: '#8b5cf6', weight: 5, opacity: 0.7}),
+]).addTo(map);
+
+// ----- ROUTE C: Zenkoji (village departure) -----
+layers.routeC = L.layerGroup([
+    L.marker([36.9192, 138.6263], {icon: makeNumberIcon('#059669', '出')})
+        .bindPopup(popup('🚌 野沢溫泉巴士站', '路線C出發點', '搭巴士到飯山站（25分），轉北陸新幹線到長野站（12分）', '09:00 出發')),
+    L.polyline([
+        [36.9192, 138.6263],
+        [36.9100, 138.6150],
+        [36.8900, 138.5800],
+    ], {color: '#059669', weight: 4, dashArray: '10,8', opacity: 0.8}),
+]).addTo(map);
+
+// ----- REGIONAL (wider view — destinations outside village) -----
+layers.regional = L.layerGroup([
+    // Jigokudani Snow Monkeys
+    L.marker([36.7328, 138.4625], {icon: makeIcon('#ef4444', '🐒')})
+        .bindPopup(popup('地獄谷野猿公苑', 'Jigokudani Snow Monkey Park', '世界唯一泡溫泉的野生猴子！冬天最佳觀賞季。需步行25分雪路進入。非常上鏡。', '💰 ¥800 · ⏱️ 來回約4小時 · 距野沢~1.5小時')),
+    // Obuse
+    L.marker([36.6975, 138.3125], {icon: makeIcon('#ef4444', '🌰')})
+        .bindPopup(popup('小布施 Obuse', '栗子小鎮 · 北齋館', '竹風堂栗子飯、小布施堂 Mont Blanc、北齋館（浮世繪天花板畫）。精緻小鎮適合散步拍照。', '💰 北齋館 ¥1,000 · ⏱️ 來回3–4小時')),
+    // Zenkoji
+    L.marker([36.6603, 138.1883], {icon: makeIcon('#059669', '⛩️')})
+        .bindPopup(popup('善光寺 Zenkoji', '長野市 · 1400年歷史', '日本最重要寺院之一。冬天雪覆蓋本堂非常壯觀。體驗「戒壇巡り」地下暗道。門前商店街買七味粉。', '💰 ¥600 · ⏱️ 來回5–6小時')),
+    // Iiyama Station
+    L.marker([36.8527, 138.3648], {icon: makeIcon('#64748b', '🚄')})
+        .bindPopup(popup('飯山站', 'Iiyama Station · 北陸新幹線', '野沢最近的新幹線站。搭巴士25分鐘即達。站內有7-11 ATM、土產店。', '🚌 野沢↔飯山 25分鐘')),
+    // Iiyama city
+    L.marker([36.8500, 138.3700], {icon: makeIcon('#ec4899', '🏯')})
+        .bindPopup(popup('飯山市 雪景散步', '日本屈指の豪雪地帶', '積雪可達3米。飯山寺町（22間寺院群）、高橋まゆみ人形館。比長野更近更悠閒。', '💰 人形館 ¥620 · ⏱️ 來回3小時')),
+    // Route A full path
+    L.polyline([
+        [36.9192, 138.6263],
+        [36.8527, 138.3648],
+        [36.7500, 138.4200],
+        [36.7328, 138.4625],
+    ], {color: '#ef4444', weight: 3, dashArray: '12,8', opacity: 0.6}),
+    L.polyline([
+        [36.7328, 138.4625],
+        [36.7200, 138.3800],
+        [36.6975, 138.3125],
+    ], {color: '#ef4444', weight: 3, dashArray: '8,6', opacity: 0.5}),
+    // Route C full path
+    L.polyline([
+        [36.9192, 138.6263],
+        [36.8527, 138.3648],
+        [36.6603, 138.1883],
+    ], {color: '#059669', weight: 3, dashArray: '12,8', opacity: 0.6}),
+]);
+// Regional NOT added to map by default (checkbox unchecked)
+
+// ===== LAYER TOGGLE LOGIC =====
+document.querySelectorAll('#layerToggle input[type="checkbox"]').forEach(function(cb) {
+    cb.addEventListener('change', function() {
+        var layerName = this.dataset.layer;
+        var layer = layers[layerName];
+        if (!layer) return;
+        if (this.checked) {
+            map.addLayer(layer);
+        } else {
+            map.removeLayer(layer);
+        }
+        // Auto-zoom to regional view when toggled
+        if (layerName === 'regional' && this.checked) {
+            map.fitBounds([[36.6500, 138.1500], [36.9400, 138.6500]], {padding: [30, 30]});
+        }
+        if (layerName === 'regional' && !this.checked) {
+            map.setView([36.9225, 138.6280], 16);
+        }
+    });
+});
+
+// ===== KEY LOCATIONS LABEL (always shown) =====
+L.marker([36.9192, 138.6263], {
+    icon: L.divIcon({
+        html: '<div style="background:#475569; color:white; padding:4px 10px; border-radius:12px; font-size:11px; font-weight:600; white-space:nowrap; box-shadow:0 2px 8px rgba(0,0,0,0.2);">🚌 巴士站（→飯山25分）</div>',
+        iconSize: [140, 24],
+        iconAnchor: [70, -5],
+        className: ''
+    })
+}).addTo(map);
+</script>
+
+</body>
+</html>

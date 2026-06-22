@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🦊 野沢溫泉 互動地圖 — Google Maps</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Microsoft JhengHei', 'Segoe UI', sans-serif; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        .header {
+            background: linear-gradient(135deg, #1a73e8, #0d47a1);
+            padding: 10px 20px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+            z-index: 10;
+        }
+        .header h1 { font-size: 1.1rem; }
+        .header .links { display: flex; gap: 8px; }
+        .header a { color: white; text-decoration: none; font-size: 0.75rem; padding: 4px 10px; border-radius: 14px; background: rgba(255,255,255,0.15); }
+
+        .main { display: flex; flex: 1; overflow: hidden; }
+
+        .sidebar {
+            width: 320px; min-width: 280px; background: white;
+            overflow-y: auto; border-right: 1px solid #e5e7eb;
+            flex-shrink: 0; display: flex; flex-direction: column;
+        }
+        .sidebar-tabs {
+            display: flex; border-bottom: 2px solid #f1f5f9;
+            flex-shrink: 0;
+        }
+        .sidebar-tabs button {
+            flex: 1; padding: 10px 6px; border: none; background: none;
+            font-size: 0.75rem; font-weight: 600; cursor: pointer; color: #64748b;
+            border-bottom: 2px solid transparent; margin-bottom: -2px;
+        }
+        .sidebar-tabs button.active { color: #1a73e8; border-bottom-color: #1a73e8; }
+        .tab-content { display: none; overflow-y: auto; flex: 1; }
+        .tab-content.active { display: block; }
+
+        .category-group { border-bottom: 1px solid #f1f5f9; }
+        .category-header {
+            display: flex; align-items: center; gap: 8px;
+            padding: 10px 14px; font-size: 0.82rem; font-weight: 700;
+            cursor: pointer; user-select: none; color: #334155;
+            background: #f8fafc;
+        }
+        .category-header:hover { background: #f1f5f9; }
+        .category-header .count { font-size: 0.68rem; color: #94a3b8; font-weight: 400; margin-left: auto; }
+        .place-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 8px 14px 8px 24px; cursor: pointer;
+            border-bottom: 1px solid #f8fafc; transition: background 0.15s;
+        }
+        .place-item:hover { background: #eff6ff; }
+        .place-item.active { background: #dbeafe; }
+        .place-item .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        .place-item .info { flex: 1; min-width: 0; }
+        .place-item .name { font-size: 0.8rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .place-item .sub { font-size: 0.68rem; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        .day-selector { display: flex; flex-wrap: wrap; gap: 4px; padding: 10px 14px; border-bottom: 1px solid #f1f5f9; }
+        .day-btn {
+            padding: 5px 10px; border-radius: 14px; border: 1px solid #e2e8f0;
+            font-size: 0.7rem; cursor: pointer; background: white; font-weight: 600;
+        }
+        .day-btn.active { background: #1a73e8; color: white; border-color: #1a73e8; }
+        .day-detail { padding: 14px; font-size: 0.8rem; line-height: 1.7; }
+        .day-detail h4 { color: #1a73e8; margin-bottom: 6px; }
+        .day-stop { display: flex; align-items: flex-start; gap: 10px; padding: 6px 0; cursor: pointer; }
+        .day-stop:hover { color: #1a73e8; }
+        .day-stop .num { width: 20px; height: 20px; background: #1a73e8; color: white; border-radius: 50%; font-size: 0.65rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-weight: 700; }
+        .day-stop .stop-info { font-size: 0.78rem; }
+        .day-stop .stop-info .stop-name { font-weight: 600; }
+        .day-stop .stop-info .stop-time { font-size: 0.7rem; color: #64748b; }
+
+        .map-area { flex: 1; position: relative; }
+        #map { width: 100%; height: 100%; }
+
+        .controls {
+            position: absolute; top: 10px; right: 10px;
+            background: white; border-radius: 10px; padding: 12px 14px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.12); z-index: 5;
+            font-size: 0.75rem; min-width: 160px;
+        }
+        .controls h3 { font-size: 0.78rem; margin-bottom: 8px; color: #374151; }
+        .controls label { display: flex; align-items: center; gap: 6px; padding: 3px 0; cursor: pointer; }
+        .controls input[type="checkbox"] { width: 14px; height: 14px; accent-color: #1a73e8; }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 100%; height: 40vh; border-right: none; border-bottom: 1px solid #e5e7eb; }
+            .main { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>🦊 野沢溫泉村 互動地圖</h1>
+    <div class="links">
+        <a href="map-alt-c-shareable.html">📋 文字版(分享)</a>
+        <a href="hotel-comparison.html">← 返回總覽</a>
+    </div>
+</div>
+
+<div class="main">
+    <div class="sidebar">
+        <div class="sidebar-tabs">
+            <button class="active" data-tab="places">📍 地點</button>
+            <button data-tab="dayplan">📅 日程</button>
+        </div>
+        <div class="tab-content active" id="tab-places"></div>
+        <div class="tab-content" id="tab-dayplan">
+            <div class="day-selector" id="day-selector"></div>
+            <div class="day-detail" id="day-detail"></div>
+        </div>
+    </div>
+
+    <div class="map-area">
+        <div id="map"></div>
+        <div class="controls" id="controls">
+            <h3>圖層篩選</h3>
+            <label><input type="checkbox" checked data-layer="hotel"> 🏨 住宿</label>
+            <label><input type="checkbox" checked data-layer="food"> 🍜 餐廳</label>
+            <label><input type="checkbox" checked data-layer="onsen"> ♨️ 溫泉</label>
+            <label><input type="checkbox" checked data-layer="sight"> 📍 景點</label>
+            <label><input type="checkbox" checked data-layer="ski"> ⛷️ 滑雪</label>
+            <div style="border-top:1px solid #e5e7eb; margin-top:6px; padding-top:6px;">
+                <label><input type="checkbox" id="toggle-route"> 🛤️ 當日路線</label>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+var PLACES = {
+    hotel: [
+        {title: 'Schanze シャンツェ野沢', sub: '⭐4.3 · 160m到長坂 · ~$600–800/人', desc: '距長坂纜車最近的平價民宿！早餐好評如潮。', meta: '💰 ~$600–800/人(5晚)', icon: '🏨', lat: 36.9197431, lng: 138.450102},
+        {title: 'たまゆら Tamayura', sub: '⭐4.0 · 90m到長坂 · ~$1,166/人', desc: '離Gondola最近！7月1日開放預訂。', meta: '💰 ~$1,166/人(5晚)', icon: '🏨', lat: 36.920282, lng: 138.4509942},
+        {title: '野沢温泉ロッヂ Nozawa Lodge', sub: '⭐3.8 · 220m到長坂 · 團體首選', desc: '外國人友善，有酒吧+交誼廳。約8月開放預訂。', meta: '💰 ~$700–1,000/人', icon: '🏨', lat: 36.9206223, lng: 138.4515856},
+        {title: 'Lodge Denbey でんべえ', sub: '⭐3.9 · Ski-in · ~$800–1,200/人', desc: '8人可住同一大房間！餐食極佳。Ski-in位置。', meta: '💰 ~$800–1,200/人', icon: '🏨', lat: 36.927071, lng: 138.455245},
+        {title: 'Address Nozawa', sub: '⭐3.5 · 290m到Yu-Road · 近初學者區', desc: '位置方便在溫泉街上。只剩6人房。', meta: '💰 ¥122,400/晚(6人)', icon: '🏨', lat: 36.922615, lng: 138.447486},
+        {title: '住吉屋 Sumiyosiya', sub: '⭐3.7 · 80m到Yu-Road · 高級旅館', desc: '頂級溫泉+懷石料理。旅館體驗最佳。', meta: '💰 ~$3,250/2人', icon: '🏨', lat: 36.9247281, lng: 138.4485714},
+        {title: 'Tanuki Apartments', sub: '⭐3.8 · 200m到Yu-Road · 有廚房', desc: '全套廚房、壁爐、多浴室。適合團體自煮。', meta: '💰 ~$1,000–1,500/人', icon: '🏨', lat: 36.9233174, lng: 138.4480276},
+        {title: 'Gondola Apartments', sub: '⭐4.0 · ~200m到長坂', desc: '現代化、近纜車、自炊、有雪具儲存。', meta: '💰 ~$1,200–1,600/人', icon: '🏨', lat: 36.9208845, lng: 138.4517432},
+    ],
+    food: [
+        {title: 'Sanzoku 山賊', sub: '野味鍋・炭火燒肉 · 需預約', desc: '山中小屋風格，野沢最有特色餐廳之一。', meta: '💰 ¥2,000–3,000/人', icon: '🍲', lat: 36.9232, lng: 138.4478},
+        {title: 'Den でん ⭐人氣No.1', sub: '大阪燒・鐵板燒', desc: '自己動手，8人適合。17:30排隊。', meta: '💰 ¥1,200–2,000/人', icon: '🥘', lat: 36.9239, lng: 138.4447},
+        {title: 'Kanetsu 兼津', sub: '手打蕎麥麵', desc: '信州產蕎麥粉，天婦羅蕎麥推薦。', meta: '💰 ¥900–1,500/人', icon: '🍜', lat: 36.923054, lng: 138.4474587},
+        {title: 'Nozawa Brewing', sub: '精釀啤酒+窯烤披薩', desc: '村內唯一啤酒廠。6種自釀+窯烤披薩。', meta: '💰 ¥1,500–2,500/人', icon: '🍺', lat: 36.9222228, lng: 138.4495662},
+        {title: 'Haus St. Anton', sub: '歐式料理 · 需預約', desc: '奧地利風格，牛排燉肉紅酒。', meta: '💰 ¥2,500–4,000/人', icon: '🍷', lat: 36.9227816, lng: 138.4476337},
+        {title: 'Nagai Pan ナガイパン', sub: '手工麵包店 · 7:00開門', desc: '新鮮麵包+咖啡。當地人也愛。', meta: '💰 ¥200–500', icon: '🍞', lat: 36.9220, lng: 138.4478},
+        {title: 'Faust ファウスト', sub: '酒吧 · 17:00–24:00', desc: '滑雪後熱門酒吧。威士忌雞尾酒。', meta: '🕐 17:00–24:00', icon: '🍸', lat: 36.9226742, lng: 138.4472545},
+    ],
+    onsen: [
+        {title: '麻釜（おがま）', sub: '天然溫泉煮蛋 · 免費', desc: '90°C泉源，自己煮蛋¥200。旁有足湯。', meta: '💰 免費 · ⏱️ 30分鐘', icon: '♨️', lat: 36.9247097, lng: 138.4488879},
+        {title: '大湯 Oyu ⭐最有名', sub: '最有名外湯 · 免費', desc: '地標級木造建築。46°C極高溫！', meta: '💰 免費 · ⚠️ 水溫極高', icon: '♨️', lat: 36.9232081, lng: 138.4482972},
+        {title: '熊之手洗湯', sub: '歷史外湯 · 免費', desc: '水溫適中，歷史傳說。', meta: '💰 免費', icon: '♨️', lat: 36.9242818, lng: 138.4444915},
+        {title: '河原湯', sub: '初心者推薦 · 免費', desc: '水溫最低，有露天感。', meta: '💰 免費 · 👍 初心者向', icon: '♨️', lat: 36.92337, lng: 138.4475462},
+        {title: 'Sparena スパリーナ', sub: 'SPA設施 · ¥700', desc: '泳池+露天+桑拿+按摩。可待半天。', meta: '💰 ¥700 · ⏱️ 2–3小時', icon: '♨️', lat: 36.9187777, lng: 138.4468324},
+        {title: '真湯 Shin-yu', sub: '村中心外湯 · 免費', desc: '水溫適中，位置方便。', meta: '💰 免費', icon: '♨️', lat: 36.9251561, lng: 138.4462325},
+        {title: '十王堂之湯', sub: '二層建築外湯 · 免費', desc: '空間寬敞，二樓有休息區。', meta: '💰 免費', icon: '♨️', lat: 36.9218063, lng: 138.446579},
+    ],
+    sight: [
+        {title: '田中屋酒造店', sub: '清酒「水尾」見學', desc: '150年歷史酒造。試飲多款清酒。', meta: '💰 ¥300–500', icon: '🍶', lat: 36.853539, lng: 138.3638536},
+        {title: '朧月夜之館', sub: '音樂紀念館', desc: '高野辰之紀念。下雪天好去處。', meta: '💰 ¥300', icon: '🎵', lat: 36.9214443, lng: 138.4477037},
+        {title: '湯澤神社', sub: '古老神社 · 拍照景點', desc: '雪覆鳥居很有意境。道祖神火祭。', meta: '💰 免費 · 📸', icon: '⛩️', lat: 36.9239966, lng: 138.4492205},
+    ],
+    ski: [
+        {title: '長坂ゴンドラ', sub: '主要纜車站 · 08:30–16:00', desc: '通往山頂主纜車。從村中心步行10–15分鐘。', meta: '⏰ 08:30–16:00', icon: '🚡', lat: 36.9200588, lng: 138.4523719},
+        {title: '日影ゲレンデ', sub: '初學者區 + 夜滑', desc: '緩坡+夜滑 17:00–20:00。', meta: '🟢 初級 · ナイター有', icon: '⛷️', lat: 36.925767, lng: 138.4533002},
+        {title: '上之平ゲレンデ', sub: '初中級 · 寬闊緩坡', desc: '第一天最佳練習場地。有餐廳和休息區。', meta: '🟢🔵 初~中級', icon: '🎿', lat: 36.9213499, lng: 138.47702},
+    ]
+};
+
+var COLORS = { hotel: '#10b981', food: '#f59e0b', onsen: '#0ea5e9', sight: '#ec4899', ski: '#1e40af' };
+var CAT_LABELS = { hotel: '🏨 住宿', food: '🍜 餐廳', onsen: '♨️ 溫泉', sight: '📍 景點', ski: '⛷️ 滑雪' };
+
+var DAY_PLANS = [
+    { day: 'Day 2', date: 'Jan 24 (六)', title: '抵達野沢', stops: [
+        {time: '10:00', name: '東京上野站', note: '北陸新幹線'},
+        {time: '12:00', name: '飯山站', note: '轉巴士'},
+        {time: '12:30', name: '野沢溫泉巴士站', note: '抵達！'},
+        {time: '13:00', name: '酒店 Check-in', note: '放行李'},
+        {time: '16:00', name: '麻釜（おがま）', note: '煮蛋體驗', placeRef: '麻釜（おがま）'},
+        {time: '18:00', name: '大湯 Oyu', note: '外湯初體驗', placeRef: '大湯 Oyu ⭐最有名'},
+        {time: '19:30', name: 'Den でん', note: '大阪燒晚餐', placeRef: 'Den でん ⭐人氣No.1'},
+    ]},
+    { day: 'Day 3', date: 'Jan 25 (日)', title: 'Ski Day 1', stops: [
+        {time: '09:30', name: '長坂ゴンドラ', note: '集合上山', placeRef: '長坂ゴンドラ'},
+        {time: '10:00', name: '上之平ゲレンデ', note: '初學者課', placeRef: '上之平ゲレンデ'},
+        {time: '12:30', name: '山頂餐廳', note: '午餐'},
+        {time: '16:00', name: '下山', note: '回村'},
+        {time: '17:00', name: '熊之手洗湯', note: '外湯', placeRef: '熊之手洗湯'},
+        {time: '19:00', name: 'Sanzoku 山賊', note: '野味鍋晚餐', placeRef: 'Sanzoku 山賊'},
+    ]},
+    { day: 'Day 4', date: 'Jan 26 (一)', title: 'Ski Day 2', stops: [
+        {time: '09:30', name: '長坂ゴンドラ', note: '上山', placeRef: '長坂ゴンドラ'},
+        {time: '10:00', name: '中級區', note: 'Kenashi-yama'},
+        {time: '16:30', name: '下山', note: ''},
+        {time: '17:30', name: 'Sparena スパリーナ', note: 'SPA放鬆', placeRef: 'Sparena スパリーナ'},
+        {time: '19:30', name: 'Haus St. Anton', note: '歐式晚餐', placeRef: 'Haus St. Anton'},
+        {time: '21:30', name: 'Faust ファウスト', note: '酒吧', placeRef: 'Faust ファウスト'},
+    ]},
+    { day: 'Day 5', date: 'Jan 27 (二)', title: '休息日 — 雪猴', stops: [
+        {time: '08:00', name: 'Nagai Pan ナガイパン', note: '早餐麵包', placeRef: 'Nagai Pan ナガイパン'},
+        {time: '09:00', name: '野沢巴士站 → 飯山站', note: '25分'},
+        {time: '10:00', name: '飯山 → 湯田中', note: '電車'},
+        {time: '11:00', name: '地獄谷野猿公苑', note: '雪猴！'},
+        {time: '16:00', name: '回飯山 → 野沢', note: ''},
+        {time: '18:00', name: '十王堂之湯', note: '外湯', placeRef: '十王堂之湯'},
+        {time: '19:30', name: 'Nozawa Brewing', note: '啤酒+披薩', placeRef: 'Nozawa Brewing'},
+    ]},
+    { day: 'Day 6', date: 'Jan 28 (三)', title: 'Ski Day 3', stops: [
+        {time: '09:30', name: '長坂ゴンドラ', note: '上山', placeRef: '長坂ゴンドラ'},
+        {time: '10:00', name: '日影ゲレンデ', note: '練習', placeRef: '日影ゲレンデ'},
+        {time: '16:00', name: '下山', note: ''},
+        {time: '17:00', name: '田中屋酒造店', note: '清酒見學', placeRef: '田中屋酒造店'},
+        {time: '18:30', name: '大湯 Oyu', note: '外湯', placeRef: '大湯 Oyu ⭐最有名'},
+        {time: '19:30', name: 'Kanetsu 兼津', note: '蕎麥麵', placeRef: 'Kanetsu 兼津'},
+    ]},
+    { day: 'Day 7', date: 'Jan 29 (四)', title: '離開 → 東京', stops: [
+        {time: '09:00', name: 'Check-out', note: '打包'},
+        {time: '10:00', name: '野沢巴士站', note: '→ 飯山'},
+        {time: '10:30', name: '飯山站', note: '新幹線 → 東京'},
+        {time: '12:30', name: '抵達東京', note: ''},
+    ]},
+];
+
+var map, markers = {}, placePositions = {}, activeInfoWindow = null;
+var routeRenderer = null;
+
+function initMap() {
+    map = new google.maps.Map(document.getElementById('map'), {
+        center: { lat: 36.9225, lng: 138.4485 },
+        zoom: 15,
+        mapTypeControl: true,
+        streetViewControl: true,
+        fullscreenControl: true
+    });
+
+    routeRenderer = new google.maps.DirectionsRenderer({
+        map: map, suppressMarkers: true,
+        polylineOptions: { strokeColor: '#1a73e8', strokeWeight: 4, strokeOpacity: 0.7 }
+    });
+    routeRenderer.setMap(null);
+
+    buildSidebar();
+    buildDayPlan();
+    placeAllMarkers();
+    setupControls();
+}
+
+function placeAllMarkers() {
+    Object.keys(PLACES).forEach(function(cat) {
+        markers[cat] = [];
+        PLACES[cat].forEach(function(p, idx) {
+            var pos = new google.maps.LatLng(p.lat, p.lng);
+            placePositions[p.title] = pos;
+
+            var marker = new google.maps.Marker({
+                position: pos,
+                map: map,
+                title: p.title,
+                icon: {
+                    url: makeSvgIcon(COLORS[cat], p.icon),
+                    scaledSize: new google.maps.Size(32, 32),
+                    anchor: new google.maps.Point(16, 16)
+                }
+            });
+
+            var gmLink = '<a href="https://www.google.com/maps/search/?api=1&query=' + p.lat + ',' + p.lng + '" target="_blank" style="font-size:0.72rem; color:#1a73e8; text-decoration:none; font-weight:600;">📍 Google Maps 開啟 →</a>';
+            var infoContent = '<div style="max-width:240px;">' +
+                '<h3 style="font-size:0.92rem; margin-bottom:3px;">' + p.title + '</h3>' +
+                '<div style="font-size:0.76rem; color:#5f6368; margin-bottom:5px;">' + p.sub + '</div>' +
+                '<div style="font-size:0.8rem; color:#3c4043; line-height:1.5; margin-bottom:5px;">' + p.desc + '</div>' +
+                '<div style="font-size:0.73rem; color:#1a73e8; font-weight:600; margin-bottom:5px;">' + p.meta + '</div>' +
+                '<div>' + gmLink + '</div></div>';
+
+            var infoWindow = new google.maps.InfoWindow({ content: infoContent });
+            marker.addListener('click', function() {
+                if (activeInfoWindow) activeInfoWindow.close();
+                infoWindow.open(map, marker);
+                activeInfoWindow = infoWindow;
+            });
+
+            markers[cat].push({ marker: marker, infoWindow: infoWindow, place: p });
+        });
+    });
+}
+
+function makeSvgIcon(color, emoji) {
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32">' +
+        '<circle cx="16" cy="16" r="14" fill="' + color + '" stroke="white" stroke-width="3"/>' +
+        '<text x="16" y="22" text-anchor="middle" font-size="14">' + emoji + '</text></svg>';
+    return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
+}
+
+function buildSidebar() {
+    var container = document.getElementById('tab-places');
+    var html = '';
+    Object.keys(PLACES).forEach(function(cat) {
+        var places = PLACES[cat];
+        html += '<div class="category-group" data-cat="' + cat + '">';
+        html += '<div class="category-header" onclick="toggleCategory(this)">';
+        html += '<span>' + CAT_LABELS[cat] + '</span>';
+        html += '<span class="count">' + places.length + '</span>';
+        html += '</div>';
+        html += '<div class="category-items">';
+        places.forEach(function(p, i) {
+            html += '<div class="place-item" data-cat="' + cat + '" data-idx="' + i + '" onclick="focusPlace(\'' + cat + '\',' + i + ')">';
+            html += '<div class="dot" style="background:' + COLORS[cat] + '"></div>';
+            html += '<div class="info"><div class="name">' + p.title + '</div><div class="sub">' + p.sub + '</div></div>';
+            html += '</div>';
+        });
+        html += '</div></div>';
+    });
+    container.innerHTML = html;
+}
+
+function toggleCategory(el) {
+    var items = el.nextElementSibling;
+    items.style.display = items.style.display === 'none' ? '' : 'none';
+}
+
+function buildDayPlan() {
+    var selHtml = '';
+    DAY_PLANS.forEach(function(d, i) {
+        selHtml += '<button class="day-btn' + (i === 0 ? ' active' : '') + '" onclick="showDay(' + i + ')">' + d.day + '</button>';
+    });
+    document.getElementById('day-selector').innerHTML = selHtml;
+    showDay(0);
+}
+
+function showDay(idx) {
+    var d = DAY_PLANS[idx];
+    document.querySelectorAll('.day-btn').forEach(function(b, i) { b.classList.toggle('active', i === idx); });
+    var html = '<h4>' + d.day + ' · ' + d.date + ' — ' + d.title + '</h4>';
+    d.stops.forEach(function(s, i) {
+        var clickAttr = s.placeRef ? ' onclick="focusPlaceByTitle(\'' + s.placeRef.replace(/'/g, "\\'") + '\')"' : '';
+        html += '<div class="day-stop"' + clickAttr + '>';
+        html += '<div class="num">' + (i + 1) + '</div>';
+        html += '<div class="stop-info"><span class="stop-name">' + s.name + '</span>';
+        html += ' <span class="stop-time">' + s.time + (s.note ? ' · ' + s.note : '') + '</span></div>';
+        html += '</div>';
+    });
+    document.getElementById('day-detail').innerHTML = html;
+
+    if (document.getElementById('toggle-route').checked) {
+        drawDayRoute(idx);
+    }
+    window._currentDay = idx;
+}
+
+function focusPlaceByTitle(title) {
+    Object.keys(markers).forEach(function(cat) {
+        markers[cat].forEach(function(m, idx) {
+            if (m.place.title === title) {
+                focusPlace(cat, idx);
+            }
+        });
+    });
+}
+
+function drawDayRoute(idx) {
+    var d = DAY_PLANS[idx];
+    var waypoints = [];
+    d.stops.forEach(function(s) {
+        if (s.placeRef && placePositions[s.placeRef]) {
+            waypoints.push(placePositions[s.placeRef]);
+        }
+    });
+    if (waypoints.length < 2) {
+        routeRenderer.setMap(null);
+        return;
+    }
+    routeRenderer.setMap(map);
+    var origin = waypoints[0];
+    var dest = waypoints[waypoints.length - 1];
+    var mid = waypoints.slice(1, -1).map(function(w) { return { location: w, stopover: true }; });
+
+    var dirService = new google.maps.DirectionsService();
+    dirService.route({
+        origin: origin,
+        destination: dest,
+        waypoints: mid,
+        travelMode: google.maps.TravelMode.WALKING
+    }, function(result, status) {
+        if (status === 'OK') {
+            routeRenderer.setDirections(result);
+        } else {
+            routeRenderer.setMap(null);
+        }
+    });
+}
+
+function focusPlace(cat, idx) {
+    document.querySelectorAll('.place-item').forEach(function(el) { el.classList.remove('active'); });
+    var el = document.querySelector('.place-item[data-cat="' + cat + '"][data-idx="' + idx + '"]');
+    if (el) el.classList.add('active');
+
+    var m = markers[cat] && markers[cat][idx];
+    if (m) {
+        map.panTo(m.marker.getPosition());
+        map.setZoom(17);
+        if (activeInfoWindow) activeInfoWindow.close();
+        m.infoWindow.open(map, m.marker);
+        activeInfoWindow = m.infoWindow;
+    }
+}
+
+function setupControls() {
+    document.querySelectorAll('#controls input[data-layer]').forEach(function(cb) {
+        cb.addEventListener('change', function() {
+            var layer = this.dataset.layer;
+            var visible = this.checked;
+            (markers[layer] || []).forEach(function(m) { m.marker.setVisible(visible); });
+        });
+    });
+
+    document.getElementById('toggle-route').addEventListener('change', function() {
+        if (this.checked && window._currentDay !== undefined) {
+            drawDayRoute(window._currentDay);
+        } else {
+            routeRenderer.setMap(null);
+        }
+    });
+
+    document.querySelectorAll('.sidebar-tabs button').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.sidebar-tabs button').forEach(function(b) { b.classList.remove('active'); });
+            document.querySelectorAll('.tab-content').forEach(function(t) { t.classList.remove('active'); });
+            this.classList.add('active');
+            document.getElementById('tab-' + this.dataset.tab).classList.add('active');
+        });
+    });
+}
+</script>
+<script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBHfr7Eu4BLkfA1BBd9-SMlmYRDIyJRkGw&libraries=places,directions&callback=initMap"></script>
+</body>
+</html>

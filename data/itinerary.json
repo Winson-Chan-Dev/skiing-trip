@@ -1,0 +1,87 @@
+[
+  {
+    "day": "Day 2",
+    "date": "Jan 24 (六)",
+    "title": "抵達野沢",
+    "shortTitle": "抵達",
+    "stops": [
+      {"time": "10:00", "name": "東京上野站", "note": "北陸新幹線"},
+      {"time": "12:00", "name": "飯山站", "note": "轉巴士"},
+      {"time": "12:30", "name": "野沢溫泉巴士站", "note": "抵達！"},
+      {"time": "13:00", "name": "酒店 Check-in", "note": "放行李"},
+      {"time": "16:00", "name": "麻釜（おがま）", "note": "煮蛋體驗", "placeId": "ogama"},
+      {"time": "18:00", "name": "大湯 Oyu", "note": "外湯初體驗", "placeId": "oyu"},
+      {"time": "19:30", "name": "Den でん", "note": "大阪燒晚餐", "placeId": "den"}
+    ]
+  },
+  {
+    "day": "Day 3",
+    "date": "Jan 25 (日)",
+    "title": "Ski Day 1",
+    "shortTitle": "滑雪1",
+    "stops": [
+      {"time": "09:30", "name": "長坂ゴンドラ", "note": "集合上山", "placeId": "nagasaka-gondola"},
+      {"time": "10:00", "name": "上之平ゲレンデ", "note": "初學者課", "placeId": "uenodaira"},
+      {"time": "12:30", "name": "山頂餐廳", "note": "午餐"},
+      {"time": "16:00", "name": "下山", "note": "回村"},
+      {"time": "17:00", "name": "熊之手洗湯", "note": "外湯", "placeId": "kumano-tearai"},
+      {"time": "19:00", "name": "Sanzoku 山賊", "note": "野味鍋晚餐", "placeId": "sanzoku"}
+    ]
+  },
+  {
+    "day": "Day 4",
+    "date": "Jan 26 (一)",
+    "title": "Ski Day 2",
+    "shortTitle": "滑雪2",
+    "stops": [
+      {"time": "09:30", "name": "長坂ゴンドラ", "note": "上山", "placeId": "nagasaka-gondola"},
+      {"time": "10:00", "name": "中級區", "note": "Kenashi-yama"},
+      {"time": "16:30", "name": "下山", "note": ""},
+      {"time": "17:30", "name": "Sparena スパリーナ", "note": "SPA放鬆", "placeId": "sparena"},
+      {"time": "19:30", "name": "Haus St. Anton", "note": "歐式晚餐", "placeId": "haus-st-anton"},
+      {"time": "21:30", "name": "Faust ファウスト", "note": "酒吧", "placeId": "faust"}
+    ]
+  },
+  {
+    "day": "Day 5",
+    "date": "Jan 27 (二)",
+    "title": "休息日 — 雪猴",
+    "shortTitle": "休息日",
+    "stops": [
+      {"time": "08:00", "name": "Nagai Pan ナガイパン", "note": "早餐麵包", "placeId": "nagai-pan"},
+      {"time": "09:00", "name": "野沢巴士站 → 飯山站", "note": "25分"},
+      {"time": "10:00", "name": "飯山 → 湯田中", "note": "電車"},
+      {"time": "11:00", "name": "地獄谷野猿公苑", "note": "雪猴！", "gmapUrl": "https://www.google.com/maps/place/Jigokudani+Monkey+Park"},
+      {"time": "16:00", "name": "回飯山 → 野沢", "note": ""},
+      {"time": "18:00", "name": "十王堂之湯", "note": "外湯", "placeId": "juodo"},
+      {"time": "19:30", "name": "Nozawa Brewing", "note": "啤酒+披薩", "placeId": "nozawa-brewing"}
+    ]
+  },
+  {
+    "day": "Day 6",
+    "date": "Jan 28 (三)",
+    "title": "Ski Day 3",
+    "shortTitle": "滑雪3",
+    "stops": [
+      {"time": "09:30", "name": "長坂ゴンドラ", "note": "上山", "placeId": "nagasaka-gondola"},
+      {"time": "10:00", "name": "日影ゲレンデ", "note": "練習", "placeId": "hikage"},
+      {"time": "16:00", "name": "下山", "note": ""},
+      {"time": "17:00", "name": "田中屋酒造店", "note": "清酒見學", "placeId": "tanakaya"},
+      {"time": "18:30", "name": "大湯 Oyu", "note": "外湯", "placeId": "oyu"},
+      {"time": "19:30", "name": "Kanetsu 兼津", "note": "蕎麥麵", "placeId": "kanetsu"}
+    ]
+  },
+  {
+    "day": "Day 7",
+    "date": "Jan 29 (四)",
+    "title": "離開 → 東京",
+    "shortTitle": "離開",
+    "stops": [
+      {"time": "09:00", "name": "Check-out", "note": "打包"},
+      {"time": "10:00", "name": "野沢巴士站", "note": "→ 飯山"},
+      {"time": "10:30", "name": "飯山站", "note": "新幹線 → 東京"},
+      {"time": "12:30", "name": "抵達東京", "note": ""},
+      {"time": "14:00", "name": "自由活動", "note": "購物"}
+    ]
+  }
+]
