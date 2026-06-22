@@ -72,59 +72,76 @@ presentation/nozawa-trip.html  (unified 6-tab page)
 ### Location Accuracy
 - **Village center**: lat 36.9225, lng 138.4485
 - **Reference point**: Schanze Nozawa @ 36.9197849, 138.4498459 (user-verified from Google Maps)
-- **Coordinate source**: Google Places API `textsearch` with romanized/English queries
-- **5 estimated locations** (no exact API match): Sanzoku, Den, Faust, Nagai Pan, Kanetsu — placed relative to known landmarks; marked `verified: false` in places.json
+- **Coordinate source**: Google Places API `textsearch` with romanized/English/Japanese queries
+- **Cafe Olive** (Hikage area): estimated, too small for Places API
 - **Tanakaya Brewery** is in Iiyama (~8km from village), coordinates are real
 
-### Design: Nothing Phone UI (Industrial Minimal)
+### Getting Accurate Coordinates (MANDATORY APPROACH)
 
-**Style Reference**: Nothing OS design language — flat, industrial, monospace, geometric.
+Use Google Places API Text Search to get real coordinates. **NEVER estimate or guess coordinates.**
+
+```bash
+# Example: Get coordinates for a restaurant
+$apiKey = "<from .env>"
+$query = "Restaurant Name Nozawa Onsen"  # Use Japanese name for better results
+$url = "https://maps.googleapis.com/maps/api/place/textsearch/json?query=$query&key=$apiKey"
+$resp = Invoke-RestMethod -Uri $url -Method Get
+$resp.results[0].geometry.location  # → { lat: XX.XXX, lng: XXX.XXX }
+```
+
+**Rules**:
+1. Always query Google Places API first for any new location
+2. Try Japanese name first (e.g. `蕎麦処 大門 野沢温泉村`), fallback to English
+3. Mark `"verified": true` when coordinates come from the API
+4. Mark `"verified": false` ONLY when API returns no results — add a `note` explaining
+5. For places not found, position relative to verified nearby landmarks
+
+### Design: Apple UI (Clean Minimalism)
+
+**Style Reference**: Apple's design language — light, spacious, rounded, premium.
 
 **Foundation**:
-- Background: pure `#000000` black
-- Font: `'Space Mono', 'Courier New', 'Microsoft JhengHei', monospace` (Google Fonts import)
-- Border radius: `0px` everywhere (sharp geometric edges)
-- No shadows, no blur, no gradients — flat surfaces with border separation
+- Background: `#F5F5F7` (Apple light gray)
+- Font: `'SF Pro Display', 'SF Pro Text', -apple-system, BlinkMacSystemFont, system-ui, sans-serif, 'PingFang HK', 'PingFang TC'`
+- Border radius: `12px` cards, `8px` badges/tags
+- Soft shadows: `0 2px 12px rgba(0,0,0,0.08)`
 
 **Color System** (CSS variables in `:root`):
-- `--nothing-black: #000000` — page background
-- `--nothing-dark: #0A0A0A` — elevated surfaces
-- `--nothing-card: #141414` — card backgrounds
-- `--nothing-border: #2A2A2A` — primary borders
-- `--nothing-border-light: #3A3A3A` — hover/active borders
-- `--nothing-red: #D71921` — primary accent (Nothing brand red)
-- `--nothing-red-dim: rgba(215,25,33,0.15)` — red tinted backgrounds
-- `--nothing-white: #FFFFFF` — primary text
-- `--nothing-gray1: #E0E0E0` — secondary text
-- `--nothing-gray2: #999999` — tertiary text
-- `--nothing-gray3: #666666` — muted text
-- `--nothing-gray4: #444444` — disabled/subtle text
-- Semantic: `--nothing-green: #33CC66`, `--nothing-yellow: #FFCC00`, `--nothing-blue: #4DA6FF`
+- `--bg: #F5F5F7` — page background
+- `--bg-elevated: #FFFFFF` — card backgrounds
+- `--text-primary: #1D1D1F` — primary text
+- `--text-secondary: #86868B` — secondary text
+- `--text-tertiary: #AEAEB2` — muted text
+- `--border: #E5E5EA` — borders
+- `--border-light: #F2F2F7` — subtle borders
+- `--accent: #007AFF` — primary accent (Apple blue)
+- `--accent-dim: rgba(0,122,255,0.1)` — blue tinted backgrounds
+- Semantic: `--success: #34C759`, `--warning: #FF9500`, `--danger: #FF3B30`, `--blue: #5AC8FA`
 
 **Components**:
-- Top nav: flat boxes with `border: 1px solid` separation, active = red background + white text
-- Cards: `background: var(--nothing-card)`, `border: 1px solid var(--nothing-border)`, no radius
-- Tags/badges: uppercase, `letter-spacing: 1px`, no radius, tinted transparent backgrounds
-- Segmented control: connected border boxes, active = white fill + black text
-- Filter chips: uppercase, sharp edges, red active outline
-- Tables: flat dark rows, border-separated, uppercase sticky headers
-- Hero: red dot `::before` decoration, uppercase h1, `"(  )"` glyph `::after`
+- Top nav: pill-shaped container with shadow, active tab = blue fill + white text
+- Cards: white background, 12px radius, soft shadow, hover lifts with shadow increase
+- Tags/badges: pill-shaped (full border-radius), soft tinted backgrounds
+- Segmented control: rounded pill, active = accent fill
+- Filter chips: pill-shaped `border-radius: 20px`, light border
+- Tables: clean with subtle alternating rows (#F9F9FB), no heavy borders
+- Hero: clean centered text, no decorations
 
 **Layout**:
-- Map tab: full-viewport Google Map + flat dark sidebar (380px right, hard left border)
-- Content tabs: max-width `1400px` centered, card grid with `gap: 16px`
-- Mobile (<768px): bottom sheet with flat handle line, single-column stacked
+- Map tab: full-viewport Google Map + white sidebar (380px right)
+- Content tabs: max-width `1400px` centered, card grid with `gap: 24px`
+- Mobile (<768px): bottom sheet with rounded top corners
 
 **Interactions**:
-- Hover: `border-color` lightens to `--nothing-border-light`, subtle `background` shift
-- Transitions: `0.15s` — fast, mechanical feel
-- Active states: red accent or white fill inversion
-- No transforms, no scale, no elevation changes
+- Hover: subtle lift `translateY(-1px)` + shadow increase
+- Transitions: `0.3s cubic-bezier(0.25, 0.1, 0.25, 1)` — smooth Apple-like
+- Active states: accent color fill
 
 **Typography Rules**:
-- All headings/labels: `text-transform: uppercase`, `letter-spacing: 1-2px`
-- Body text: `0.78rem`, line-height `1.6`
-- Monospace throughout — no serif or sans-serif fallback except for Chinese chars
+- NO `text-transform: uppercase` anywhere
+- NO `letter-spacing` beyond default
+- Font weights: 700 headings, 500 subheadings, 400 body
+- Body text: `0.9rem`, line-height `1.6`
 
 ### UI Language
 Traditional Chinese (Hong Kong audience).
@@ -147,58 +164,33 @@ node scripts/read-excel.js read "Hotel"  # read a specific sheet
 
 ### Setup
 - **Platform**: Vercel (connected via GitHub)
-- **GitHub account**: winsonclfa@hotmail.com
-- **Repo**: Push this project to GitHub, deploy via Vercel for sharing with friends
-- **Output**: Static site from `presentation/` folder
+- **GitHub account**: winsonclfa@hotmail.com (GitHub user: Winson-Chan-Dev)
+- **Repo**: https://github.com/Winson-Chan-Dev/skiing-trip
+- **Output**: Static site from `presentation/` folder (configured in `vercel.json`)
+- **Live URL**: https://skiing-trip.vercel.app
 
-### Deployment Steps
-1. Initialize git repo locally
-2. Configure git user (winsonclfa@hotmail.com)
-3. Create GitHub repo and push
-4. Connect to Vercel for auto-deploy
-5. Share Vercel URL with friends
+### Deploy Workflow
+```bash
+# After making changes:
+npm run build                          # regenerate HTML
+git add -A && git commit -m "..."      # commit changes
+git push origin master                 # push to GitHub
+vercel --prod                          # deploy to production
+```
 
----
-
-## Hotel Tab — UI Style Demo
-
-The **🏨 住宿** (Hotel) tab is used to demo 3 different frontend UI styles. Each style variant renders the same hotel comparison data with a completely different visual identity.
-
-### Style Variants
-
-#### 1. Apple UI (Clean Minimalism)
-- **Aesthetic**: SF Pro typography, generous whitespace, frosted glass, soft shadows
-- **Colors**: Light mode — white/gray backgrounds, subtle blue accents
-- **Components**: Rounded cards (12-16px radius), vibrancy/blur effects, smooth spring animations
-- **Typography**: SF Pro Display / -apple-system, thin-to-medium weights, large titles
-- **Interactions**: Gentle hover lifts, smooth transitions (0.3-0.5s ease)
-
-#### 2. Nothing Phone UI (Industrial Minimal) — CURRENT DEFAULT
-- **Aesthetic**: Flat, industrial, monospace, geometric (as documented in Design section above)
-- **Colors**: Pure black `#000`, sharp borders, Nothing brand red accent
-- **Components**: Zero radius, no shadows, border-separated flat surfaces
-- **Typography**: Space Mono / monospace, uppercase headings, letter-spacing
-- **Interactions**: Fast 0.15s mechanical transitions, border-color shifts
-
-#### 3. Muji Format (Japanese Minimalism)
-- **Aesthetic**: Natural, understated, warm — inspired by MUJI's "no-brand" philosophy
-- **Colors**: Warm neutrals — off-white `#F5F2EB`, kraft paper tan `#D4C5A9`, charcoal text `#333`
-- **Components**: Minimal borders, generous padding, subtle 2-4px radius, thin hairline dividers
-- **Typography**: Clean sans-serif (Noto Sans JP / system), regular weight, natural hierarchy through size only
-- **Interactions**: Barely-there hover states, no flashy animations, content-first
-
-### Implementation Plan
-- Each style = separate CSS theme applied to the same hotel HTML structure
-- Toggle or separate pages to switch between styles for demo purposes
-- Content remains identical (Traditional Chinese), only visual presentation changes
+### Notes
+- `.env` is in `.gitignore` — API key not pushed to repo
+- Google Maps API key IS embedded in generated HTML (visible in page source) — acceptable for a friends-only sharing site
+- `vercel.json` sets `outputDirectory: "presentation"` — only that folder is served
 
 ---
 
 ## How to Use This Workspace
 1. **Map/location updates**: Edit `data/places.json` or `data/itinerary.json`, then `npm run build`
-2. **Content updates**: Edit HTML fragments in `data/content/`, then `npm run build`
-3. **Research**: Use `/deep-research` for hotel/price/availability investigations
-4. **Excel**: Use `scripts/read-excel.js` to read/modify the master spreadsheet
-5. **Budget**: Keep running totals in `budget/` folder
-6. **Skill**: Use `/build-map` to regenerate HTML after data changes
-7. **Deploy**: Push to GitHub → Vercel auto-deploys from `presentation/`
+2. **New locations**: Use Google Places API to get exact coordinates (see "Getting Accurate Coordinates" above)
+3. **Content updates**: Edit HTML fragments in `data/content/`, then `npm run build`
+4. **Research**: Use `/deep-research` for hotel/price/availability investigations
+5. **Excel**: Use `scripts/read-excel.js` to read/modify the master spreadsheet
+6. **Budget**: Keep running totals in `budget/` folder
+7. **Skill**: Use `/build-map` to regenerate HTML after data changes
+8. **Deploy**: `npm run build` → `git push` → `vercel --prod`

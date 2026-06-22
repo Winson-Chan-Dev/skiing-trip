@@ -21,7 +21,8 @@
 
         /* 1. Nothing Phone Theme (Default) */
         body.theme-nothing {
-            --font-family: 'Space Mono', 'Courier New', 'Microsoft JhengHei', monospace;
+            --font-family: 'Space Mono', 'Courier New', monospace;
+            --font-family-zh: 'Microsoft JhengHei', monospace;
             --bg-color: #000000;
             --text-color: #ffffff;
             --card-bg: #141414;
@@ -63,7 +64,8 @@
 
         /* 2. Apple UI Theme */
         body.theme-apple {
-            --font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif, 'PingFang TC';
+            --font-family: 'SF Pro Display', 'SF Pro Text', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+            --font-family-zh: 'PingFang HK', 'PingFang TC', 'PingFang SC', sans-serif;
             --bg-color: #F5F5F7;
             --text-color: #1D1D1F;
             --card-bg: #FFFFFF;
@@ -106,6 +108,7 @@
         /* 3. Muji Theme */
         body.theme-muji {
             --font-family: 'Noto Sans JP', 'Hiragino Sans', -apple-system, sans-serif;
+            --font-family-zh: 'Noto Sans JP', 'Hiragino Sans', sans-serif;
             --bg-color: #F7F4EF;
             --text-color: #2C2C2C;
             --card-bg: #FFFFFF;
@@ -147,12 +150,12 @@
 
         /* ===== GLOBAL STYLES (using variables) ===== */
         body {
-            font-family: var(--font-family);
+            font-family: var(--font-family), var(--font-family-zh);
             background-color: var(--bg-color);
             color: var(--text-color);
             transition: background-color 0.3s, color 0.3s;
             line-height: 1.6;
-            padding-top: 60px; /* space for switcher */
+            padding-top: 20px;
         }
 
         .container {
@@ -161,43 +164,15 @@
             padding: 40px 20px;
         }
 
-        /* Theme Switcher */
-        .theme-switcher {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 10px;
-            background: var(--card-bg);
-            border-bottom: 1px solid var(--border-light);
-            z-index: 1000;
-            box-shadow: var(--box-shadow);
-            transition: background-color 0.3s, border-color 0.3s;
+        /* Strikethrough for unavailable hotels */
+        .unavailable {
+            opacity: 0.45;
+            text-decoration: line-through;
+            text-decoration-color: rgba(0,0,0,0.3);
         }
-        .theme-btn {
-            background: transparent;
-            color: var(--gray3);
-            border: 1px solid var(--border-light);
-            padding: 8px 16px;
-            margin: 0 4px;
-            cursor: pointer;
-            font-family: inherit;
-            font-size: 0.85rem;
-            border-radius: var(--border-radius-badge);
-            transition: all 0.2s;
-            font-weight: 600;
-        }
-        
-        .theme-btn:hover {
-            color: var(--text-color);
-        }
-        .theme-btn.active {
-            background: var(--text-color);
-            color: var(--bg-color);
-            border-color: var(--text-color);
+        .unavailable td {
+            text-decoration: line-through;
+            text-decoration-color: rgba(0,0,0,0.3);
         }
 
         /* Hero */
@@ -283,7 +258,20 @@
         .theme-apple .summary-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
         .theme-muji .summary-card:hover { background: rgba(0,0,0,0.02); }
 
-        .summary-card .icon { font-size: 1.8rem; margin-bottom: 12px; }
+        .summary-card .icon { 
+            font-size: 1.1rem; 
+            margin-bottom: 12px; 
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: #007AFF;
+            color: #fff;
+            font-weight: 600;
+            font-family: 'SF Pro Display', -apple-system, sans-serif;
+        }
         .summary-card h3 { 
             font-size: calc(var(--title-size) * 0.75); 
             margin-bottom: 8px; 
@@ -497,13 +485,7 @@
 
     </style>
 </head>
-<body class="theme-nothing">
-
-    <div class="theme-switcher">
-        <button class="theme-btn" data-theme="apple" onclick="setTheme('apple')">Apple UI</button>
-        <button class="theme-btn active" data-theme="nothing" onclick="setTheme('nothing')">Nothing UI</button>
-        <button class="theme-btn" data-theme="muji" onclick="setTheme('muji')">MUJI Format</button>
-    </div>
+<body class="theme-apple">
 
     <div class="container">
         
@@ -515,29 +497,29 @@
         <h2 class="section-title">精選推薦</h2>
         <div class="summary-cards">
             <div class="summary-card">
-                <div class="icon">🥇</div>
+                <div class="icon">1</div>
                 <h3>最佳綜合選擇</h3>
                 <p><strong>Schanze Nozawa シャンツェ野沢</strong> — 步行3分鐘到纜車站，性價比最高，服務一流。即將額滿，盡快聯絡！</p>
             </div>
             <div class="summary-card">
-                <div class="icon">🥈</div>
+                <div class="icon">2</div>
                 <h3>最佳傳統體驗</h3>
                 <p><strong>Tamayura たまゆら</strong> — 步行2分鐘到纜車站，道地手作日式料理，溫馨民宿氛圍。7月1日開放預訂。</p>
             </div>
             <div class="summary-card">
-                <div class="icon">🥉</div>
+                <div class="icon">3</div>
                 <h3>最佳團體體驗</h3>
                 <p><strong>Lodge Denbey でんべえ</strong> — 8人同住一間大和室，位於日影滑雪場內（ski-in），食物超讚。7月1日開放。</p>
             </div>
             <div class="summary-card">
-                <div class="icon">💎</div>
+                <div class="icon">◆</div>
                 <h3>最佳豪華選擇</h3>
                 <p><strong>HETA 蔕</strong> — 設計感極強，剛好可容納8人（套房+雙人房）。但僅有3晚空房。</p>
             </div>
         </div>
 
         <h2 class="section-title">完整排名</h2>
-        <p class="helper-text">💡 點擊欄位標題可排序 | 所有價格為每人5晚總計（HKD）</p>
+        <p class="helper-text">點擊欄位標題可排序 | 所有價格為每人5晚總計（HKD）</p>
         <div class="table-wrapper">
         <table class="ranking-table" id="mainRankTable">
             <thead>
@@ -562,10 +544,10 @@
                     <td data-sort="1">1</td>
                     <td><strong>Schanze Nozawa</strong><br><small>シャンツェ野沢</small></td>
                     <td>民宿</td>
-                    <td data-sort="3"><span class="distance-badge">3分鐘</span><br><span class="slope-up sub-text">⬆ 上坡</span></td>
-                    <td data-sort="11"><span class="distance-badge">11分鐘</span><br><span class="slope-down sub-text">⬇ 下坡</span></td>
+                    <td data-sort="3"><span class="distance-badge">3分鐘</span><br><span class="slope-up sub-text">↑ 上坡</span></td>
+                    <td data-sort="11"><span class="distance-badge">11分鐘</span><br><span class="slope-down sub-text">↓ 下坡</span></td>
                     <td data-sort="8"><span class="distance-badge">8分鐘</span><br><span class="slope-flat sub-text">— 平路</span></td>
-                    <td>✅ 可以</td>
+                    <td>可以</td>
                     <td><span class="meal-tag meal-breakfast">含早餐</span></td>
                     <td data-sort="700">$600–800</td>
                     <td data-sort="500">~$500<span class="sub-text">5晚晚餐外食</span></td>
@@ -573,29 +555,29 @@
                     <td data-sort="4.3"><span class="stars">★★★★☆</span> 4.3</td>
                     <td><span class="tag tag-full">即將額滿</span></td>
                 </tr>
-                <tr>
+                <tr class="unavailable">
                     <td data-sort="2">2</td>
                     <td><strong>Tamayura たまゆら</strong></td>
                     <td>民宿</td>
-                    <td data-sort="2"><span class="distance-badge">2分鐘</span><br><span class="slope-up sub-text">⬆ 上坡</span></td>
-                    <td data-sort="9"><span class="distance-badge">9分鐘</span><br><span class="slope-down sub-text">⬇ 下坡</span></td>
+                    <td data-sort="2"><span class="distance-badge">2分鐘</span><br><span class="slope-up sub-text">↑ 上坡</span></td>
+                    <td data-sort="9"><span class="distance-badge">9分鐘</span><br><span class="slope-down sub-text">↓ 下坡</span></td>
                     <td data-sort="7"><span class="distance-badge">7分鐘</span><br><span class="slope-flat sub-text">— 平路</span></td>
-                    <td>⚠️ 需分房(4+3+?)</td>
+                    <td>需分房(4+3+?)</td>
                     <td><span class="meal-tag meal-full">一泊二食</span><span class="sub-text">早+晚餐（手作）</span></td>
                     <td data-sort="1166">$1,166<span class="sub-text">含二食</span></td>
                     <td data-sort="0">已含<span class="sub-text">一泊二食</span></td>
                     <td data-sort="1166" class="price-total">$1,166</td>
                     <td data-sort="4.0"><span class="stars">★★★★☆</span> 4.0</td>
-                    <td><span class="tag tag-soon">7/1開放</span></td>
+                    <td><span class="tag tag-full">無房</span></td>
                 </tr>
                 <tr>
                     <td data-sort="3">3</td>
                     <td><strong>Gondola Apartments</strong><br><small>新選項</small></td>
                     <td>公寓</td>
-                    <td data-sort="3"><span class="distance-badge">3分鐘</span><br><span class="slope-up sub-text">⬆ 上坡</span></td>
-                    <td data-sort="10"><span class="distance-badge">10分鐘</span><br><span class="slope-down sub-text">⬇ 下坡</span></td>
+                    <td data-sort="3"><span class="distance-badge">3分鐘</span><br><span class="slope-up sub-text">↑ 上坡</span></td>
+                    <td data-sort="10"><span class="distance-badge">10分鐘</span><br><span class="slope-down sub-text">↓ 下坡</span></td>
                     <td data-sort="8"><span class="distance-badge">8分鐘</span><br><span class="slope-flat sub-text">— 平路</span></td>
-                    <td>⚠️ 需多間</td>
+                    <td>需多間</td>
                     <td><span class="meal-tag meal-none">自炊</span><span class="sub-text">有廚房</span></td>
                     <td data-sort="1400">$1,200–1,600</td>
                     <td data-sort="400">~$400<span class="sub-text">自煮/外食</span></td>
@@ -607,10 +589,10 @@
                     <td data-sort="4">4</td>
                     <td><strong>Lodge Denbey でんべえ</strong></td>
                     <td>滑雪小屋</td>
-                    <td data-sort="14"><span class="distance-badge">14分鐘</span><br><span class="slope-up sub-text">⬆ 上坡</span></td>
-                    <td data-sort="18"><span class="distance-badge">18分鐘</span><br><span class="slope-down sub-text">⬇ 下坡</span></td>
-                    <td data-sort="0"><span class="distance-badge" style="background:#dcfce7;color:#166534;">Ski-in!</span><br><span class="slope-flat sub-text">就在場內</span></td>
-                    <td>✅ 全員同房</td>
+                    <td data-sort="14"><span class="distance-badge">14分鐘</span><br><span class="slope-up sub-text">↑ 上坡</span></td>
+                    <td data-sort="18"><span class="distance-badge">18分鐘</span><br><span class="slope-down sub-text">↓ 下坡</span></td>
+                    <td data-sort="0"><span class="distance-badge" style="background:rgba(52,199,89,0.15);color:#34C759;">Ski-in!</span><br><span class="slope-flat sub-text">就在場內</span></td>
+                    <td>可 全員同房</td>
                     <td><span class="meal-tag meal-full">一泊二食</span><span class="sub-text">早+晚餐（名物）</span></td>
                     <td data-sort="1000">$800–1,200<span class="sub-text">含二食</span></td>
                     <td data-sort="0">已含<span class="sub-text">一泊二食</span></td>
@@ -622,10 +604,10 @@
                     <td data-sort="5">5</td>
                     <td><strong>野沢溫泉ロッヂ</strong><br><small>Nozawa Onsen Lodge</small></td>
                     <td>旅舍</td>
-                    <td data-sort="3"><span class="distance-badge">3分鐘</span><br><span class="slope-up sub-text">⬆ 上坡</span></td>
-                    <td data-sort="10"><span class="distance-badge">10分鐘</span><br><span class="slope-down sub-text">⬇ 下坡</span></td>
+                    <td data-sort="3"><span class="distance-badge">3分鐘</span><br><span class="slope-up sub-text">↑ 上坡</span></td>
+                    <td data-sort="10"><span class="distance-badge">10分鐘</span><br><span class="slope-down sub-text">↓ 下坡</span></td>
                     <td data-sort="7"><span class="distance-badge">7分鐘</span><br><span class="slope-flat sub-text">— 平路</span></td>
-                    <td>✅ 可以</td>
+                    <td>可以</td>
                     <td><span class="meal-tag meal-breakfast">含早餐</span><span class="sub-text">有酒吧</span></td>
                     <td data-sort="850">$700–1,000</td>
                     <td data-sort="500">~$500<span class="sub-text">5晚晚餐外食</span></td>
@@ -637,10 +619,10 @@
                     <td data-sort="6">6</td>
                     <td><strong>Tanuki Apartments</strong></td>
                     <td>公寓</td>
-                    <td data-sort="11"><span class="distance-badge">11分鐘</span><br><span class="slope-up sub-text">⬆ 上坡</span></td>
+                    <td data-sort="11"><span class="distance-badge">11分鐘</span><br><span class="slope-up sub-text">↑ 上坡</span></td>
                     <td data-sort="4"><span class="distance-badge">4分鐘</span><br><span class="slope-flat sub-text">— 平路</span></td>
                     <td data-sort="5"><span class="distance-badge">5分鐘</span><br><span class="slope-flat sub-text">— 平路</span></td>
-                    <td>✅ 3-4房單位</td>
+                    <td>可 3-4房單位</td>
                     <td><span class="meal-tag meal-none">自炊</span><span class="sub-text">全廚房+壁爐</span></td>
                     <td data-sort="1250">$1,000–1,500</td>
                     <td data-sort="350">~$350<span class="sub-text">自煮為主</span></td>
@@ -652,10 +634,10 @@
                     <td data-sort="7">7</td>
                     <td><strong>住吉屋 Sumiyosiya</strong></td>
                     <td>高級旅館</td>
-                    <td data-sort="14"><span class="distance-badge">14分鐘</span><br><span class="slope-up sub-text">⬆ 上坡</span></td>
+                    <td data-sort="14"><span class="distance-badge">14分鐘</span><br><span class="slope-up sub-text">↑ 上坡</span></td>
                     <td data-sort="2"><span class="distance-badge">2分鐘</span><br><span class="slope-flat sub-text">— 平路</span></td>
                     <td data-sort="3"><span class="distance-badge">3分鐘</span><br><span class="slope-flat sub-text">— 平路</span></td>
-                    <td>⚠️ 需分房</td>
+                    <td>需分房</td>
                     <td><span class="meal-tag meal-full">一泊二食</span><span class="sub-text">懷石料理</span></td>
                     <td data-sort="1625">$1,625+<span class="sub-text">含懷石</span></td>
                     <td data-sort="0">已含<span class="sub-text">一泊二食</span></td>
@@ -663,29 +645,29 @@
                     <td data-sort="3.7"><span class="stars">★★★★☆</span> 3.7</td>
                     <td><span class="tag tag-soon">未開放</span></td>
                 </tr>
-                <tr>
+                <tr class="unavailable">
                     <td data-sort="8">8</td>
                     <td><strong>河一屋 Kawaichiya</strong></td>
                     <td>旅館</td>
-                    <td data-sort="17"><span class="distance-badge">17分鐘</span><br><span class="slope-up sub-text">⬆ 上坡</span></td>
-                    <td data-sort="9"><span class="distance-badge">9分鐘</span><br><span class="slope-down sub-text">⬇ 下坡</span></td>
+                    <td data-sort="17"><span class="distance-badge">17分鐘</span><br><span class="slope-up sub-text">↑ 上坡</span></td>
+                    <td data-sort="9"><span class="distance-badge">9分鐘</span><br><span class="slope-down sub-text">↓ 下坡</span></td>
                     <td data-sort="12"><span class="distance-badge">12分鐘</span><br><span class="slope-flat sub-text">— 平路</span></td>
-                    <td>✅ 大和室</td>
+                    <td>可 大和室</td>
                     <td><span class="meal-tag meal-full">一泊二食</span><span class="sub-text">日式家庭料理</span></td>
                     <td data-sort="1000">$800–1,200<span class="sub-text">含二食</span></td>
                     <td data-sort="0">已含<span class="sub-text">一泊二食</span></td>
                     <td data-sort="1000" class="price-total">$800–1,200</td>
                     <td data-sort="3.6"><span class="stars">★★★★☆</span> 3.6</td>
-                    <td><span class="tag tag-soon">約7/25</span></td>
+                    <td><span class="tag tag-full">無房</span></td>
                 </tr>
                 <tr>
                     <td data-sort="9">9</td>
                     <td><strong>Address Nozawa</strong></td>
                     <td>公寓酒店</td>
-                    <td data-sort="10"><span class="distance-badge">10分鐘</span><br><span class="slope-up sub-text">⬆ 上坡</span></td>
-                    <td data-sort="5"><span class="distance-badge">5分鐘</span><br><span class="slope-down sub-text">⬇ 下坡</span></td>
+                    <td data-sort="10"><span class="distance-badge">10分鐘</span><br><span class="slope-up sub-text">↑ 上坡</span></td>
+                    <td data-sort="5"><span class="distance-badge">5分鐘</span><br><span class="slope-down sub-text">↓ 下坡</span></td>
                     <td data-sort="4"><span class="distance-badge">4分鐘</span><br><span class="slope-flat sub-text">— 平路</span></td>
-                    <td>❌ 最多6人</td>
+                    <td>否 最多6人</td>
                     <td><span class="meal-tag meal-none">無餐食</span><span class="sub-text">需外食</span></td>
                     <td data-sort="2000">~$2,000</td>
                     <td data-sort="600">~$600<span class="sub-text">全外食</span></td>
@@ -697,10 +679,10 @@
                     <td data-sort="10">10</td>
                     <td><strong>桐屋旅館 Kiriya</strong><br><small>新選項</small></td>
                     <td>旅館</td>
-                    <td data-sort="8"><span class="distance-badge">8分鐘</span><br><span class="slope-up sub-text">⬆ 上坡</span></td>
-                    <td data-sort="6"><span class="distance-badge">6分鐘</span><br><span class="slope-down sub-text">⬇ 下坡</span></td>
+                    <td data-sort="8"><span class="distance-badge">8分鐘</span><br><span class="slope-up sub-text">↑ 上坡</span></td>
+                    <td data-sort="6"><span class="distance-badge">6分鐘</span><br><span class="slope-down sub-text">↓ 下坡</span></td>
                     <td data-sort="5"><span class="distance-badge">5分鐘</span><br><span class="slope-flat sub-text">— 平路</span></td>
-                    <td>✅ 可以</td>
+                    <td>可以</td>
                     <td><span class="meal-tag meal-full">一泊二食</span><span class="sub-text">日式定食</span></td>
                     <td data-sort="850">$700–1,000<span class="sub-text">含二食</span></td>
                     <td data-sort="0">已含<span class="sub-text">一泊二食</span></td>
@@ -712,10 +694,10 @@
                     <td data-sort="11">11</td>
                     <td><strong>Lodge Nagano</strong><br><small>新選項</small></td>
                     <td>旅舍</td>
-                    <td data-sort="5"><span class="distance-badge">5分鐘</span><br><span class="slope-up sub-text">⬆ 上坡</span></td>
-                    <td data-sort="8"><span class="distance-badge">8分鐘</span><br><span class="slope-down sub-text">⬇ 下坡</span></td>
+                    <td data-sort="5"><span class="distance-badge">5分鐘</span><br><span class="slope-up sub-text">↑ 上坡</span></td>
+                    <td data-sort="8"><span class="distance-badge">8分鐘</span><br><span class="slope-down sub-text">↓ 下坡</span></td>
                     <td data-sort="6"><span class="distance-badge">6分鐘</span><br><span class="slope-flat sub-text">— 平路</span></td>
-                    <td>✅ 可以</td>
+                    <td>可以</td>
                     <td><span class="meal-tag meal-breakfast">含早餐</span></td>
                     <td data-sort="600">$500–700</td>
                     <td data-sort="500">~$500<span class="sub-text">5晚晚餐外食</span></td>
@@ -723,29 +705,29 @@
                     <td data-sort="3.4"><span class="stars">★★★☆☆</span> 3.4</td>
                     <td><span class="tag tag-unknown">待確認</span></td>
                 </tr>
-                <tr>
+                <tr class="unavailable">
                     <td data-sort="12">12</td>
                     <td><strong>HETA 蔕</strong></td>
                     <td>精品設計屋</td>
-                    <td data-sort="7"><span class="distance-badge">7分鐘</span><br><span class="slope-up sub-text">⬆ 上坡</span></td>
-                    <td data-sort="8"><span class="distance-badge">8分鐘</span><br><span class="slope-down sub-text">⬇ 下坡</span></td>
+                    <td data-sort="7"><span class="distance-badge">7分鐘</span><br><span class="slope-up sub-text">↑ 上坡</span></td>
+                    <td data-sort="8"><span class="distance-badge">8分鐘</span><br><span class="slope-down sub-text">↓ 下坡</span></td>
                     <td data-sort="6"><span class="distance-badge">6分鐘</span><br><span class="slope-flat sub-text">— 平路</span></td>
-                    <td>✅ 套房+雙人房</td>
+                    <td>可 套房+雙人房</td>
                     <td><span class="meal-tag meal-none">無餐食</span><span class="sub-text">需外食</span></td>
                     <td data-sort="1700">~$1,700<span class="sub-text">僅3晚</span></td>
                     <td data-sort="600">~$600<span class="sub-text">全外食</span></td>
                     <td data-sort="2300" class="price-total">~$2,300</td>
                     <td data-sort="3.3"><span class="stars">★★★☆☆</span> 3.3</td>
-                    <td><span class="tag tag-full">僅3晚</span></td>
+                    <td><span class="tag tag-full">無房</span></td>
                 </tr>
                 <tr>
                     <td data-sort="13">13</td>
                     <td><strong>SKI INN Nozawa</strong></td>
                     <td>公寓</td>
-                    <td data-sort="13"><span class="distance-badge">13分鐘</span><br><span class="slope-up sub-text">⬆ 上坡</span></td>
-                    <td data-sort="10"><span class="distance-badge">10分鐘</span><br><span class="slope-down sub-text">⬇ 下坡</span></td>
+                    <td data-sort="13"><span class="distance-badge">13分鐘</span><br><span class="slope-up sub-text">↑ 上坡</span></td>
+                    <td data-sort="10"><span class="distance-badge">10分鐘</span><br><span class="slope-down sub-text">↓ 下坡</span></td>
                     <td data-sort="8"><span class="distance-badge">8分鐘</span><br><span class="slope-flat sub-text">— 平路</span></td>
-                    <td>❌ 最多6人</td>
+                    <td>否 最多6人</td>
                     <td><span class="meal-tag meal-none">自炊</span><span class="sub-text">有廚房</span></td>
                     <td data-sort="1782">$1,782</td>
                     <td data-sort="350">~$350<span class="sub-text">自煮為主</span></td>
@@ -758,9 +740,9 @@
         </div>
         
         <p class="helper-text">
-            📌 距離說明：長坂纜車站位於山腰（從村落上坡走）| Yu-Road/日影位於村落下方（下坡走）<br>
-            📌 餐費估算：外食晚餐 ~¥2,000–3,000/人/餐（~$100–120 HKD），5晚 ≈ $500–600 | 自煮 ≈ $300–400<br>
-            📌 一泊二食：住宿費已含早晚餐，無額外餐費
+            距離說明：長坂纜車站位於山腰（從村落上坡走）| Yu-Road/日影位於村落下方（下坡走）<br>
+            餐費估算：外食晚餐 ~¥2,000–3,000/人/餐（~$100–120 HKD），5晚 ≈ $500–600 | 自煮 ≈ $300–400<br>
+            一泊二食：住宿費已含早晚餐，無額外餐費
         </p>
 
         <h2 class="section-title">詳細分析 — 首選推薦</h2>
@@ -769,7 +751,7 @@
             <div class="hotel-card recommended">
                 <div class="hotel-header">
                     <div>
-                        <h3>🥇 Schanze Nozawa シャンツェ野沢</h3>
+                        <h3>#1 Schanze Nozawa シャンツェ野沢</h3>
                         <small>schanzenozawa.com</small>
                     </div>
                     <span class="badge">首選推薦</span>
@@ -777,7 +759,7 @@
                 <div class="hotel-body">
                     <dl class="hotel-details">
                         <dt>類型</dt><dd>家庭經營民宿</dd>
-                        <dt>到長坂纜車站距離</dt><dd>160米 — 步行3分鐘 🎿</dd>
+                        <dt>到長坂纜車站距離</dt><dd>160米 — 步行3分鐘</dd>
                         <dt>到Yu-Road電動步道</dt><dd>750米 — 步行11分鐘</dd>
                         <dt>容量</dt><dd>大型家庭房，可容納8人團體</dd>
                         <dt>預估價格</dt><dd>$600–800 HKD / 每人（5晚）</dd>
@@ -795,7 +777,7 @@
                 </div>
                 <div class="pros-cons">
                     <div class="pros">
-                        <h4>✅ 優點</h4>
+                        <h4>優點</h4>
                         <ul>
                             <li>超近長坂纜車站（主要纜車）</li>
                             <li>所有選項中性價比最高</li>
@@ -804,7 +786,7 @@
                         </ul>
                     </div>
                     <div class="cons">
-                        <h4>❌ 缺點</h4>
+                        <h4>缺點</h4>
                         <ul>
                             <li>2027年1月已近乎額滿</li>
                             <li>設施偏基本/傳統（非豪華路線）</li>
@@ -817,7 +799,7 @@
             <div class="hotel-card recommended">
                 <div class="hotel-header">
                     <div>
-                        <h3>🥈 Tamayura たまゆら</h3>
+                        <h3>#2 Tamayura たまゆら</h3>
                         <small>nozawa-tamayura.com</small>
                     </div>
                     <span class="badge">亞軍推薦</span>
@@ -825,7 +807,7 @@
                 <div class="hotel-body">
                     <dl class="hotel-details">
                         <dt>類型</dt><dd>傳統日式民宿</dd>
-                        <dt>到長坂纜車站距離</dt><dd>90米 — 步行2分鐘 🎿</dd>
+                        <dt>到長坂纜車站距離</dt><dd>90米 — 步行2分鐘</dd>
                         <dt>到Yu-Road電動步道</dt><dd>650米 — 步行9分鐘</dd>
                         <dt>容量</dt><dd>4人房 + 3人房（第8人需確認）</dd>
                         <dt>預估價格</dt><dd>~$1,166 HKD / 每人（5晚，一泊二食）</dd>
@@ -843,7 +825,7 @@
                 </div>
                 <div class="pros-cons">
                     <div class="pros">
-                        <h4>✅ 優點</h4>
+                        <h4>優點</h4>
                         <ul>
                             <li>距離長坂纜車站最近（僅90米！）</li>
                             <li>道地日式民宿，手作料理一流</li>
@@ -852,7 +834,7 @@
                         </ul>
                     </div>
                     <div class="cons">
-                        <h4>❌ 缺點</h4>
+                        <h4>缺點</h4>
                         <ul>
                             <li>公共衛浴/廁所（傳統風格）</li>
                             <li>8人需分住2-3間房</li>
@@ -866,7 +848,7 @@
             <div class="hotel-card">
                 <div class="hotel-header">
                     <div>
-                        <h3>🥉 Lodge Denbey でんべえ</h3>
+                        <h3>#3 Lodge Denbey でんべえ</h3>
                         <small>nozawa-denbey.com</small>
                     </div>
                 </div>
@@ -875,7 +857,7 @@
                         <dt>類型</dt><dd>滑雪小屋 / 民宿</dd>
                         <dt>到長坂纜車站距離</dt><dd>1.1公里 — 步行14分鐘（可滑雪互通）</dd>
                         <dt>到日影滑雪場</dt><dd>就在場內 — Ski-in！</dd>
-                        <dt>容量</dt><dd>大和室可容納全部8人同住 ✓</dd>
+                        <dt>容量</dt><dd>大和室可容納全部8人同住</dd>
                         <dt>預估價格</dt><dd>$800–1,200 HKD / 每人（5晚，一泊二食）</dd>
                         <dt>餐食</dt><dd>口碑極佳的自製餐食（一泊二食），館內大浴場</dd>
                         <dt>預訂方式</dt><dd>2026年7月1日上午10:00開放（4晚以上）</dd>
@@ -891,7 +873,7 @@
                 </div>
                 <div class="pros-cons">
                     <div class="pros">
-                        <h4>✅ 優點</h4>
+                        <h4>優點</h4>
                         <ul>
                             <li>全部8人住同一間大和室 — 最有團體感</li>
                             <li>就在日影滑雪場裡面（Ski-in）</li>
@@ -900,7 +882,7 @@
                         </ul>
                     </div>
                     <div class="cons">
-                        <h4>❌ 缺點</h4>
+                        <h4>缺點</h4>
                         <ul>
                             <li>穿雪鞋走到長坂 = 14分鐘上坡</li>
                             <li>距離溫泉街餐廳及夜生活較遠</li>
@@ -923,13 +905,13 @@
                 </tr>
             </thead>
             <tbody>
-                <tr><td>💰 預算友善</td><td>Schanze / Lodge Nagano</td><td>5晚每人 $500–800</td></tr>
-                <tr><td>🎿 最近纜車站</td><td>Tamayura (2分鐘) / Schanze (3分鐘)</td><td>穿雪鞋走路最短</td></tr>
-                <tr><td>👥 8人全員同住</td><td>Lodge Denbey / 河一屋</td><td>一間大和室全員搞定</td></tr>
-                <tr><td>🍶 溫泉街夜生活</td><td>Tanuki / Address Nozawa</td><td>出門就是居酒屋和酒吧</td></tr>
-                <tr><td>🍲 自己煮（打邊爐！）</td><td>Tanuki / SKI INN</td><td>完整廚房，一起下廚</td></tr>
-                <tr><td>✨ 豪華 / 設計感</td><td>HETA 蔕 / 住吉屋</td><td>極致美感，頂級體驗</td></tr>
-                <tr><td>🔰 初學者友善位置</td><td>Lodge Denbey / 住吉屋</td><td>就在日影初學區旁邊</td></tr>
+                <tr><td>預算友善</td><td>Schanze / Lodge Nagano</td><td>5晚每人 $500–800</td></tr>
+                <tr><td>最近纜車站</td><td>Tamayura (2分鐘) / Schanze (3分鐘)</td><td>穿雪鞋走路最短</td></tr>
+                <tr><td>8人全員同住</td><td>Lodge Denbey / 河一屋</td><td>一間大和室全員搞定</td></tr>
+                <tr><td>溫泉街夜生活</td><td>Tanuki / Address Nozawa</td><td>出門就是居酒屋和酒吧</td></tr>
+                <tr><td>自己煮（打邊爐）</td><td>Tanuki / SKI INN</td><td>完整廚房，一起下廚</td></tr>
+                <tr><td>豪華 / 設計感</td><td>HETA 蔕 / 住吉屋</td><td>極致美感，頂級體驗</td></tr>
+                <tr><td>初學者友善位置</td><td>Lodge Denbey / 住吉屋</td><td>就在日影初學區旁邊</td></tr>
             </tbody>
         </table>
         </div>
@@ -937,18 +919,8 @@
     </div>
 
     <script>
-        function setTheme(theme) {
-            document.body.className = `theme-${theme}`;
-            localStorage.setItem('hotel-theme', theme);
-            
-            document.querySelectorAll('.theme-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.theme === theme);
-            });
-        }
-
-        // Initialize theme
-        const savedTheme = localStorage.getItem('hotel-theme') || 'nothing';
-        setTheme(savedTheme);
+        // Apple theme is the default and only theme
+        document.body.className = 'theme-apple';
 
         // Sorting Logic
         (function() {

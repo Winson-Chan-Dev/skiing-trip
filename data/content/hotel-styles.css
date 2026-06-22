@@ -1,4 +1,14 @@
-        /* ===== Nothing Phone UI — Content Tab Styles ===== */
+        /* ===== Apple UI — Content Tab Styles ===== */
+
+        /* Unavailable hotels */
+        .unavailable {
+            opacity: 0.45;
+        }
+        .unavailable td {
+            text-decoration: line-through;
+            text-decoration-color: rgba(0,0,0,0.3);
+        }
+
         .container {
             max-width: 1400px;
             margin: 0 auto;
@@ -6,12 +16,11 @@
         }
 
         .section-title {
-            color: var(--nothing-white);
+            color: var(--text-primary);
             font-size: 1.1rem;
             font-weight: 700;
             margin-bottom: 24px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
+            letter-spacing: 0;
             position: relative;
             padding-left: 16px;
         }
@@ -25,7 +34,7 @@
             width: 6px;
             height: 6px;
             border-radius: 50%;
-            background: var(--nothing-red);
+            background: var(--accent);
         }
 
         .summary-cards {
@@ -33,81 +42,83 @@
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 1px;
             margin-bottom: 50px;
-            border: 1px solid var(--nothing-border);
+            border: 1px solid var(--border);
         }
 
         .summary-card {
-            background: var(--nothing-card);
+            background: var(--bg-elevated);
             border: none;
-            border-right: 1px solid var(--nothing-border);
-            border-radius: 0;
+            border-right: 1px solid var(--border);
+            border-radius: var(--radius);
             padding: 24px;
-            transition: background 0.15s;
+            transition: background 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+            box-shadow: var(--shadow);
         }
 
         .summary-card:hover {
-            background: rgba(255,255,255,0.03);
+            background: rgba(0,0,0,0.02);
         }
         .summary-card .icon { font-size: 1.8rem; margin-bottom: 12px; }
-        .summary-card h3 { font-size: 0.85rem; margin-bottom: 6px; color: var(--nothing-white); font-weight: 700; letter-spacing: 0.5px; }
-        .summary-card p { color: var(--nothing-gray3); font-size: 0.78rem; line-height: 1.6; }
+        .summary-card h3 { font-size: 0.85rem; margin-bottom: 6px; color: var(--text-primary); font-weight: 700; letter-spacing: 0; }
+        .summary-card p { color: var(--text-secondary); font-size: 0.78rem; line-height: 1.6; }
 
         .hotel-grid { display: grid; grid-template-columns: 1fr; gap: 20px; margin-bottom: 50px; }
 
         .hotel-card {
-            background: var(--nothing-card);
-            border: 1px solid var(--nothing-border);
-            border-radius: 0;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
             overflow: hidden;
-            transition: border-color 0.15s;
+            transition: border-color 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+            box-shadow: var(--shadow);
         }
 
         .hotel-card:hover {
-            border-color: var(--nothing-border-light);
+            border-color: var(--border);
         }
-        .hotel-card.recommended { border-left: 3px solid var(--nothing-red); }
+        .hotel-card.recommended { border-left: 3px solid var(--accent); }
 
         .hotel-header { display: flex; justify-content: space-between; align-items: flex-start; padding: 24px 24px 0; }
-        .hotel-header h3 { font-size: 1rem; color: var(--nothing-white); font-weight: 700; letter-spacing: 0.5px; }
-        .hotel-header .badge { background: var(--nothing-red); color: white; padding: 4px 10px; border-radius: 0; font-size: 0.65rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+        .hotel-header h3 { font-size: 1rem; color: var(--text-primary); font-weight: 700; letter-spacing: 0; }
+        .hotel-header .badge { background: var(--accent); color: white; padding: 4px 10px; border-radius: var(--radius-sm); font-size: 0.65rem; font-weight: 700; letter-spacing: 0; }
 
         .hotel-body { padding: 16px 24px 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         @media (max-width: 768px) { .hotel-body { grid-template-columns: 1fr; } }
 
-        .hotel-details { font-size: 0.78rem; color: var(--nothing-gray3); }
-        .hotel-details dt { font-weight: 700; color: var(--nothing-gray1); margin-top: 10px; letter-spacing: 0.5px; }
+        .hotel-details { font-size: 0.78rem; color: var(--text-secondary); }
+        .hotel-details dt { font-weight: 700; color: var(--text-primary); margin-top: 10px; letter-spacing: 0; }
         .hotel-details dd { margin-left: 0; margin-top: 2px; }
 
         .score-section { display: flex; flex-direction: column; gap: 8px; }
         .score-bar { display: flex; align-items: center; gap: 10px; font-size: 0.72rem; }
-        .score-bar label { width: 100px; color: var(--nothing-gray3); flex-shrink: 0; }
-        .bar-track { flex: 1; height: 4px; background: var(--nothing-border); border-radius: 0; overflow: hidden; }
-        .bar-fill { height: 100%; border-radius: 0; transition: width 0.6s ease; }
-        .bar-fill.loc { background: var(--nothing-red); }
-        .bar-fill.grp { background: var(--nothing-green); }
-        .bar-fill.val { background: var(--nothing-yellow); }
-        .bar-fill.exp { background: var(--nothing-blue); }
-        .bar-fill.avl { background: var(--nothing-gray2); }
-        .score-total { font-size: 2rem; font-weight: 700; color: var(--nothing-red); margin-top: 8px; }
+        .score-bar label { width: 100px; color: var(--text-secondary); flex-shrink: 0; }
+        .bar-track { flex: 1; height: 4px; background: var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+        .bar-fill { height: 100%; border-radius: var(--radius-sm); transition: width 0.6s ease; }
+        .bar-fill.loc { background: var(--accent); }
+        .bar-fill.grp { background: var(--success); }
+        .bar-fill.val { background: var(--warning); }
+        .bar-fill.exp { background: var(--blue); }
+        .bar-fill.avl { background: var(--text-secondary); }
+        .score-total { font-size: 2rem; font-weight: 700; color: var(--accent); margin-top: 8px; }
 
         .pros-cons { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 24px 24px; font-size: 0.78rem; }
-        .pros h4 { color: var(--nothing-green); margin-bottom: 6px; font-size: 0.7rem; letter-spacing: 1px; text-transform: uppercase; }
-        .cons h4 { color: var(--nothing-red); margin-bottom: 6px; font-size: 0.7rem; letter-spacing: 1px; text-transform: uppercase; }
-        .pros li, .cons li { margin-left: 16px; margin-bottom: 4px; color: var(--nothing-gray3); }
+        .pros h4 { color: var(--success); margin-bottom: 6px; font-size: 0.7rem; letter-spacing: 0; }
+        .cons h4 { color: var(--accent); margin-bottom: 6px; font-size: 0.7rem; letter-spacing: 0; }
+        .pros li, .cons li { margin-left: 16px; margin-bottom: 4px; color: var(--text-secondary); }
 
         .ranking-table {
             width: 100%;
             border-collapse: collapse;
-            background: var(--nothing-card);
-            border: 1px solid var(--nothing-border);
-            border-radius: 0;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
             overflow: hidden;
             margin-bottom: 50px;
         }
 
         .ranking-table th {
-            background: var(--nothing-dark);
-            color: var(--nothing-gray2);
+            background: #F9F9FB;
+            color: var(--text-secondary);
             padding: 12px 10px;
             text-align: left;
             font-size: 0.68rem;
@@ -115,34 +126,33 @@
             user-select: none;
             white-space: nowrap;
             position: relative;
-            border-bottom: 1px solid var(--nothing-border);
-            letter-spacing: 1px;
-            text-transform: uppercase;
+            border-bottom: 1px solid var(--border);
+            letter-spacing: 0;
         }
-        .ranking-table th:hover { background: rgba(255,255,255,0.03); }
+        .ranking-table th:hover { background: rgba(0,0,0,0.02); }
         .ranking-table th .sort-icon { opacity: 0.5; margin-left: 3px; font-size: 0.7rem; }
-        .ranking-table th.sorted-asc .sort-icon, .ranking-table th.sorted-desc .sort-icon { opacity: 1; color: var(--nothing-red); }
-        .ranking-table td { padding: 10px 10px; border-bottom: 1px solid var(--nothing-border); font-size: 0.75rem; vertical-align: middle; color: var(--nothing-gray1); }
-        .ranking-table tr:hover { background: rgba(255,255,255,0.02); }
-        .ranking-table .sub-text { display: block; font-size: 0.68rem; color: var(--nothing-gray4); margin-top: 2px; }
-        .slope-up { color: var(--nothing-red); font-weight: 700; }
-        .slope-down { color: var(--nothing-green); font-weight: 700; }
-        .slope-flat { color: var(--nothing-gray4); }
-        .meal-tag { display: inline-block; padding: 2px 6px; border-radius: 0; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.5px; }
-        .meal-full { background: rgba(51,204,102,0.15); color: var(--nothing-green); }
-        .meal-breakfast { background: rgba(255,204,0,0.15); color: var(--nothing-yellow); }
-        .meal-none { background: rgba(255,255,255,0.03); color: var(--nothing-gray4); }
-        .price-total { font-weight: 700; color: var(--nothing-white); }
+        .ranking-table th.sorted-asc .sort-icon, .ranking-table th.sorted-desc .sort-icon { opacity: 1; color: var(--accent); }
+        .ranking-table td { padding: 10px 10px; border-bottom: 1px solid var(--border); font-size: 0.75rem; vertical-align: middle; color: var(--text-primary); }
+        .ranking-table tr:hover { background: rgba(0,0,0,0.02); }
+        .ranking-table .sub-text { display: block; font-size: 0.68rem; color: var(--text-tertiary); margin-top: 2px; }
+        .slope-up { color: var(--accent); font-weight: 700; }
+        .slope-down { color: var(--success); font-weight: 700; }
+        .slope-flat { color: var(--text-tertiary); }
+        .meal-tag { display: inline-block; padding: 2px 6px; border-radius: var(--radius-sm); font-size: 0.65rem; font-weight: 700; letter-spacing: 0; }
+        .meal-full { background: rgba(52,199,89,0.12); color: var(--success); }
+        .meal-breakfast { background: rgba(255,149,0,0.12); color: var(--warning); }
+        .meal-none { background: rgba(0,0,0,0.02); color: var(--text-tertiary); }
+        .price-total { font-weight: 700; color: var(--text-primary); }
 
-        .stars { color: var(--nothing-yellow); letter-spacing: 2px; }
+        .stars { color: var(--warning); letter-spacing: 0; }
 
-        .tag { display: inline-block; padding: 2px 8px; border-radius: 0; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.5px; }
-        .tag-open { background: rgba(51,204,102,0.15); color: var(--nothing-green); }
-        .tag-soon { background: rgba(255,204,0,0.15); color: var(--nothing-yellow); }
-        .tag-full { background: rgba(215,25,33,0.15); color: #ff6b6b; }
-        .tag-unknown { background: rgba(255,255,255,0.03); color: var(--nothing-gray4); }
+        .tag { display: inline-block; padding: 2px 8px; border-radius: var(--radius-sm); font-size: 0.65rem; font-weight: 700; letter-spacing: 0; }
+        .tag-open { background: rgba(52,199,89,0.12); color: var(--success); }
+        .tag-soon { background: rgba(255,149,0,0.12); color: var(--warning); }
+        .tag-full { background: rgba(255,59,48,0.12); color: #ff6b6b; }
+        .tag-unknown { background: rgba(0,0,0,0.02); color: var(--text-tertiary); }
 
-        .distance-badge { display: inline-flex; align-items: center; gap: 4px; background: rgba(77,166,255,0.1); color: var(--nothing-blue); padding: 3px 8px; border-radius: 0; font-size: 0.72rem; font-weight: 700; }
+        .distance-badge { display: inline-flex; align-items: center; gap: 4px; background: rgba(0,122,255,0.1); color: var(--blue); padding: 3px 8px; border-radius: var(--radius-sm); font-size: 0.72rem; font-weight: 700; }
 
 
         /* Booking Tab Styles (Nothing) */
@@ -159,14 +169,14 @@
             top: 0;
             bottom: 0;
             width: 1px;
-            background: var(--nothing-border-light);
+            background: var(--border);
         }
 
         .timeline-item {
             position: relative;
-            background: var(--nothing-card);
-            border: 1px solid var(--nothing-border);
-            border-radius: 0;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
             padding: 24px;
             margin-bottom: 20px;
         }
@@ -179,75 +189,73 @@
             width: 10px;
             height: 10px;
             border-radius: 50%;
-            border: 2px solid var(--nothing-border);
+            border: 2px solid var(--border);
         }
 
-        .timeline-item.urgent::before { border-color: var(--nothing-red); background: var(--nothing-red); box-shadow: 0 0 6px var(--nothing-red); }
-        .timeline-item.upcoming::before { border-color: var(--nothing-yellow); background: var(--nothing-yellow); }
-        .timeline-item.later::before { border-color: var(--nothing-green); background: var(--nothing-green); }
+        .timeline-item.urgent::before { border-color: var(--accent); background: var(--accent); box-shadow: 0 0 6px var(--accent); }
+        .timeline-item.upcoming::before { border-color: var(--warning); background: var(--warning); }
+        .timeline-item.later::before { border-color: var(--success); background: var(--success); }
 
         .timeline-date {
             font-size: 0.68rem;
             font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 0;
             margin-bottom: 8px;
         }
 
-        .timeline-item.urgent .timeline-date { color: var(--nothing-red); }
-        .timeline-item.upcoming .timeline-date { color: var(--nothing-yellow); }
-        .timeline-item.later .timeline-date { color: var(--nothing-green); }
+        .timeline-item.urgent .timeline-date { color: var(--accent); }
+        .timeline-item.upcoming .timeline-date { color: var(--warning); }
+        .timeline-item.later .timeline-date { color: var(--success); }
 
-        .timeline-item h3 { font-size: 0.9rem; margin-bottom: 8px; color: var(--nothing-white); letter-spacing: 0.5px; }
-        .timeline-item p { color: var(--nothing-gray3); font-size: 0.78rem; line-height: 1.7; }
+        .timeline-item h3 { font-size: 0.9rem; margin-bottom: 8px; color: var(--text-primary); letter-spacing: 0; }
+        .timeline-item p { color: var(--text-secondary); font-size: 0.78rem; line-height: 1.7; }
 
         .booking-table {
             width: 100%;
             border-collapse: collapse;
-            background: var(--nothing-card);
-            border: 1px solid var(--nothing-border);
-            border-radius: 0;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
             overflow: hidden;
             margin-bottom: 50px;
         }
 
         .booking-table th {
-            background: var(--nothing-dark);
-            color: var(--nothing-gray2);
+            background: #F9F9FB;
+            color: var(--text-secondary);
             padding: 14px 16px;
             text-align: left;
             font-size: 0.72rem;
-            border-bottom: 1px solid var(--nothing-border);
-            letter-spacing: 1px;
-            text-transform: uppercase;
+            border-bottom: 1px solid var(--border);
+            letter-spacing: 0;
         }
-        .booking-table td { padding: 14px 16px; border-bottom: 1px solid var(--nothing-border); font-size: 0.78rem; vertical-align: top; color: var(--nothing-gray1); }
-        .booking-table tr:hover { background: rgba(255,255,255,0.02); }
+        .booking-table td { padding: 14px 16px; border-bottom: 1px solid var(--border); font-size: 0.78rem; vertical-align: top; color: var(--text-primary); }
+        .booking-table tr:hover { background: rgba(0,0,0,0.02); }
 
         .booking-method {
             display: inline-flex;
             align-items: center;
             gap: 4px;
             padding: 3px 8px;
-            border-radius: 0;
+            border-radius: var(--radius-sm);
             font-size: 0.68rem;
             font-weight: 700;
             margin: 2px 0;
-            letter-spacing: 0.5px;
+            letter-spacing: 0;
         }
 
         .method-web { background: rgba(139,92,246,0.12); color: #b794f6; }
-        .method-whatsapp { background: rgba(51,204,102,0.12); color: var(--nothing-green); }
-        .method-phone { background: rgba(255,204,0,0.12); color: var(--nothing-yellow); }
-        .method-email { background: rgba(77,166,255,0.12); color: var(--nothing-blue); }
+        .method-whatsapp { background: rgba(52,199,89,0.12); color: var(--success); }
+        .method-phone { background: rgba(255,149,0,0.12); color: var(--warning); }
+        .method-email { background: rgba(0,122,255,0.12); color: var(--blue); }
         .method-platform { background: rgba(215,25,33,0.12); color: #ff6b6b; }
 
         .countdown {
-            background: var(--nothing-card);
-            border: 1px solid var(--nothing-border);
-            border-radius: 0;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
             padding: 30px;
-            color: white;
+            color: var(--text-primary);
             text-align: center;
             margin-bottom: 30px;
             position: relative;
@@ -258,42 +266,42 @@
             position: absolute;
             top: 0; left: 0; right: 0;
             height: 2px;
-            background: var(--nothing-red);
+            background: var(--accent);
         }
 
-        .countdown h3 { font-size: 0.85rem; margin-bottom: 16px; color: var(--nothing-gray2); letter-spacing: 2px; text-transform: uppercase; }
+        .countdown h3 { font-size: 0.85rem; margin-bottom: 16px; color: var(--text-secondary); letter-spacing: 0; }
 
         .countdown-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1px;
-            background: var(--nothing-border);
+            background: var(--border);
         }
 
         .countdown-item {
-            background: var(--nothing-dark);
+            background: var(--bg);
             border: none;
-            border-radius: 0;
+            border-radius: var(--radius);
             padding: 20px;
         }
 
         .countdown-item .days {
             font-size: 2.5rem;
             font-weight: 700;
-            color: var(--nothing-red);
+            color: var(--accent);
         }
 
         .countdown-item .label {
             font-size: 0.72rem;
-            color: var(--nothing-gray3);
+            color: var(--text-secondary);
             margin-top: 4px;
-            letter-spacing: 0.5px;
+            letter-spacing: 0;
         }
 
         .action-box {
-            background: var(--nothing-card);
-            border: 1px solid var(--nothing-red);
-            border-radius: 0;
+            background: var(--bg-elevated);
+            border: 1px solid var(--accent);
+            border-radius: var(--radius);
             padding: 24px;
             margin-bottom: 30px;
             position: relative;
@@ -306,7 +314,7 @@
             left: 20px;
             width: 20px;
             height: 20px;
-            background: var(--nothing-red);
+            background: var(--accent);
             color: white;
             font-size: 0.7rem;
             font-weight: 700;
@@ -315,13 +323,13 @@
             justify-content: center;
         }
 
-        .action-box h3 { color: var(--nothing-red); margin-bottom: 12px; font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase; }
+        .action-box h3 { color: var(--accent); margin-bottom: 12px; font-size: 0.85rem; letter-spacing: 0; }
         .action-box ul { list-style: none; padding: 0; }
-        .action-box li { padding: 8px 0; border-bottom: 1px solid var(--nothing-border); color: var(--nothing-gray2); font-size: 0.78rem; }
+        .action-box li { padding: 8px 0; border-bottom: 1px solid var(--border); color: var(--text-secondary); font-size: 0.78rem; }
         .action-box li:last-child { border-bottom: none; }
-        .action-box li strong { color: var(--nothing-white); }
+        .action-box li strong { color: var(--text-primary); }
 
-        /* Dining Tab Styles (Nothing) */
+        /* Dining Tab Styles */
         .dining-category {
             margin-bottom: 40px;
         }
@@ -340,24 +348,23 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: var(--nothing-card);
-            border: 1px solid var(--nothing-border);
-            border-radius: 0;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
         }
 
         .dining-category-header h3 {
-            color: var(--nothing-white);
+            color: var(--text-primary);
             font-size: 0.9rem;
             font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
+            letter-spacing: 0;
         }
 
         .dining-category-header p {
-            color: var(--nothing-gray4);
+            color: var(--text-tertiary);
             font-size: 0.72rem;
             margin-top: 2px;
-            letter-spacing: 0.5px;
+            letter-spacing: 0;
         }
 
         .dining-grid {
@@ -367,34 +374,35 @@
         }
 
         .dining-card {
-            background: var(--nothing-card);
-            border: 1px solid var(--nothing-border);
-            border-radius: 0;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
             padding: 20px;
-            transition: border-color 0.15s;
+            transition: border-color 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+            box-shadow: var(--shadow);
             position: relative;
         }
 
         .dining-card:hover {
-            border-color: var(--nothing-border-light);
+            border-color: var(--border);
         }
 
         .dining-card .resto-name {
             font-size: 0.88rem;
             font-weight: 700;
-            color: var(--nothing-white);
+            color: var(--text-primary);
             margin-bottom: 2px;
         }
 
         .dining-card .resto-name-jp {
             font-size: 0.72rem;
-            color: var(--nothing-gray4);
+            color: var(--text-tertiary);
             margin-bottom: 10px;
         }
 
         .dining-card .resto-desc {
             font-size: 0.78rem;
-            color: var(--nothing-gray3);
+            color: var(--text-secondary);
             line-height: 1.6;
             margin-bottom: 12px;
         }
@@ -411,38 +419,38 @@
             justify-content: space-between;
             align-items: center;
             padding-top: 10px;
-            border-top: 1px solid var(--nothing-border);
+            border-top: 1px solid var(--border);
         }
 
         .price-tag {
             display: inline-block;
             padding: 3px 8px;
-            border-radius: 0;
+            border-radius: var(--radius-sm);
             font-size: 0.68rem;
             font-weight: 700;
-            letter-spacing: 0.5px;
+            letter-spacing: 0;
         }
 
-        .price-budget { background: rgba(51,204,102,0.12); color: var(--nothing-green); }
-        .price-mid { background: rgba(255,204,0,0.12); color: var(--nothing-yellow); }
+        .price-budget { background: rgba(52,199,89,0.12); color: var(--success); }
+        .price-mid { background: rgba(255,149,0,0.12); color: var(--warning); }
         .price-high { background: rgba(215,25,33,0.12); color: #ff6b6b; }
 
-        .rec-stars { color: var(--nothing-red); font-size: 0.85rem; letter-spacing: 2px; }
+        .rec-stars { color: var(--accent); font-size: 0.85rem; letter-spacing: 0; }
 
         .food-tag {
             display: inline-block;
             padding: 2px 8px;
-            border-radius: 0;
+            border-radius: var(--radius-sm);
             font-size: 0.65rem;
             font-weight: 700;
-            background: rgba(77,166,255,0.1);
-            color: var(--nothing-blue);
-            letter-spacing: 0.5px;
+            background: rgba(0,122,255,0.1);
+            color: var(--blue);
+            letter-spacing: 0;
         }
 
-        .food-tag.tag-vibe { background: rgba(139,92,246,0.1); color: #b794f6; }
-        .food-tag.tag-lang { background: rgba(51,204,102,0.1); color: var(--nothing-green); }
-        .food-tag.tag-time { background: rgba(255,204,0,0.1); color: var(--nothing-yellow); }
+        .food-tag.tag-vibe { background: rgba(88,86,214,0.1); color: #b794f6; }
+        .food-tag.tag-lang { background: rgba(52,199,89,0.1); color: var(--success); }
+        .food-tag.tag-time { background: rgba(255,149,0,0.1); color: var(--warning); }
 
         .specialty-grid {
             display: grid;
@@ -451,38 +459,39 @@
         }
 
         .specialty-card {
-            background: var(--nothing-card);
-            border: 1px solid var(--nothing-border);
-            border-radius: 0;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
             padding: 20px;
             text-align: center;
+            box-shadow: var(--shadow);
         }
 
         .specialty-card .spec-icon { font-size: 2.2rem; margin-bottom: 10px; }
-        .specialty-card h4 { font-size: 0.85rem; color: var(--nothing-white); margin-bottom: 4px; font-weight: 700; letter-spacing: 0.5px; }
-        .specialty-card .spec-jp { font-size: 0.72rem; color: var(--nothing-gray4); margin-bottom: 8px; }
-        .specialty-card p { font-size: 0.75rem; color: var(--nothing-gray3); line-height: 1.6; }
+        .specialty-card h4 { font-size: 0.85rem; color: var(--text-primary); margin-bottom: 4px; font-weight: 700; letter-spacing: 0; }
+        .specialty-card .spec-jp { font-size: 0.72rem; color: var(--text-tertiary); margin-bottom: 8px; }
+        .specialty-card p { font-size: 0.75rem; color: var(--text-secondary); line-height: 1.6; }
 
         .dining-tip {
-            background: var(--nothing-card);
-            border: 1px solid var(--nothing-border);
-            border-radius: 0;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
             padding: 24px;
-            color: white;
+            color: var(--text-primary);
             margin-bottom: 30px;
         }
 
-        .dining-tip h3 { margin-bottom: 12px; font-size: 0.85rem; color: var(--nothing-white); letter-spacing: 1px; text-transform: uppercase; }
+        .dining-tip h3 { margin-bottom: 12px; font-size: 0.85rem; color: var(--text-primary); letter-spacing: 0; }
         .dining-tip ul { list-style: none; padding: 0; }
-        .dining-tip li { padding: 6px 0; font-size: 0.78rem; color: var(--nothing-gray2); border-bottom: 1px solid var(--nothing-border); }
+        .dining-tip li { padding: 6px 0; font-size: 0.78rem; color: var(--text-secondary); border-bottom: 1px solid var(--border); }
         .dining-tip li:last-child { border-bottom: none; }
-        .dining-tip li::before { content: '> '; color: var(--nothing-red); font-weight: 700; }
+        .dining-tip li::before { content: '> '; color: var(--accent); font-weight: 700; }
 
-        /* Sightseeing Tab Styles (Nothing) */
+        /* Sightseeing Tab Styles */
         .day-plan {
-            background: var(--nothing-card);
-            border: 1px solid var(--nothing-border);
-            border-radius: 0;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
             padding: 28px;
             margin-bottom: 30px;
             position: relative;
@@ -493,19 +502,18 @@
             position: absolute;
             top: 0; left: 0;
             width: 3px; height: 100%;
-            background: var(--nothing-red);
+            background: var(--accent);
         }
 
         .day-plan h3 {
             font-size: 0.9rem;
-            color: var(--nothing-white);
+            color: var(--text-primary);
             font-weight: 700;
             margin-bottom: 16px;
             display: flex;
             align-items: center;
             gap: 10px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
+            letter-spacing: 0;
         }
 
         .day-plan-timeline {
@@ -520,7 +528,7 @@
             top: 6px;
             bottom: 6px;
             width: 1px;
-            background: var(--nothing-border-light);
+            background: var(--border);
         }
 
         .plan-step {
@@ -537,40 +545,39 @@
             height: 8px;
             border-radius: 50%;
             background: transparent;
-            border: 2px solid var(--nothing-red);
+            border: 2px solid var(--accent);
         }
 
         .plan-step .step-time {
             font-size: 0.72rem;
             font-weight: 700;
-            color: var(--nothing-red);
+            color: var(--accent);
             margin-bottom: 2px;
         }
 
         .plan-step .step-title {
             font-size: 0.82rem;
             font-weight: 700;
-            color: var(--nothing-white);
+            color: var(--text-primary);
         }
 
         .plan-step .step-desc {
             font-size: 0.75rem;
-            color: var(--nothing-gray4);
+            color: var(--text-tertiary);
             margin-top: 2px;
         }
 
         .activity-section { margin-bottom: 40px; }
 
         .activity-section-header {
-            color: var(--nothing-white);
+            color: var(--text-primary);
             font-size: 1rem;
             font-weight: 700;
             margin-bottom: 20px;
             display: flex;
             align-items: center;
             gap: 12px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
+            letter-spacing: 0;
         }
 
         .activity-grid {
@@ -580,34 +587,35 @@
         }
 
         .activity-card {
-            background: var(--nothing-card);
-            border: 1px solid var(--nothing-border);
-            border-radius: 0;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
             padding: 20px;
-            transition: border-color 0.15s;
+            transition: border-color 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+            box-shadow: var(--shadow);
         }
 
         .activity-card:hover {
-            border-color: var(--nothing-border-light);
+            border-color: var(--border);
         }
 
         .activity-card .act-title {
             font-size: 0.88rem;
             font-weight: 700;
-            color: var(--nothing-white);
+            color: var(--text-primary);
             margin-bottom: 2px;
         }
 
         .activity-card .act-subtitle {
             font-size: 0.68rem;
-            color: var(--nothing-gray4);
+            color: var(--text-tertiary);
             margin-bottom: 10px;
-            letter-spacing: 0.5px;
+            letter-spacing: 0;
         }
 
         .activity-card .act-desc {
             font-size: 0.78rem;
-            color: var(--nothing-gray3);
+            color: var(--text-secondary);
             line-height: 1.6;
             margin-bottom: 12px;
         }
@@ -621,47 +629,47 @@
         .act-tag {
             display: inline-block;
             padding: 2px 8px;
-            border-radius: 0;
+            border-radius: var(--radius-sm);
             font-size: 0.65rem;
             font-weight: 700;
-            letter-spacing: 0.5px;
+            letter-spacing: 0;
         }
 
-        .act-tag-free { background: rgba(51,204,102,0.12); color: var(--nothing-green); }
-        .act-tag-paid { background: rgba(255,204,0,0.12); color: var(--nothing-yellow); }
-        .act-tag-time { background: rgba(77,166,255,0.1); color: var(--nothing-blue); }
+        .act-tag-free { background: rgba(52,199,89,0.12); color: var(--success); }
+        .act-tag-paid { background: rgba(255,149,0,0.12); color: var(--warning); }
+        .act-tag-time { background: rgba(0,122,255,0.1); color: var(--blue); }
         .act-tag-dist { background: rgba(139,92,246,0.1); color: #b794f6; }
-        .act-tag-tip { background: rgba(255,204,0,0.1); color: var(--nothing-yellow); }
+        .act-tag-tip { background: rgba(255,149,0,0.1); color: var(--warning); }
 
         .route-option {
-            background: var(--nothing-card);
-            border: 1px solid var(--nothing-border);
-            border-radius: 0;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
             padding: 20px;
             margin-bottom: 16px;
-            border-left: 3px solid var(--nothing-gray4);
+            border-left: 3px solid var(--text-tertiary);
         }
 
-        .route-option.recommended { border-left-color: var(--nothing-red); }
+        .route-option.recommended { border-left-color: var(--accent); }
 
         .route-option h4 {
             font-size: 0.88rem;
-            color: var(--nothing-white);
+            color: var(--text-primary);
             font-weight: 700;
             margin-bottom: 8px;
-            letter-spacing: 0.5px;
+            letter-spacing: 0;
         }
 
         .route-option p {
             font-size: 0.78rem;
-            color: var(--nothing-gray3);
+            color: var(--text-secondary);
             line-height: 1.6;
         }
 
         .route-option .route-details {
             margin-top: 10px;
             font-size: 0.72rem;
-            color: var(--nothing-gray4);
+            color: var(--text-tertiary);
         }
 
         .route-option .route-details span {
@@ -669,11 +677,11 @@
             margin-right: 16px;
         }
 
-        /* ===== Village Map Styles (Nothing) ===== */
+        /* ===== Village Map Styles ===== */
         .map-container {
-            background: var(--nothing-card);
-            border: 1px solid var(--nothing-border);
-            border-radius: 0;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
             padding: 24px;
             margin-bottom: 30px;
         }
@@ -681,10 +689,9 @@
         .map-container h2 {
             font-size: 0.9rem;
             margin-bottom: 16px;
-            color: var(--nothing-white);
+            color: var(--text-primary);
             font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
+            letter-spacing: 0;
         }
 
         .map-controls {
@@ -696,36 +703,36 @@
 
         .map-toggle {
             padding: 6px 12px;
-            border-radius: 0;
-            border: 1px solid var(--nothing-border);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
             border-right: none;
             background: transparent;
-            color: var(--nothing-gray3);
+            color: var(--text-secondary);
             font-size: 0.68rem;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.15s;
+            transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
             font-family: inherit;
-            letter-spacing: 0.5px;
+            letter-spacing: 0;
         }
 
-        .map-toggle:last-child { border-right: 1px solid var(--nothing-border); }
-        .map-toggle:hover { background: rgba(255,255,255,0.03); color: var(--nothing-white); }
-        .map-toggle.active { background: var(--nothing-white); color: var(--nothing-black); border-color: var(--nothing-white); }
-        .map-toggle.active-route-a { background: var(--nothing-red); color: white; border-color: var(--nothing-red); }
+        .map-toggle:last-child { border-right: 1px solid var(--border); }
+        .map-toggle:hover { background: rgba(0,0,0,0.02); color: var(--text-primary); }
+        .map-toggle.active { background: var(--text-primary); color: var(--bg); border-color: var(--text-primary); }
+        .map-toggle.active-route-a { background: var(--accent); color: white; border-color: var(--accent); }
         .map-toggle.active-route-b { background: #b794f6; color: white; border-color: #b794f6; }
-        .map-toggle.active-route-c { background: var(--nothing-green); color: white; border-color: var(--nothing-green); }
-        .map-toggle.active-food { background: var(--nothing-yellow); color: black; border-color: var(--nothing-yellow); }
-        .map-toggle.active-onsen { background: var(--nothing-blue); color: white; border-color: var(--nothing-blue); }
+        .map-toggle.active-route-c { background: var(--success); color: white; border-color: var(--success); }
+        .map-toggle.active-food { background: var(--warning); color: black; border-color: var(--warning); }
+        .map-toggle.active-onsen { background: var(--blue); color: white; border-color: var(--blue); }
         .map-toggle.active-sight { background: #ff6b9d; color: white; border-color: #ff6b9d; }
 
         .map-svg-wrap {
             position: relative;
             width: 100%;
             overflow-x: auto;
-            border-radius: 0;
-            border: 1px solid var(--nothing-border);
-            background: var(--nothing-black);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            background: var(--bg);
         }
 
         .map-svg-wrap svg {
@@ -741,8 +748,8 @@
             gap: 14px;
             margin-top: 14px;
             font-size: 0.68rem;
-            color: var(--nothing-gray4);
-            letter-spacing: 0.5px;
+            color: var(--text-tertiary);
+            letter-spacing: 0;
         }
 
         .map-legend-item {
@@ -760,15 +767,15 @@
 
         .map-tooltip {
             position: absolute;
-            background: var(--nothing-dark);
-            border: 1px solid var(--nothing-border);
-            color: var(--nothing-white);
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
             padding: 8px 12px;
-            border-radius: 0;
+            border-radius: var(--radius-sm);
             font-size: 0.72rem;
             pointer-events: none;
             opacity: 0;
-            transition: opacity 0.15s;
+            transition: opacity 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
             z-index: 100;
             max-width: 220px;
             line-height: 1.4;
